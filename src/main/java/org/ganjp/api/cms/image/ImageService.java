@@ -8,7 +8,7 @@ import org.ganjp.api.cms.image.ImageUpdateRequest;
 import org.ganjp.api.cms.image.ImageResponse;
 import org.ganjp.api.cms.image.Image;
 import org.ganjp.api.cms.image.ImageRepository;
-import org.ganjp.api.cms.util.CmsUtil;
+import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

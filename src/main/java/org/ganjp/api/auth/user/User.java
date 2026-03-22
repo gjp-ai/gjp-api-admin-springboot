@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ganjp.api.auth.role.Role;
 import org.ganjp.api.auth.role.UserRole;
-import org.ganjp.api.auth.token.RefreshToken;
+import org.ganjp.api.auth.refresh.RefreshToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

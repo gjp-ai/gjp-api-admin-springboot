@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.ganjp.api.auth.security.JwtUtils;
 
 import org.ganjp.api.cms.image.ImageService;
-import org.ganjp.api.cms.util.CmsUtil;
+import org.ganjp.api.common.util.CmsUtil;
 import org.ganjp.api.common.model.ApiResponse;
 import org.ganjp.api.common.model.PaginatedResponse;
 import org.springframework.core.io.FileSystemResource;

@@ -1,4 +1,4 @@
-package org.ganjp.api.auth.token;
+package org.ganjp.api.auth.refresh;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

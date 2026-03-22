@@ -8,7 +8,7 @@ import org.ganjp.api.cms.article.image.ArticleImageUpdateRequest;
 import org.ganjp.api.cms.article.image.ArticleImageResponse;
 import org.ganjp.api.cms.article.image.ArticleImage;
 import org.ganjp.api.cms.article.image.ArticleImageRepository;
-import org.ganjp.api.cms.util.CmsUtil;
+import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

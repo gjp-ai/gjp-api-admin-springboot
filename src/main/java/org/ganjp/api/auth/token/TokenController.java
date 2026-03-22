@@ -4,12 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.ganjp.api.auth.token.LoginRequest;
-import org.ganjp.api.auth.token.LogoutRequest;
-import org.ganjp.api.auth.token.RefreshTokenRequest;
+import org.ganjp.api.auth.refresh.RefreshTokenRequest;
+import org.ganjp.api.auth.refresh.TokenRefreshResponse;
 import org.ganjp.api.common.model.ApiResponse;
-import org.ganjp.api.auth.token.AuthTokenResponse;
-import org.ganjp.api.auth.token.TokenRefreshResponse;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.auth.session.ActiveUserService;
 import org.ganjp.api.auth.token.AuthService;

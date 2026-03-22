@@ -1,4 +1,4 @@
-package org.ganjp.api.cms.util;
+package org.ganjp.api.common.util;
 
 public class CmsUtil {
     private CmsUtil() {}

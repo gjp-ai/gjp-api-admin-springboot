@@ -1,4 +1,4 @@
-package org.ganjp.api.auth.util;
+package org.ganjp.api.auth.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

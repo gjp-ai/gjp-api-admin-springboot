@@ -13,7 +13,7 @@ import org.ganjp.api.auth.role.RoleRepository;
 import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.auth.role.UserRoleRepository;
 import org.ganjp.api.auth.session.ActiveUserService;
-import org.ganjp.api.auth.token.RefreshTokenRepository;
+import org.ganjp.api.auth.refresh.RefreshTokenRepository;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

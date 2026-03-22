@@ -177,7 +177,7 @@ public class FileController {
             java.io.File file = fileService.getFileByFilename(filename);
             java.io.InputStream is = new java.io.FileInputStream(file);
             InputStreamResource resource = new InputStreamResource(is);
-            String ct = org.ganjp.api.cms.util.CmsUtil.determineContentType(filename);
+            String ct = org.ganjp.api.common.util.CmsUtil.determineContentType(filename);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(ct))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")

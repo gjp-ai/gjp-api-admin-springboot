@@ -30,7 +30,7 @@ public class ArticleImageController {
     @GetMapping("/view/{filename:.+}")
     public ResponseEntity<Resource> viewImage(@PathVariable String filename) {
         Resource file = articleImageService.getImage(filename);
-        String contentType = org.ganjp.api.cms.util.CmsUtil.determineContentType(filename);
+        String contentType = org.ganjp.api.common.util.CmsUtil.determineContentType(filename);
         
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))

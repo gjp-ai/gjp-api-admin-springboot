@@ -4,7 +4,7 @@ import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.auth.security.JwtAuthenticationFilter;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.auth.security.LoginRateLimitFilter;
-import org.ganjp.api.auth.token.TokenBlacklistService;
+import org.ganjp.api.auth.blacklist.TokenBlacklistService;
 import org.ganjp.api.auth.session.ActiveUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

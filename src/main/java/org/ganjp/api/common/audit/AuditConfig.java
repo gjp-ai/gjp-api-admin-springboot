@@ -1,7 +1,7 @@
 package org.ganjp.api.common.audit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ganjp.api.common.audit.AuthenticationAuditInterceptor;
+import org.ganjp.api.auth.security.AuthenticationAuditInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

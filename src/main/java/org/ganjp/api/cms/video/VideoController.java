@@ -159,7 +159,7 @@ public class VideoController {
         try {
             java.io.File file = videoService.getVideoFileByFilename(filename);
             long contentLength = file.length();
-            String contentType = org.ganjp.api.cms.util.CmsUtil.determineContentType(filename);
+            String contentType = org.ganjp.api.common.util.CmsUtil.determineContentType(filename);
 
             if (rangeHeader == null) {
                 InputStreamResource full = new InputStreamResource(new java.io.FileInputStream(file));

@@ -1,4 +1,4 @@
-package org.ganjp.api.auth.token;
+package org.ganjp.api.auth.blacklist;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

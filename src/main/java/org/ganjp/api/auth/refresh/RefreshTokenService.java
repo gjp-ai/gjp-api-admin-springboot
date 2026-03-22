@@ -1,10 +1,8 @@
-package org.ganjp.api.auth.token;
+package org.ganjp.api.auth.refresh;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.config.SecurityProperties;
-import org.ganjp.api.auth.token.RefreshToken;
-import org.ganjp.api.auth.token.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

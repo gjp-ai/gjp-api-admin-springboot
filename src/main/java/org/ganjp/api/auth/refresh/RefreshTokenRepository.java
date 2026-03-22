@@ -1,6 +1,6 @@
-package org.ganjp.api.auth.token;
+package org.ganjp.api.auth.refresh;
 
-import org.ganjp.api.auth.token.RefreshToken;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
