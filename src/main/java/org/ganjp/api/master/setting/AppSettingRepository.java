@@ -1,6 +1,6 @@
-package org.ganjp.api.bm.setting;
+package org.ganjp.api.master.setting;
 
-import org.ganjp.api.bm.setting.AppSetting;
+import org.ganjp.api.master.setting.AppSetting;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

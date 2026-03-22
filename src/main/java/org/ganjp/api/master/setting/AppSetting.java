@@ -1,4 +1,4 @@
-package org.ganjp.api.bm.setting;
+package org.ganjp.api.master.setting;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import org.ganjp.api.common.model.BaseEntity;
  * Application Settings Entity with internationalization support
  */
 @Entity
-@Table(name = "bm_app_settings")
+@Table(name = "master_app_settings")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder

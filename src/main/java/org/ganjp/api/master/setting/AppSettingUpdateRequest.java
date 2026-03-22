@@ -1,4 +1,4 @@
-package org.ganjp.api.bm.setting;
+package org.ganjp.api.master.setting;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ganjp.api.bm.setting.AppSetting;
+import org.ganjp.api.master.setting.AppSetting;
 
 /**
  * DTO for updating an app setting

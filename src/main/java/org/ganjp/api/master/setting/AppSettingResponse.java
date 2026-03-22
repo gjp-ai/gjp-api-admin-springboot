@@ -1,10 +1,10 @@
-package org.ganjp.api.bm.setting;
+package org.ganjp.api.master.setting;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ganjp.api.bm.setting.AppSetting;
+import org.ganjp.api.master.setting.AppSetting;
 
 import java.time.LocalDateTime;
 

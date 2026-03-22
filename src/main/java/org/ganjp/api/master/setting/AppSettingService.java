@@ -1,12 +1,12 @@
-package org.ganjp.api.bm.setting;
+package org.ganjp.api.master.setting;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.bm.setting.AppSettingResponse;
-import org.ganjp.api.bm.setting.AppSettingCreateRequest;
-import org.ganjp.api.bm.setting.AppSettingUpdateRequest;
-import org.ganjp.api.bm.setting.AppSetting;
-import org.ganjp.api.bm.setting.AppSettingRepository;
+import org.ganjp.api.master.setting.AppSettingResponse;
+import org.ganjp.api.master.setting.AppSettingCreateRequest;
+import org.ganjp.api.master.setting.AppSettingUpdateRequest;
+import org.ganjp.api.master.setting.AppSetting;
+import org.ganjp.api.master.setting.AppSettingRepository;
 import org.ganjp.api.common.exception.BusinessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -127,7 +127,7 @@ public class AppSettingService {
     /**
      * Get all settings with pagination and filtering
      */
-    public Page<AppSettingResponse> getSettings(String searchTerm, AppSetting.Language lang, 
+    public Page<AppSettingResponse> getSettings(String searchTerm, AppSetting.Language lang,
                                                Boolean isPublic, Boolean isSystem, Pageable pageable) {
         Page<AppSetting> settings = appSettingRepository.findBySearchCriteria(searchTerm, lang, isPublic, isSystem, pageable);
         return settings.map(AppSettingResponse::fromEntity);
@@ -158,7 +158,7 @@ public class AppSettingService {
 
         AppSetting savedSetting = appSettingRepository.save(setting);
         log.info("Created app setting: {} [{}] by user: {}", savedSetting.getName(), savedSetting.getLang(), createdBy);
-        
+
         return AppSettingResponse.fromEntity(savedSetting);
     }
 
@@ -218,7 +218,7 @@ public class AppSettingService {
 
         AppSetting savedSetting = appSettingRepository.save(setting);
         log.info("Updated app setting: {} [{}] by user: {}", savedSetting.getName(), savedSetting.getLang(), updatedBy);
-        
+
         return AppSettingResponse.fromEntity(savedSetting);
     }
 
@@ -241,7 +241,7 @@ public class AppSettingService {
 
         AppSetting savedSetting = appSettingRepository.save(setting);
         log.info("Updated app setting value: {} [{}] = '{}' by user: {}", savedSetting.getName(), savedSetting.getLang(), newValue, updatedBy);
-        
+
         return AppSettingResponse.fromEntity(savedSetting);
     }
 

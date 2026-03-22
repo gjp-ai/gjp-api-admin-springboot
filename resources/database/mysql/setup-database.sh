@@ -16,7 +16,7 @@
 # SQL execution order:
 #   1. 00-gjp-db.sql   - Create database
 #   2. 01-gjp-auth.sql - Auth tables (users, roles, user_roles, audit_logs, refresh_tokens) + seed data
-#   3. 01-gjp-bm.sql   - Business module tables (app_settings) + seed data
+#   3. 01-gjp-master.sql - Master data tables (app_settings) + seed data
 #   4. 01-gjp-cms.sql   - CMS tables (website, logo, image, video, audio, article, file, article_image, question)
 
 set -euo pipefail
@@ -59,7 +59,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SQL_FILES=(
     "00-gjp-db.sql"
     "01-gjp-auth.sql"
-    "01-gjp-bm.sql"
+    "01-gjp-master.sql"
     "01-gjp-cms.sql"
 )
 
@@ -131,7 +131,7 @@ echo "  - auth_roles"
 echo "  - auth_user_roles"
 echo "  - audit_logs"
 echo "  - auth_refresh_tokens"
-echo "  - bm_app_settings"
+echo "  - master_app_settings"
 echo "  - cms_website"
 echo "  - cms_logo"
 echo "  - cms_image"
