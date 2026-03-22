@@ -1,0 +1,35 @@
+# Production profile
+server:
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 20
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+  jackson:
+    serialization:
+      indent-output: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+
+# Logging configuration
+logging:
+  level:
+    org.ganjp.api: WARN
+    org.springframework: WARN
+  file:
+    name: logs/gjp-api-admin.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

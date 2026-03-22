@@ -1,0 +1,68 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api/
+
+spring:
+  application:
+    name: GJP-API-ADMIN
+  profiles:
+    active: dev
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+    date-format: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+security:
+  jwt:
+    expiration: 43200000
+    refresh-expiration: 2592000000
+  public-endpoints:
+    - "/"
+    - "/v1/register"
+    - "/v1/auth/**"
+    - "/actuator/health"
+    - "/swagger-ui/**"
+    - "/v3/api-docs/**"
+  authorized-endpoints:
+    - pattern: "/v1/roles/**"
+      roles:
+        - "ROLE_SUPER_ADMIN"
+  cors:
+    allowed-origins:
+      - https://ganjianping.com
+      - https://www.ganjianping.com
+      - http://localhost:8082
+      - http://127.0.0.1:8082
+      - http://localhost:3000
+
+audit:
+  enabled: true
+  log-request-data: true
+  log-response-data: true
+  max-data-length: 10000
+  log-successful-operations: true
+  log-failed-operations: true
+  retention-days: 300
+  async-processing: true
+  audit-authentication-events: true
+  max-failed-attempts-per-minute: 10
+  include-sensitive-data: false
+  exclude-patterns:
+    - "/actuator/.*"
+    - "/swagger-.*"
+    - "/v3/api-docs.*"
+    - "/favicon.ico"
+  thread-pool:
+    core-pool-size: 2
+    max-pool-size: 5
+    queue-capacity: 100
+    keep-alive-seconds: 60
+    thread-name-prefix: "audit-"
