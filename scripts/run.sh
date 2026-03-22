@@ -5,7 +5,7 @@
 # Starts the gjp-api-admin-springboot application.
 #
 # Configuration is managed via Spring profile YAML files:
-#   application-dev.yml  - Local development (requires env vars: MYSQL_USERNAME, MYSQL_PASSWORD)
+#   application-dev.yml  - Local development (requires env vars: MYSQL_USERNAME, MYSQL_PASSWORD, JWT_SECRET_KEY)
 #   application-prod.yml - Production (requires env vars: DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET_KEY)
 #
 # Usage:
@@ -23,6 +23,10 @@ fi
 if [[ -z "${MYSQL_PASSWORD:-}" ]]; then
     MYSQL_PASSWORD=$(zsh -lc 'echo $MYSQL_PASSWORD' 2>/dev/null || true)
     export MYSQL_PASSWORD
+fi
+if [[ -z "${JWT_SECRET_KEY:-}" ]]; then
+    JWT_SECRET_KEY=$(zsh -lc 'echo $JWT_SECRET_KEY' 2>/dev/null || true)
+    export JWT_SECRET_KEY
 fi
 
 # ── Resolve project directory ────────────────────────────────────────────────
@@ -50,6 +54,7 @@ while [[ $# -gt 0 ]]; do
             echo "Dev profile  : requires environment variables:"
             echo "  MYSQL_USERNAME  MySQL username"
             echo "  MYSQL_PASSWORD  MySQL password"
+            echo "  JWT_SECRET_KEY  JWT signing key (generate with ./scripts/generate-jwt-key.sh)"
             echo ""
             echo "Prod profile : requires environment variables:"
             echo "  DB_URL          MySQL JDBC URL"
@@ -85,6 +90,7 @@ MISSING=()
 if [[ "${SPRING_PROFILE}" == "dev" ]]; then
     [[ -z "${MYSQL_USERNAME:-}" ]] && MISSING+=("MYSQL_USERNAME")
     [[ -z "${MYSQL_PASSWORD:-}" ]] && MISSING+=("MYSQL_PASSWORD")
+    [[ -z "${JWT_SECRET_KEY:-}" ]] && MISSING+=("JWT_SECRET_KEY")
 
     if [[ ${#MISSING[@]} -gt 0 ]]; then
         echo "ERROR: Dev profile requires the following environment variables:"
@@ -95,6 +101,10 @@ if [[ "${SPRING_PROFILE}" == "dev" ]]; then
         echo "Export them before running:"
         echo "  export MYSQL_USERNAME=root"
         echo "  export MYSQL_PASSWORD=your_password"
+        echo "  export JWT_SECRET_KEY=\$(openssl rand -base64 48)"
+        echo ""
+        echo "Or generate a JWT secret key with:"
+        echo "  ./scripts/generate-jwt-key.sh"
         exit 1
     fi
 elif [[ "${SPRING_PROFILE}" == "prod" ]]; then
