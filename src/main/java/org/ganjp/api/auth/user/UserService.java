@@ -13,6 +13,7 @@ import org.ganjp.api.auth.role.RoleRepository;
 import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.auth.role.UserRoleRepository;
 import org.ganjp.api.auth.session.ActiveUserService;
+import org.ganjp.api.auth.token.RefreshTokenRepository;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,7 @@ public class UserService {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ActiveUserService activeUserService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * Get all users with pagination
@@ -455,7 +457,8 @@ public class UserService {
     }
     
     /**
-     * Delete a user by ID (soft delete)
+     * Delete a user by ID (soft delete).
+     * Also revokes all refresh tokens and removes active session.
      *
      * @param id user ID
      * @param currentUserId ID of the user performing the operation
@@ -468,24 +471,17 @@ public class UserService {
 
         // Perform soft delete
         user.setActive(false);
+        user.setAccountStatus(AccountStatus.suspended);
         user.setUpdatedAt(LocalDateTime.now());
         user.setUpdatedBy(currentUserId);
 
         userRepository.save(user);
-    }
 
-    /**
-     * Hard delete a user by ID (use with caution)
-     *
-     * @param id user ID
-     * @throws ResourceNotFoundException if user not found
-     */
-    @Transactional
-    public void hardDeleteUser(String id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User", "id", id);
-        }
-        userRepository.deleteById(id);
+        // Revoke all refresh tokens for the user
+        refreshTokenRepository.revokeAllTokensForUser(id);
+
+        // Remove from active user tracking
+        activeUserService.removeActiveUser(id);
     }
 
     /**

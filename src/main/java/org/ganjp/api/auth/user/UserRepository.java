@@ -167,6 +167,15 @@ public interface UserRepository extends JpaRepository<User, String> {
                                      @Param("roleCode") String roleCode,
                                      Pageable pageable);
     
+    /**
+     * Lock a user account (set status to locked with expiry time)
+     */
+    @Modifying
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Query(value = "UPDATE auth_users SET account_status = :#{#status.name()}, account_locked_until = :lockedUntil, updated_at = :now WHERE id = :userId", nativeQuery = true)
+    int lockAccount(@Param("userId") String userId, @Param("status") AccountStatus status,
+                    @Param("lockedUntil") LocalDateTime lockedUntil, @Param("now") LocalDateTime now);
+
     // Dashboard statistics methods
     long countByActiveTrue();
     

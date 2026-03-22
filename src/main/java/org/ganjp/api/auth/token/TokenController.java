@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.ganjp.api.auth.token.LoginRequest;
 import org.ganjp.api.auth.token.LogoutRequest;
 import org.ganjp.api.auth.token.RefreshTokenRequest;
-import org.ganjp.api.auth.token.LoginResponse;
 import org.ganjp.api.common.model.ApiResponse;
 import org.ganjp.api.auth.token.AuthTokenResponse;
 import org.ganjp.api.auth.token.TokenRefreshResponse;
@@ -206,30 +205,6 @@ public class TokenController {
         sanitized.put("mobileNumber", loginRequest.getMobileNumber());
         // Deliberately exclude password for security
         return sanitized;
-    }
-
-    /**
-     * Helper method to sanitize login response for audit logging (remove token)
-     */
-    private Object sanitizeLoginResponse(LoginResponse loginResponse) {
-        Map<String, Object> sanitized = new HashMap<>();
-        sanitized.put("username", loginResponse.getUsername());
-        sanitized.put("email", loginResponse.getEmail());
-        sanitized.put("accountStatus", loginResponse.getAccountStatus());
-        sanitized.put("lastLoginAt", loginResponse.getLastLoginAt());
-        sanitized.put("roleCodes", loginResponse.getRoleCodes());
-        // Deliberately exclude token for security
-        return sanitized;
-    }
-
-    /**
-     * Helper method to extract user ID from login response
-     */
-    private String extractUserIdFromResponse(LoginResponse loginResponse) {
-        // Since LoginResponse doesn't contain user ID directly, 
-        // we could try to extract it from the JWT token or return null
-        // For now, return null as user ID is typically handled by security context
-        return null;
     }
 
     /**

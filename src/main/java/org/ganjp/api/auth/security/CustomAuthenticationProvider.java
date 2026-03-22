@@ -25,6 +25,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.ganjp.api.auth.user.AccountStatus;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -115,26 +117,36 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
+    private static final int MAX_FAILED_ATTEMPTS = 5;
+    private static final int LOCK_DURATION_MINUTES = 30;
+
     /**
      * Update login failure metrics for a known user with an invalid password.
-     * This method uses multiple approaches to maximize the chance of success.
+     * Automatically locks the account after MAX_FAILED_ATTEMPTS consecutive failures.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void updateLoginFailureForKnownUser(User user) {
         try {
-            // Update failed login metrics using direct JDBC for maximum reliability
             LocalDateTime now = LocalDateTime.now();
-            
-            log.info("Attempting to update login failures for user: id={}, username={}", 
+
+            log.info("Attempting to update login failures for user: id={}, username={}",
                     user.getId(), user.getUsername());
-                    
+
             if (user.getId() == null || user.getId().isEmpty()) {
                 log.error("Cannot update login failures: User ID is null or empty for username: {}", user.getUsername());
                 return;
             }
 
             updateWithJpaQuery(user.getId(), now);
-            
+
+            // Auto-lock account after exceeding max failed attempts
+            int newFailedAttempts = user.getFailedLoginAttempts() + 1;
+            if (newFailedAttempts >= MAX_FAILED_ATTEMPTS) {
+                LocalDateTime lockUntil = now.plusMinutes(LOCK_DURATION_MINUTES);
+                userRepository.lockAccount(user.getId(), AccountStatus.locked, lockUntil, now);
+                log.warn("Account locked for user {} after {} failed attempts. Locked until {}",
+                        user.getUsername(), newFailedAttempts, lockUntil);
+            }
         } catch (Exception e) {
             log.error("Failed to update login failure metrics", e);
         }

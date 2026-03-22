@@ -260,7 +260,18 @@ INSERT INTO auth_roles (id, code, name, description, parent_role_id, level, is_s
 -- Level 0 (Basic user role)
 ('550e8400-e29b-41d4-a716-446655440010', 'USER', 'Regular User', 'Standard authenticated user with basic reading, commenting, and profile management privileges', NULL, 0, TRUE, 10, NULL, NULL);
 
+-- Table: auth_token_blacklist
+-- Purpose: Persist blacklisted JWT access tokens to survive server restarts
+CREATE TABLE IF NOT EXISTS auth_token_blacklist (
+    token_id VARCHAR(255) NOT NULL COMMENT 'JWT token ID (jti claim)',
+    expires_at TIMESTAMP NOT NULL COMMENT 'Token expiration time — entries are cleaned up after this',
+
+    PRIMARY KEY (token_id),
+    KEY idx_token_blacklist_expires_at (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Blacklisted JWT access tokens for logout/revocation support';
+
 -- Assign SUPER_ADMIN role to superadmin user
-INSERT INTO auth_user_roles (user_id, role_id, granted_at, created_by, updated_by) 
+INSERT INTO auth_user_roles (user_id, role_id, granted_at, created_by, updated_by)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '550e8400-e29b-41d4-a716-446655440001', CURRENT_TIMESTAMP, NULL, NULL);
 

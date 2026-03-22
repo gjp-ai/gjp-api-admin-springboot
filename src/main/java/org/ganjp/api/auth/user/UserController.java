@@ -222,19 +222,6 @@ public class UserController {
     }
 
     /**
-     * Permanently delete a user from the database (hard delete)
-     * 
-     * @param id User ID
-     * @return Success message
-     */
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
-    @DeleteMapping("/{id}/permanent")
-    public ResponseEntity<ApiResponse<Void>> hardDeleteUser(@PathVariable String id) {
-        userService.hardDeleteUser(id);
-        return ResponseEntity.ok(ApiResponse.success(null, "User permanently deleted"));
-    }
-
-    /**
      * Change a user's password
      * 
      * @param id User ID
