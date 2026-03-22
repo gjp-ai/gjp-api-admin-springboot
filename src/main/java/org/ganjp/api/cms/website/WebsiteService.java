@@ -2,8 +2,8 @@ package org.ganjp.api.cms.website;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.cms.website.CreateWebsiteRequest;
-import org.ganjp.api.cms.website.UpdateWebsiteRequest;
+import org.ganjp.api.cms.website.WebsiteCreateRequest;
+import org.ganjp.api.cms.website.WebsiteUpdateRequest;
 import org.ganjp.api.cms.website.WebsiteResponse;
 import org.ganjp.api.cms.website.Website;
 import org.ganjp.api.cms.website.WebsiteRepository;
@@ -35,7 +35,7 @@ public class WebsiteService {
     /**
      * Create a new website
      */
-    public WebsiteResponse createWebsite(CreateWebsiteRequest request, String createdBy) {
+    public WebsiteResponse createWebsite(WebsiteCreateRequest request, String createdBy) {
         log.info("Creating new website: {} by user: {}", request.getName(), createdBy);
 
         // Validate unique name per language
@@ -69,7 +69,7 @@ public class WebsiteService {
     /**
      * Update an existing website
      */
-    public WebsiteResponse updateWebsite(String id, UpdateWebsiteRequest request, String updatedBy) {
+    public WebsiteResponse updateWebsite(String id, WebsiteUpdateRequest request, String updatedBy) {
         log.info("Updating website with ID: {} by user: {}", id, updatedBy);
 
         Website website = websiteRepository.findById(id)

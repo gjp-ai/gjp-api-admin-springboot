@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.ganjp.api.auth.register.RegisterRequest;
 import org.ganjp.api.common.model.ApiResponse;
 import org.ganjp.api.auth.register.RegisterResponse;
-import org.ganjp.api.auth.token.AuthService;
+import org.ganjp.api.auth.register.RegisterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,7 +41,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RegisterController {
 
-    private final AuthService authService;
+    private final RegisterService registerService;
 
     /**
      * Register a new user with ROLE_USER role
@@ -58,7 +58,7 @@ public class RegisterController {
             request.setAttribute("loginUsername", registerRequest.getUsername());
             request.setAttribute("loginRequestData", sanitizeRegisterRequest(registerRequest));
 
-            RegisterResponse registerResponse = authService.register(registerRequest);
+            RegisterResponse registerResponse = registerService.register(registerRequest);
             
             // Store response data and resource ID for audit logging
             request.setAttribute("loginResponseData", sanitizeRegisterResponse(registerResponse));

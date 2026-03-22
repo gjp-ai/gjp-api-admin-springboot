@@ -9,14 +9,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO for password change requests
+ * DTO for admin-initiated password reset (no current password required)
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PasswordChangeRequest {
-    
+public class AdminResetPasswordRequest {
+
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
     @Pattern(

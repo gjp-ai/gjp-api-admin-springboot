@@ -5,7 +5,7 @@ import org.ganjp.api.cms.file.FileUploadProperties;
 import org.ganjp.api.cms.file.FileCreateRequest;
 import org.ganjp.api.cms.file.FileResponse;
 import org.ganjp.api.cms.file.FileUpdateRequest;
-import org.ganjp.api.cms.file.File;
+import org.ganjp.api.cms.file.FileAsset;
 import org.ganjp.api.cms.file.FileRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ public class FileService {
     private final FileUploadProperties uploadProperties; // file upload config
 
     public FileResponse createFile(FileCreateRequest request, String userId) {
-        File f = new File();
+        FileAsset f = new FileAsset();
         String id = UUID.randomUUID().toString();
         f.setId(id);
         f.setName(request.getName());
@@ -97,14 +97,14 @@ public class FileService {
         f.setCreatedBy(userId);
         f.setUpdatedBy(userId);
 
-        File saved = fileRepository.save(f);
+        FileAsset saved = fileRepository.save(f);
         return toResponse(saved);
     }
 
     public FileResponse updateFile(String id, FileUpdateRequest request, String userId) {
-        Optional<File> opt = fileRepository.findById(id);
+        Optional<FileAsset> opt = fileRepository.findById(id);
         if (opt.isEmpty()) return null;
-        File f = opt.get();
+        FileAsset f = opt.get();
         if (request.getName() != null) f.setName(request.getName());
         if (request.getOriginalUrl() != null) f.setOriginalUrl(request.getOriginalUrl());
         if (request.getSourceName() != null) f.setSourceName(request.getSourceName());
@@ -148,12 +148,12 @@ public class FileService {
 
         f.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         f.setUpdatedBy(userId);
-        File saved = fileRepository.save(f);
+        FileAsset saved = fileRepository.save(f);
         return toResponse(saved);
     }
 
     public FileResponse getFileById(String id) {
-        Optional<File> opt = fileRepository.findById(id);
+        Optional<FileAsset> opt = fileRepository.findById(id);
         return opt.map(this::toResponse).orElse(null);
     }
 
@@ -165,23 +165,23 @@ public class FileService {
     }
 
     public java.util.List<FileResponse> listFiles() {
-        List<File> all = fileRepository.findAll();
+        List<FileAsset> all = fileRepository.findAll();
         return all.stream().map(this::toResponse).toList();
     }
 
-    public java.util.List<FileResponse> searchFiles(String name, File.Language lang, String tags, Boolean isActive) {
-        List<File> list = fileRepository.searchFiles(name, lang, tags, isActive);
+    public java.util.List<FileResponse> searchFiles(String name, FileAsset.Language lang, String tags, Boolean isActive) {
+        List<FileAsset> list = fileRepository.searchFiles(name, lang, tags, isActive);
         return list.stream().map(this::toResponse).toList();
     }
 
-    public Page<FileResponse> searchFiles(String name, File.Language lang, String tags, Boolean isActive, Pageable pageable) {
+    public Page<FileResponse> searchFiles(String name, FileAsset.Language lang, String tags, Boolean isActive, Pageable pageable) {
         return fileRepository.searchFiles(name, lang, tags, isActive, pageable).map(this::toResponse);
     }
 
     public boolean deleteFile(String id, String userId) {
-        Optional<File> opt = fileRepository.findById(id);
+        Optional<FileAsset> opt = fileRepository.findById(id);
         if (opt.isEmpty()) return false;
-        File f = opt.get();
+        FileAsset f = opt.get();
         f.setIsActive(false);
         f.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         f.setUpdatedBy(userId);
@@ -189,7 +189,7 @@ public class FileService {
         return true;
     }
 
-    private FileResponse toResponse(File f) {
+    private FileResponse toResponse(FileAsset f) {
         FileResponse r = new FileResponse();
         r.setId(f.getId());
         r.setName(f.getName());

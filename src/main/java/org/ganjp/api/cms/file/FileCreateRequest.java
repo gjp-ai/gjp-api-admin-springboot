@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ganjp.api.cms.file.File;
+import org.ganjp.api.cms.file.FileAsset;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ public class FileCreateRequest {
     private MultipartFile file;
     private String filename; // optional desired filename
     private String tags;
-    private File.Language lang;
+    private FileAsset.Language lang;
     private Integer displayOrder;
     private Boolean isActive;
 }

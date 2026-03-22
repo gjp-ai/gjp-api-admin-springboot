@@ -3,8 +3,8 @@ package org.ganjp.api.bm.setting;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.bm.setting.AppSettingResponse;
-import org.ganjp.api.bm.setting.CreateAppSettingRequest;
-import org.ganjp.api.bm.setting.UpdateAppSettingRequest;
+import org.ganjp.api.bm.setting.AppSettingCreateRequest;
+import org.ganjp.api.bm.setting.AppSettingUpdateRequest;
 import org.ganjp.api.bm.setting.AppSetting;
 import org.ganjp.api.bm.setting.AppSettingRepository;
 import org.ganjp.api.common.exception.BusinessException;
@@ -137,7 +137,7 @@ public class AppSettingService {
      * Create new setting
      */
     @Transactional
-    public AppSettingResponse createSetting(CreateAppSettingRequest request, String createdBy) {
+    public AppSettingResponse createSetting(AppSettingCreateRequest request, String createdBy) {
         // Check if setting already exists
         if (appSettingRepository.existsByNameAndLang(request.getName(), request.getLang())) {
             throw new BusinessException("App setting already exists with name: " + request.getName() + " and language: " + request.getLang());
@@ -166,7 +166,7 @@ public class AppSettingService {
      * Update setting
      */
     @Transactional
-    public AppSettingResponse updateSetting(String id, UpdateAppSettingRequest request, String updatedBy) {
+    public AppSettingResponse updateSetting(String id, AppSettingUpdateRequest request, String updatedBy) {
         AppSetting setting = appSettingRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("App setting not found with id: " + id));
 

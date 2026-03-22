@@ -3,8 +3,8 @@ package org.ganjp.api.auth.role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.ganjp.api.auth.role.RoleUpsertRequest;
-import org.ganjp.api.auth.role.RolePatchRequest;
+import org.ganjp.api.auth.role.RoleCreateRequest;
+import org.ganjp.api.auth.role.RoleUpdateRequest;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.common.model.ApiResponse;
 import org.ganjp.api.auth.role.RoleResponse;
@@ -65,7 +65,7 @@ public class RoleController {
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse<RoleResponse>> createRole(
-            @Valid @RequestBody RoleUpsertRequest roleRequest,
+            @Valid @RequestBody RoleCreateRequest roleRequest,
             HttpServletRequest request) {
         String userId = jwtUtils.extractUserIdFromToken(request);
         RoleResponse createdRole = roleService.createRole(roleRequest, userId);
@@ -77,7 +77,7 @@ public class RoleController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<RoleResponse>> updateRole(
             @PathVariable String id,
-            @Valid @RequestBody RoleUpsertRequest roleRequest,
+            @Valid @RequestBody RoleCreateRequest roleRequest,
             HttpServletRequest request) {
         String userId = extractUserIdFromToken(request);
         RoleResponse updatedRole = roleService.updateRoleFully(id, roleRequest, userId);
@@ -92,7 +92,7 @@ public class RoleController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<RoleResponse>> updateRolePartially(
             @PathVariable String id,
-            @Valid @RequestBody RolePatchRequest partiallyUpdateRequest,
+            @Valid @RequestBody RoleUpdateRequest partiallyUpdateRequest,
             HttpServletRequest request) {
         String userId = extractUserIdFromToken(request);
         RoleResponse updatedRole = roleService.updateRolePartially(id, partiallyUpdateRequest, userId);

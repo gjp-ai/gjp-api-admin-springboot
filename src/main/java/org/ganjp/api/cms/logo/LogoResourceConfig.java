@@ -1,4 +1,4 @@
-package org.ganjp.api.cms.config;
+package org.ganjp.api.cms.logo;
 
 import lombok.RequiredArgsConstructor;
 import org.ganjp.api.cms.logo.LogoUploadProperties;
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @RequiredArgsConstructor
-public class StaticResourceConfig implements WebMvcConfigurer {
+public class LogoResourceConfig implements WebMvcConfigurer {
 
     private final LogoUploadProperties uploadProperties;
 

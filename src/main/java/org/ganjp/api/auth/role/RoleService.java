@@ -2,8 +2,8 @@ package org.ganjp.api.auth.role;
 
 import lombok.RequiredArgsConstructor;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
-import org.ganjp.api.auth.role.RoleUpsertRequest;
-import org.ganjp.api.auth.role.RolePatchRequest;
+import org.ganjp.api.auth.role.RoleCreateRequest;
+import org.ganjp.api.auth.role.RoleUpdateRequest;
 import org.ganjp.api.auth.role.RoleResponse;
 import org.ganjp.api.auth.role.Role;
 import org.ganjp.api.auth.role.RoleRepository;
@@ -51,7 +51,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponse createRole(RoleUpsertRequest roleCreateRequest, String userId) {
+    public RoleResponse createRole(RoleCreateRequest roleCreateRequest, String userId) {
         if (roleRepository.existsByCode(roleCreateRequest.getCode())) {
             throw new RuntimeException("Role with code " + roleCreateRequest.getCode() + " already exists");
         }
@@ -86,7 +86,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponse updateRoleFully(String id, RoleUpsertRequest roleUpdateRequest, String userId) {
+    public RoleResponse updateRoleFully(String id, RoleCreateRequest roleUpdateRequest, String userId) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
 
@@ -138,7 +138,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponse updateRolePartially(String id, RolePatchRequest rolePatchRequest, String username) {
+    public RoleResponse updateRolePartially(String id, RoleUpdateRequest rolePatchRequest, String username) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
 

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ganjp.api.cms.file.File;
+import org.ganjp.api.cms.file.FileAsset;
 
 @Data
 @Builder
@@ -20,7 +20,7 @@ public class FileResponse {
     private String extension;
     private String mimeType;
     private String tags;
-    private File.Language lang;
+    private FileAsset.Language lang;
     private Integer displayOrder;
     private String createdAt;
     private String updatedAt;

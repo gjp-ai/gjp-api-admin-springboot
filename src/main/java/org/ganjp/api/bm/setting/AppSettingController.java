@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.ganjp.api.auth.user.UserResponse;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.bm.setting.AppSettingResponse;
-import org.ganjp.api.bm.setting.CreateAppSettingRequest;
-import org.ganjp.api.bm.setting.UpdateAppSettingRequest;
+import org.ganjp.api.bm.setting.AppSettingCreateRequest;
+import org.ganjp.api.bm.setting.AppSettingUpdateRequest;
 import org.ganjp.api.bm.setting.AppSetting;
 import org.ganjp.api.bm.setting.AppSettingService;
 import org.ganjp.api.common.model.ApiResponse;
@@ -174,7 +174,7 @@ public class AppSettingController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<AppSettingResponse>> createSetting(
-            @Valid @RequestBody CreateAppSettingRequest request,
+            @Valid @RequestBody AppSettingCreateRequest request,
             HttpServletRequest httpRequest) {
         
         String createdBy = extractUserIdFromRequest(httpRequest);
@@ -190,7 +190,7 @@ public class AppSettingController {
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<AppSettingResponse>> updateSetting(
             @PathVariable String id,
-            @Valid @RequestBody UpdateAppSettingRequest request,
+            @Valid @RequestBody AppSettingUpdateRequest request,
             HttpServletRequest httpRequest) {
         
         String updatedBy = extractUserIdFromRequest(httpRequest);

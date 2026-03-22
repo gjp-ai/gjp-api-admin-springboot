@@ -3,9 +3,9 @@ package org.ganjp.api.auth.user;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.ganjp.api.auth.user.profile.PasswordChangeRequest;
-import org.ganjp.api.auth.user.UserUpsertRequest;
-import org.ganjp.api.auth.user.UserPatchRequest;
+import org.ganjp.api.auth.user.profile.AdminResetPasswordRequest;
+import org.ganjp.api.auth.user.UserCreateRequest;
+import org.ganjp.api.auth.user.UserUpdateRequest;
 import org.ganjp.api.auth.user.UserResponse;
 import org.ganjp.api.auth.user.AccountStatus;
 import org.ganjp.api.auth.security.JwtUtils;
@@ -132,18 +132,18 @@ public class UserController {
     /**
      * Create a new user
      * 
-     * @param userUpsertRequest User creation/update request
+     * @param userCreateRequest User creation/update request
      * @param request HTTP request for extracting the current user
      * @return Created user details
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse<UserResponse>> createUser(
-            @Valid @RequestBody UserUpsertRequest userUpsertRequest,
+            @Valid @RequestBody UserCreateRequest userCreateRequest,
             HttpServletRequest request) {
         
         String userId = jwtUtils.extractUserIdFromToken(request);
-        UserResponse createdUser = userService.createUser(userUpsertRequest, userId);
+        UserResponse createdUser = userService.createUser(userCreateRequest, userId);
         
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -159,7 +159,7 @@ public class UserController {
      * - Should be idempotent (same result regardless of how many times called)
      *
      * @param id User ID
-     * @param userUpsertRequest User data for complete replacement
+     * @param userCreateRequest User data for complete replacement
      * @param request HTTP request for extracting the current user
      * @return Updated user details
      */
@@ -167,11 +167,11 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> replaceUser(
             @PathVariable String id,
-            @Valid @RequestBody UserUpsertRequest userUpsertRequest,
+            @Valid @RequestBody UserCreateRequest userCreateRequest,
             HttpServletRequest request) {
 
         String userId = jwtUtils.extractUserIdFromToken(request);
-        UserResponse updatedUser = userService.updateUserFully(id, userUpsertRequest, userId);
+        UserResponse updatedUser = userService.updateUserFully(id, userCreateRequest, userId);
 
         return ResponseEntity.ok(ApiResponse.success(updatedUser, "User replaced successfully"));
     }
@@ -185,7 +185,7 @@ public class UserController {
      * - Used for making partial modifications to a resource
      * 
      * @param id User ID
-     * @param userPatchRequest User patch request for partial updates
+     * @param userUpdateRequest User patch request for partial updates
      * @param request HTTP request for extracting the current user
      * @return Updated user details
      */
@@ -193,11 +193,11 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUserPartially(
             @PathVariable String id,
-            @Valid @RequestBody UserPatchRequest userPatchRequest,
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest,
             HttpServletRequest request) {
         
         String userId = jwtUtils.extractUserIdFromToken(request);
-        UserResponse updatedUser = userService.updateUserPartially(id, userPatchRequest, userId);
+        UserResponse updatedUser = userService.updateUserPartially(id, userUpdateRequest, userId);
         
         return ResponseEntity.ok(ApiResponse.success(updatedUser, "User updated successfully"));
     }
@@ -238,7 +238,7 @@ public class UserController {
      * Change a user's password
      * 
      * @param id User ID
-     * @param passwordChangeRequest New password request
+     * @param adminResetPasswordRequest New password request
      * @param request HTTP request for extracting the current user
      * @return Updated user details
      */
@@ -246,11 +246,11 @@ public class UserController {
     @PatchMapping("/{id}/password")
     public ResponseEntity<ApiResponse<UserResponse>> changePassword(
             @PathVariable String id,
-            @Valid @RequestBody PasswordChangeRequest passwordChangeRequest,
+            @Valid @RequestBody AdminResetPasswordRequest adminResetPasswordRequest,
             HttpServletRequest request) {
         
         String userId = jwtUtils.extractUserIdFromToken(request);
-        UserResponse updatedUser = userService.changePassword(id, passwordChangeRequest.getPassword(), userId);
+        UserResponse updatedUser = userService.changePassword(id, adminResetPasswordRequest.getPassword(), userId);
         
         return ResponseEntity.ok(ApiResponse.success(updatedUser, "Password updated successfully"));
     }

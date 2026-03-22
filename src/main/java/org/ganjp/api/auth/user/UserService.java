@@ -1,8 +1,8 @@
 package org.ganjp.api.auth.user;
 
 import lombok.RequiredArgsConstructor;
-import org.ganjp.api.auth.user.UserUpsertRequest;
-import org.ganjp.api.auth.user.UserPatchRequest;
+import org.ganjp.api.auth.user.UserCreateRequest;
+import org.ganjp.api.auth.user.UserUpdateRequest;
 import org.ganjp.api.auth.role.RoleResponse;
 import org.ganjp.api.auth.user.UserResponse;
 import org.ganjp.api.auth.role.Role;
@@ -200,26 +200,26 @@ public class UserService {
     /**
      * Create a new user
      *
-     * @param userUpsertRequest user data
+     * @param userCreateRequest user data
      * @param currentUserId ID of the user performing the operation
      * @return UserResponse
      */
     @Transactional
-    public UserResponse createUser(UserUpsertRequest userUpsertRequest, String currentUserId) {
+    public UserResponse createUser(UserCreateRequest userCreateRequest, String currentUserId) {
         // Validate username uniqueness
-        if (userRepository.existsByUsername(userUpsertRequest.getUsername())) {
+        if (userRepository.existsByUsername(userCreateRequest.getUsername())) {
             throw new IllegalArgumentException("Username is already taken");
         }
 
         // Validate email uniqueness if provided
-        if (userUpsertRequest.getEmail() != null && userRepository.existsByEmail(userUpsertRequest.getEmail())) {
+        if (userCreateRequest.getEmail() != null && userRepository.existsByEmail(userCreateRequest.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }
 
         // Validate mobile uniqueness if provided
-        if (userUpsertRequest.getMobileCountryCode() != null && userUpsertRequest.getMobileNumber() != null &&
+        if (userCreateRequest.getMobileCountryCode() != null && userCreateRequest.getMobileNumber() != null &&
                 userRepository.existsByMobileCountryCodeAndMobileNumber(
-                        userUpsertRequest.getMobileCountryCode(), userUpsertRequest.getMobileNumber())) {
+                        userCreateRequest.getMobileCountryCode(), userCreateRequest.getMobileNumber())) {
             throw new IllegalArgumentException("Mobile number is already registered");
         }
 
@@ -229,13 +229,13 @@ public class UserService {
 
         User user = User.builder()
                 .id(userId)
-                .username(userUpsertRequest.getUsername())
-                .nickname(userUpsertRequest.getNickname())
-                .email(userUpsertRequest.getEmail())
-                .mobileCountryCode(userUpsertRequest.getMobileCountryCode())
-                .mobileNumber(userUpsertRequest.getMobileNumber())
-                .accountStatus(userUpsertRequest.getAccountStatus() != null ? userUpsertRequest.getAccountStatus() : AccountStatus.pending_verification)
-                .active(userUpsertRequest.getActive() != null ? userUpsertRequest.getActive() : true)
+                .username(userCreateRequest.getUsername())
+                .nickname(userCreateRequest.getNickname())
+                .email(userCreateRequest.getEmail())
+                .mobileCountryCode(userCreateRequest.getMobileCountryCode())
+                .mobileNumber(userCreateRequest.getMobileNumber())
+                .accountStatus(userCreateRequest.getAccountStatus() != null ? userCreateRequest.getAccountStatus() : AccountStatus.pending_verification)
+                .active(userCreateRequest.getActive() != null ? userCreateRequest.getActive() : true)
                 .passwordChangedAt(now)
                 .createdAt(now)
                 .updatedAt(now)
@@ -243,15 +243,15 @@ public class UserService {
                 .updatedBy(currentUserId)
                 .build();
 
-        if (userUpsertRequest.getPassword() != null && !userUpsertRequest.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userUpsertRequest.getPassword()));
+        if (userCreateRequest.getPassword() != null && !userCreateRequest.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
         }
 
         User savedUser = userRepository.save(user);
 
         // Assign roles if provided
-        if (userUpsertRequest.getRoleCodes() != null && !userUpsertRequest.getRoleCodes().isEmpty()) {
-            assignRolesToUser(savedUser, userUpsertRequest.getRoleCodes(), currentUserId);
+        if (userCreateRequest.getRoleCodes() != null && !userCreateRequest.getRoleCodes().isEmpty()) {
+            assignRolesToUser(savedUser, userCreateRequest.getRoleCodes(), currentUserId);
         }
 
         return mapToUserResponse(savedUser);
@@ -261,61 +261,61 @@ public class UserService {
      * Update an existing user (partial update)
      * 
      * This method implements partial updates to a user resource:
-     * - Only fields that are non-null in userPatchRequest will be updated
+     * - Only fields that are non-null in userUpdateRequest will be updated
      * - Fields not included in the request will retain their current values
      * - Used for PATCH operations for partial resource updates
      *
      * @param id user ID to update
-     * @param userPatchRequest updated user data for partial updates
+     * @param userUpdateRequest updated user data for partial updates
      * @param currentUserId ID of the user performing the operation
      * @return UserResponse
      * @throws ResourceNotFoundException if user not found
      */
     @Transactional
-    public UserResponse updateUserPartially(String id, UserPatchRequest userPatchRequest, String currentUserId) {
+    public UserResponse updateUserPartially(String id, UserUpdateRequest userUpdateRequest, String currentUserId) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         // Check username uniqueness if it's being changed
-        if (userPatchRequest.getUsername() != null && !userPatchRequest.getUsername().equals(user.getUsername())
-                && userRepository.existsByUsername(userPatchRequest.getUsername())) {
+        if (userUpdateRequest.getUsername() != null && !userUpdateRequest.getUsername().equals(user.getUsername())
+                && userRepository.existsByUsername(userUpdateRequest.getUsername())) {
             throw new IllegalArgumentException("Username is already taken");
         }
 
         // Check email uniqueness if it's being changed
-        if (userPatchRequest.getEmail() != null && !userPatchRequest.getEmail().equals(user.getEmail())
-                && userRepository.existsByEmail(userPatchRequest.getEmail())) {
+        if (userUpdateRequest.getEmail() != null && !userUpdateRequest.getEmail().equals(user.getEmail())
+                && userRepository.existsByEmail(userUpdateRequest.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }
 
         // Check mobile uniqueness if it's being changed
-        if (userPatchRequest.getMobileCountryCode() != null && userPatchRequest.getMobileNumber() != null
+        if (userUpdateRequest.getMobileCountryCode() != null && userUpdateRequest.getMobileNumber() != null
                 && (user.getMobileCountryCode() == null || user.getMobileNumber() == null
-                || !userPatchRequest.getMobileCountryCode().equals(user.getMobileCountryCode())
-                || !userPatchRequest.getMobileNumber().equals(user.getMobileNumber()))
+                || !userUpdateRequest.getMobileCountryCode().equals(user.getMobileCountryCode())
+                || !userUpdateRequest.getMobileNumber().equals(user.getMobileNumber()))
                 && userRepository.existsByMobileCountryCodeAndMobileNumber(
-                userPatchRequest.getMobileCountryCode(), userPatchRequest.getMobileNumber())) {
+                userUpdateRequest.getMobileCountryCode(), userUpdateRequest.getMobileNumber())) {
             throw new IllegalArgumentException("Mobile number is already registered");
         }
 
         // Update fields if provided
-        if (userPatchRequest.getUsername() != null) {
-            user.setUsername(userPatchRequest.getUsername());
+        if (userUpdateRequest.getUsername() != null) {
+            user.setUsername(userUpdateRequest.getUsername());
         }
 
-        if (userPatchRequest.getNickname() != null) {
-            user.setNickname(userPatchRequest.getNickname());
+        if (userUpdateRequest.getNickname() != null) {
+            user.setNickname(userUpdateRequest.getNickname());
         }
 
-        if (userPatchRequest.getEmail() != null) {
-            user.setEmail(userPatchRequest.getEmail());
+        if (userUpdateRequest.getEmail() != null) {
+            user.setEmail(userUpdateRequest.getEmail());
         }
 
         // Update mobile fields together
-        if (userPatchRequest.getMobileCountryCode() != null && userPatchRequest.getMobileNumber() != null) {
-            user.setMobileCountryCode(userPatchRequest.getMobileCountryCode());
-            user.setMobileNumber(userPatchRequest.getMobileNumber());
-        } else if (userPatchRequest.getMobileCountryCode() == null && userPatchRequest.getMobileNumber() == null
+        if (userUpdateRequest.getMobileCountryCode() != null && userUpdateRequest.getMobileNumber() != null) {
+            user.setMobileCountryCode(userUpdateRequest.getMobileCountryCode());
+            user.setMobileNumber(userUpdateRequest.getMobileNumber());
+        } else if (userUpdateRequest.getMobileCountryCode() == null && userUpdateRequest.getMobileNumber() == null
                    && user.getMobileCountryCode() != null && user.getMobileNumber() != null) {
             // Clear mobile fields if explicitly set to null
             user.setMobileCountryCode(null);
@@ -323,19 +323,19 @@ public class UserService {
         }
 
         // Update password if provided
-        if (userPatchRequest.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(userPatchRequest.getPassword()));
+        if (userUpdateRequest.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
             user.setPasswordChangedAt(LocalDateTime.now());
         }
 
         // Update account status if provided
-        if (userPatchRequest.getAccountStatus() != null) {
-            user.setAccountStatus(userPatchRequest.getAccountStatus());
+        if (userUpdateRequest.getAccountStatus() != null) {
+            user.setAccountStatus(userUpdateRequest.getAccountStatus());
         }
 
         // Update active status if provided
-        if (userPatchRequest.getActive() != null) {
-            user.setActive(userPatchRequest.getActive());
+        if (userUpdateRequest.getActive() != null) {
+            user.setActive(userUpdateRequest.getActive());
         }
 
         // Update audit fields
@@ -345,14 +345,14 @@ public class UserService {
         User updatedUser = userRepository.save(user);
 
         // Update roles if provided
-        if (userPatchRequest.getRoleCodes() != null) {
+        if (userUpdateRequest.getRoleCodes() != null) {
             // Remove existing roles
             List<UserRole> existingUserRoles = userRoleRepository.findByUserId(id);
             userRoleRepository.deleteAll(existingUserRoles);
             
             // Assign new roles
-            if (!userPatchRequest.getRoleCodes().isEmpty()) {
-                assignRolesToUser(updatedUser, userPatchRequest.getRoleCodes(), currentUserId);
+            if (!userUpdateRequest.getRoleCodes().isEmpty()) {
+                assignRolesToUser(updatedUser, userUpdateRequest.getRoleCodes(), currentUserId);
             }
         }
 
@@ -363,56 +363,56 @@ public class UserService {
      * Replace an existing user (full update)
      * 
      * This method implements a complete replacement of a user resource:
-     * - All fields from userUpsertRequest are used to replace current values
+     * - All fields from userCreateRequest are used to replace current values
      * - All fields should be provided in the request (null values will clear existing values)
      * - Used for PUT operations that replace the entire resource
      *
      * @param id User ID to replace
-     * @param userUpsertRequest User data for complete replacement 
+     * @param userCreateRequest User data for complete replacement 
      * @param currentUserId ID of the user making this request
      * @return Updated user details
      * @throws ResourceNotFoundException if user not found
      */
     @Transactional
-    public UserResponse updateUserFully(String id, UserUpsertRequest userUpsertRequest, String currentUserId) {
+    public UserResponse updateUserFully(String id, UserCreateRequest userCreateRequest, String currentUserId) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         // Check username uniqueness if it's being changed
-        if (!userUpsertRequest.getUsername().equals(user.getUsername())
-                && userRepository.existsByUsername(userUpsertRequest.getUsername())) {
+        if (!userCreateRequest.getUsername().equals(user.getUsername())
+                && userRepository.existsByUsername(userCreateRequest.getUsername())) {
             throw new IllegalArgumentException("Username is already taken");
         }
 
         // Check email uniqueness if it's being changed
-        if (!userUpsertRequest.getEmail().equals(user.getEmail())
-                && userRepository.existsByEmail(userUpsertRequest.getEmail())) {
+        if (!userCreateRequest.getEmail().equals(user.getEmail())
+                && userRepository.existsByEmail(userCreateRequest.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }
 
         // Check mobile uniqueness if it's being changed
-        if (userUpsertRequest.getMobileCountryCode() != null && userUpsertRequest.getMobileNumber() != null
-                && !userUpsertRequest.getMobileCountryCode().equals(user.getMobileCountryCode())
-                && !userUpsertRequest.getMobileNumber().equals(user.getMobileNumber())
+        if (userCreateRequest.getMobileCountryCode() != null && userCreateRequest.getMobileNumber() != null
+                && !userCreateRequest.getMobileCountryCode().equals(user.getMobileCountryCode())
+                && !userCreateRequest.getMobileNumber().equals(user.getMobileNumber())
                 && userRepository.existsByMobileCountryCodeAndMobileNumber(
-                    userUpsertRequest.getMobileCountryCode(), userUpsertRequest.getMobileNumber())) {
+                    userCreateRequest.getMobileCountryCode(), userCreateRequest.getMobileNumber())) {
             throw new IllegalArgumentException("Mobile number is already registered");
         }
 
         // Update user fields for complete replacement
-        user.setUsername(userUpsertRequest.getUsername());
-        user.setNickname(userUpsertRequest.getNickname());
-        user.setEmail(userUpsertRequest.getEmail());
+        user.setUsername(userCreateRequest.getUsername());
+        user.setNickname(userCreateRequest.getNickname());
+        user.setEmail(userCreateRequest.getEmail());
         
         // Only update password if provided
-        if (userUpsertRequest.getPassword() != null && !userUpsertRequest.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userUpsertRequest.getPassword()));
+        if (userCreateRequest.getPassword() != null && !userCreateRequest.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
         }
         
-        user.setMobileCountryCode(userUpsertRequest.getMobileCountryCode());
-        user.setMobileNumber(userUpsertRequest.getMobileNumber());
-        user.setAccountStatus(userUpsertRequest.getAccountStatus());
-        user.setActive(userUpsertRequest.getActive());
+        user.setMobileCountryCode(userCreateRequest.getMobileCountryCode());
+        user.setMobileNumber(userCreateRequest.getMobileNumber());
+        user.setAccountStatus(userCreateRequest.getAccountStatus());
+        user.setActive(userCreateRequest.getActive());
         user.setUpdatedAt(LocalDateTime.now());
         user.setUpdatedBy(currentUserId);
         
@@ -420,14 +420,14 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         
         // Update roles if provided
-        if (userUpsertRequest.getRoleCodes() != null && !userUpsertRequest.getRoleCodes().isEmpty()) {
+        if (userCreateRequest.getRoleCodes() != null && !userCreateRequest.getRoleCodes().isEmpty()) {
             // Remove existing roles
             List<UserRole> existingUserRoles = userRoleRepository.findByUserId(id);
             userRoleRepository.deleteAll(existingUserRoles);
             
             // Add new roles
             List<UserRole> userRoles = new ArrayList<>();
-            for (String roleCode : userUpsertRequest.getRoleCodes()) {
+            for (String roleCode : userCreateRequest.getRoleCodes()) {
                 Role role = roleRepository.findByCode(roleCode)
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "code", roleCode));
                 

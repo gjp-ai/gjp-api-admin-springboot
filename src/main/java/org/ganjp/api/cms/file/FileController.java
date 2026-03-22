@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
-import org.ganjp.api.cms.file.File;
+import org.ganjp.api.cms.file.FileAsset;
 
 @RestController
 @RequestMapping("/v1/files")
@@ -62,10 +62,10 @@ public class FileController {
             
             Pageable pageable = PageRequest.of(page, size, sortDirection, sort);
             
-            File.Language langEnum = null;
+            FileAsset.Language langEnum = null;
             if (lang != null && !lang.isBlank()) {
                 try {
-                    langEnum = File.Language.valueOf(lang.toUpperCase());
+                    langEnum = FileAsset.Language.valueOf(lang.toUpperCase());
                 } catch (IllegalArgumentException ex) {
                     return ResponseEntity.badRequest().body(ApiResponse.error(400, "Invalid lang value", null));
                 }

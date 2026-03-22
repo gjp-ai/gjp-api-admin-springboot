@@ -2,8 +2,8 @@ package org.ganjp.api.cms.question;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.cms.question.CreateQuestionRequest;
-import org.ganjp.api.cms.question.UpdateQuestionRequest;
+import org.ganjp.api.cms.question.QuestionCreateRequest;
+import org.ganjp.api.cms.question.QuestionUpdateRequest;
 import org.ganjp.api.cms.question.QuestionResponse;
 import org.ganjp.api.cms.question.Question;
 import org.ganjp.api.cms.question.QuestionRepository;
@@ -32,7 +32,7 @@ public class QuestionService {
     /**
      * Create a new question
      */
-    public QuestionResponse createQuestion(CreateQuestionRequest request, String createdBy) {
+    public QuestionResponse createQuestion(QuestionCreateRequest request, String createdBy) {
         log.info("Creating new question: {} by user: {}", request.getQuestion(), createdBy);
 
         // Validate unique question per language
@@ -61,7 +61,7 @@ public class QuestionService {
     /**
      * Update an existing question
      */
-    public QuestionResponse updateQuestion(String id, UpdateQuestionRequest request, String updatedBy) {
+    public QuestionResponse updateQuestion(String id, QuestionUpdateRequest request, String updatedBy) {
         log.info("Updating question: {} by user: {}", id, updatedBy);
 
         Question question = questionRepository.findById(id)

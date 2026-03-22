@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.ganjp.api.auth.security.JwtUtils;
 
 import org.ganjp.api.cms.article.ArticleResponse;
-import org.ganjp.api.cms.website.CreateWebsiteRequest;
-import org.ganjp.api.cms.website.UpdateWebsiteRequest;
+import org.ganjp.api.cms.website.WebsiteCreateRequest;
+import org.ganjp.api.cms.website.WebsiteUpdateRequest;
 import org.ganjp.api.cms.website.WebsiteResponse;
 import org.ganjp.api.cms.website.Website;
 import org.ganjp.api.cms.website.WebsiteService;
@@ -137,7 +137,7 @@ public class WebsiteController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiResponse<WebsiteResponse>> createWebsite(
-            @Valid @RequestBody CreateWebsiteRequest request,
+            @Valid @RequestBody WebsiteCreateRequest request,
             HttpServletRequest httpRequest
     ) {
         String createdBy = extractUserIdFromRequest(httpRequest);
@@ -153,7 +153,7 @@ public class WebsiteController {
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiResponse<WebsiteResponse>> updateWebsite(
             @PathVariable String id,
-            @Valid @RequestBody UpdateWebsiteRequest request,
+            @Valid @RequestBody WebsiteUpdateRequest request,
             HttpServletRequest httpRequest
     ) {
         String updatedBy = extractUserIdFromRequest(httpRequest);

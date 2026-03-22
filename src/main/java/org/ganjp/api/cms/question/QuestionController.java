@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ganjp.api.auth.security.JwtUtils;
-import org.ganjp.api.cms.question.CreateQuestionRequest;
-import org.ganjp.api.cms.question.UpdateQuestionRequest;
+import org.ganjp.api.cms.question.QuestionCreateRequest;
+import org.ganjp.api.cms.question.QuestionUpdateRequest;
 import org.ganjp.api.cms.question.QuestionResponse;
 import org.ganjp.api.cms.question.Question;
 import org.ganjp.api.cms.question.QuestionService;
@@ -89,7 +89,7 @@ public class QuestionController {
     @PostMapping
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<QuestionResponse>> createQuestion(
-            @Valid @RequestBody CreateQuestionRequest request,
+            @Valid @RequestBody QuestionCreateRequest request,
             HttpServletRequest httpRequest
     ) {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -105,7 +105,7 @@ public class QuestionController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<QuestionResponse>> updateQuestion(
             @PathVariable String id,
-            @Valid @RequestBody UpdateQuestionRequest request,
+            @Valid @RequestBody QuestionUpdateRequest request,
             HttpServletRequest httpRequest
     ) {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
