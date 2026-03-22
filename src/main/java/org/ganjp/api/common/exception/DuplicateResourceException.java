@@ -1,4 +1,4 @@
-package org.ganjp.api.auth.user;
+package org.ganjp.api.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

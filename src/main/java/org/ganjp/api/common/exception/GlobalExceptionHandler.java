@@ -52,6 +52,18 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Handles duplicate resource exceptions
+     */
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDuplicateResourceException(DuplicateResourceException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(409, "Duplicate resource", errors));
+    }
+
+    /**
      * Handles access denied exceptions
      */
     @ExceptionHandler(AccessDeniedException.class)
