@@ -2,9 +2,6 @@ package org.ganjp.api.auth.user.profile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.auth.user.profile.ChangePasswordRequest;
-import org.ganjp.api.auth.user.profile.UpdateProfileRequest;
-import org.ganjp.api.auth.user.profile.UserProfileResponse;
 import org.ganjp.api.auth.user.User;
 import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.common.exception.BusinessException;

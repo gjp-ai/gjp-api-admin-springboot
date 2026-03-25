@@ -2,8 +2,6 @@ package org.ganjp.api.auth.register;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.auth.register.RegisterRequest;
-import org.ganjp.api.auth.register.RegisterResponse;
 import org.ganjp.api.auth.role.Role;
 import org.ganjp.api.auth.user.User;
 import org.ganjp.api.auth.role.UserRole;

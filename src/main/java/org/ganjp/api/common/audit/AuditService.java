@@ -1,8 +1,6 @@
 package org.ganjp.api.common.audit;
 
 import org.ganjp.api.auth.security.JwtUtils;
-import org.ganjp.api.common.audit.AuditLog;
-import org.ganjp.api.common.audit.AuditLogRepository;
 import org.ganjp.api.common.util.IpAddressUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

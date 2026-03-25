@@ -1,9 +1,11 @@
 package org.ganjp.api.common.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.common.model.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +18,7 @@ import java.util.Map;
  * Global exception handler for centralizing error responses across controllers.
  * Handles various exceptions and returns appropriate API responses.
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -88,25 +91,64 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * Handles bad credentials exceptions (authentication failures)
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBadCredentialsException(BadCredentialsException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(401, "Authentication failed", errors));
+    }
+
+    /**
+     * Handles illegal argument exceptions (invalid input)
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(400, "Invalid request", errors));
+    }
+
+    /**
+     * Handles illegal state exceptions (operation not allowed in current state)
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalStateException(IllegalStateException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(409, "Operation not allowed", errors));
+    }
+
+    /**
      * Handles general runtime exceptions
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handleRuntimeExceptions(RuntimeException ex) {
+        log.warn("Unhandled RuntimeException: {}", ex.getMessage(), ex);
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
-        
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(400, "Request error", errors));
     }
     
     /**
-     * Handles all other unexpected exceptions
+     * Handles all other unexpected exceptions.
+     * Returns a generic message to avoid leaking internal details (SQL errors, stack traces, etc.)
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGeneralExceptions(Exception ex) {
+        log.error("Unhandled exception", ex);
         Map<String, String> errors = new HashMap<>();
-        errors.put("error", ex.getMessage());
-        
+        errors.put("error", "An unexpected error occurred. Please try again later.");
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(500, "Server error", errors));
     }

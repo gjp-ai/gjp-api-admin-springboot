@@ -9,7 +9,6 @@ import org.ganjp.api.auth.refresh.TokenRefreshResponse;
 import org.ganjp.api.common.model.ApiResponse;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.auth.session.ActiveUserService;
-import org.ganjp.api.auth.token.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.DeleteMapping;

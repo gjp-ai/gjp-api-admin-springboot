@@ -97,7 +97,7 @@ public class User implements UserDetails {
     @Builder.Default
     private List<UserRole> userRoles = new ArrayList<>();
     
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 

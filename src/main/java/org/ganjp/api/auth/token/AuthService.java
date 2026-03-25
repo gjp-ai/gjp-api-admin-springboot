@@ -3,8 +3,6 @@ package org.ganjp.api.auth.token;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.auth.token.LoginRequest;
-import org.ganjp.api.auth.token.LogoutRequest;
 import org.ganjp.api.auth.blacklist.TokenBlacklistService;
 import org.ganjp.api.auth.refresh.RefreshToken;
 import org.ganjp.api.auth.refresh.RefreshTokenRequest;

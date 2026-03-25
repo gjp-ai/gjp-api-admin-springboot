@@ -1,16 +1,10 @@
 package org.ganjp.api.auth.user;
 
 import lombok.RequiredArgsConstructor;
-import org.ganjp.api.auth.user.UserCreateRequest;
-import org.ganjp.api.auth.user.UserUpdateRequest;
 import org.ganjp.api.auth.role.RoleResponse;
-import org.ganjp.api.auth.user.UserResponse;
 import org.ganjp.api.auth.role.Role;
-import org.ganjp.api.auth.user.User;
 import org.ganjp.api.auth.role.UserRole;
-import org.ganjp.api.auth.user.AccountStatus;
 import org.ganjp.api.auth.role.RoleRepository;
-import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.auth.role.UserRoleRepository;
 import org.ganjp.api.auth.session.ActiveUserService;
 import org.ganjp.api.auth.refresh.RefreshTokenRepository;
@@ -394,10 +388,10 @@ public class UserService {
             throw new IllegalArgumentException("Email is already registered");
         }
 
-        // Check mobile uniqueness if it's being changed
+        // Check mobile uniqueness if it's being changed (either country code OR number differs)
         if (userCreateRequest.getMobileCountryCode() != null && userCreateRequest.getMobileNumber() != null
-                && !userCreateRequest.getMobileCountryCode().equals(user.getMobileCountryCode())
-                && !userCreateRequest.getMobileNumber().equals(user.getMobileNumber())
+                && (!userCreateRequest.getMobileCountryCode().equals(user.getMobileCountryCode())
+                    || !userCreateRequest.getMobileNumber().equals(user.getMobileNumber()))
                 && userRepository.existsByMobileCountryCodeAndMobileNumber(
                     userCreateRequest.getMobileCountryCode(), userCreateRequest.getMobileNumber())) {
             throw new IllegalArgumentException("Mobile number is already registered");

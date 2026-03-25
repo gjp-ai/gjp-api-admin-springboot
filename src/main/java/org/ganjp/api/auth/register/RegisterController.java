@@ -4,19 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.ganjp.api.auth.register.RegisterRequest;
 import org.ganjp.api.common.model.ApiResponse;
-import org.ganjp.api.auth.register.RegisterResponse;
-import org.ganjp.api.auth.register.RegisterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.validation.FieldError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -130,13 +124,5 @@ public class RegisterController {
         return sanitized;
     }
     
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        ApiResponse<Object> response = ApiResponse.error(400, "Registration failed", Map.of("error", errors.values().isEmpty() ? "Validation failed" : errors.values().iterator().next()));
-        return ResponseEntity.badRequest().body(response);
-    }
+    // Validation errors are handled by GlobalExceptionHandler
 }

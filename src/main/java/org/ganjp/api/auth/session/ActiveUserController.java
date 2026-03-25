@@ -1,7 +1,6 @@
 package org.ganjp.api.auth.session;
 
 import lombok.RequiredArgsConstructor;
-import org.ganjp.api.auth.session.ActiveUserService;
 import org.ganjp.api.common.model.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
