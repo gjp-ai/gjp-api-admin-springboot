@@ -53,7 +53,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
 
         if (entry.count.get() > MAX_ATTEMPTS) {
             log.warn("Rate limit exceeded for IP: {} ({} attempts in window)", clientIp, entry.count.get());
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(429);
             response.setContentType("application/json;charset=UTF-8");
 
             String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -67,16 +67,24 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Get client IP for rate limiting.
+     * Uses getRemoteAddr() as the primary source to prevent X-Forwarded-For
+     * header spoofing. Attackers can trivially rotate X-Forwarded-For values
+     * to bypass per-IP rate limits. The remote address is set by the TCP
+     * connection and cannot be forged.
+     *
+     * Note: If deployed behind a trusted reverse proxy (Nginx, ALB, etc.),
+     * configure the proxy to set a verified header and update this method
+     * to trust only that specific header.
+     */
     private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            return ip.contains(",") ? ip.split(",")[0].trim() : ip;
+        String ip = request.getRemoteAddr();
+        // Normalize IPv6 loopback to IPv4
+        if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
+            return "127.0.0.1";
         }
-        ip = request.getHeader("X-Real-IP");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
-        return request.getRemoteAddr();
+        return ip;
     }
 
     private static class RateLimitEntry {

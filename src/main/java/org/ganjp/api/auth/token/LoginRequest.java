@@ -1,6 +1,7 @@
 package org.ganjp.api.auth.token;
 
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class LoginRequest {
     // User can login with username, email, or mobile number
     private String username;
     private String email;
+    @NotBlank(message = "Password is required")
     private String password;
     private String mobileCountryCode; // Used for mobile login
     private String mobileNumber; // Used for mobile login

@@ -184,33 +184,39 @@ public class AuthService {
         try {
             // Extract and blacklist access token
             String authHeader = request.getHeader("Authorization");
+            String userId = null;
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String accessToken = authHeader.substring(7);
-                
+
                 // Extract token information for blacklisting
                 String tokenId = jwtUtils.extractTokenId(accessToken);
                 long expirationTime = jwtUtils.extractExpirationTimestamp(accessToken);
-                
+                userId = jwtUtils.extractUserId(accessToken);
+
                 if (tokenId != null) {
                     tokenBlacklistService.blacklistToken(tokenId, expirationTime);
                     log.debug("Access token blacklisted: {}", tokenId);
                 }
             }
-            
-            // Revoke refresh token if provided
-            if (logoutRequest.getRefreshToken() != null && !logoutRequest.getRefreshToken().trim().isEmpty()) {
+
+            // Handle logout from all devices
+            if (logoutRequest.isLogoutFromAllDevices() && userId != null) {
+                int revoked = refreshTokenService.revokeAllUserTokens(userId);
+                log.debug("Logout from all devices: revoked {} refresh tokens for user {}", revoked, userId);
+            } else if (logoutRequest.getRefreshToken() != null && !logoutRequest.getRefreshToken().trim().isEmpty()) {
+                // Revoke only the provided refresh token
                 refreshTokenService.revokeRefreshToken(logoutRequest.getRefreshToken());
                 log.debug("Refresh token revoked during logout");
             }
-            
+
         } catch (Exception e) {
             log.warn("Failed to fully process logout tokens: {}", e.getMessage());
             // Continue with logout even if token revocation fails
         }
-        
+
         // Clear the security context
         SecurityContextHolder.clearContext();
-        log.debug("Enhanced logout completed successfully");
+        log.debug("Logout completed successfully");
     }
     
     /**
