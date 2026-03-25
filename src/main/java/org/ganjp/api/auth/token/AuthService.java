@@ -16,6 +16,7 @@ import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.auth.user.AccountStatus;
 import org.ganjp.api.auth.user.User;
 import org.ganjp.api.auth.user.UserRepository;
+import org.ganjp.api.common.util.IpAddressUtils;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -78,7 +79,7 @@ public class AuthService {
         User user = (User) authentication.getPrincipal();
         
         // Get client IP address for login tracking
-        String clientIp = getClientIp();
+        String clientIp = getClientIpFromRequest();
         
         // Update last login timestamp and IP
         LocalDateTime now = LocalDateTime.now();
@@ -220,111 +221,20 @@ public class AuthService {
     }
     
     /**
-     * Get the client's IP address from the current request
-     * This method handles various proxy headers and converts local addresses to a readable format
+     * Get the client's IP address from the current request context.
      */
-    // Constants for IP handling
-    private static final String UNKNOWN_IP = "unknown";
-    private static final String IPV4_LOCALHOST = "127.0.0.1";
-    private static final String IPV6_LOCALHOST_LONG = "0:0:0:0:0:0:0:1";
-    private static final String IPV6_LOCALHOST_SHORT = "::1";
-    
-    /**
-     * Gets the client's IP address from the request using various header strategies.
-     * This enhanced version:
-     * 1. Properly handles IPv6 addresses including loopback conversion
-     * 2. Checks multiple proxy headers in order of reliability
-     * 3. Performs proper validation of IP addresses
-     * 4. Has improved error handling and logging
-     *
-     * @return The client's IP address or "unknown" if it cannot be determined
-     */
-    private String getClientIp() {
+    private String getClientIpFromRequest() {
         try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attributes == null) {
                 log.debug("No request attributes available");
-                return UNKNOWN_IP;
+                return "unknown";
             }
-            
-            HttpServletRequest request = attributes.getRequest();
-            
-            // Define headers to check in order of preference
-            final String[] PROXY_HEADERS = {
-                "X-Forwarded-For",
-                "Proxy-Client-IP",
-                "WL-Proxy-Client-IP",
-                "HTTP_X_FORWARDED_FOR",
-                "HTTP_CLIENT_IP",
-                "HTTP_X_FORWARDED",
-                "HTTP_X_CLUSTER_CLIENT_IP",
-                "HTTP_FORWARDED_FOR",
-                "HTTP_FORWARDED",
-                "X-Real-IP",
-                "CF-Connecting-IP", // Cloudflare
-                "True-Client-IP"    // Akamai and Cloudflare
-            };
-            
-            // Check all proxy headers
-            for (String header : PROXY_HEADERS) {
-                String ip = request.getHeader(header);
-                if (isValidIp(ip)) {
-                    // For X-Forwarded-For, get first IP which is the client IP
-                    if (header.equals("X-Forwarded-For") && ip.contains(",")) {
-                        ip = ip.split(",")[0].trim();
-                    }
-                    log.debug("Client IP found using header {}: {}", header, ip);
-                    return normalizeIp(ip);
-                }
-            }
-            
-            // Use the remote address as a last resort
-            String ip = request.getRemoteAddr();
-            log.debug("Using remote address as client IP: {}", ip);
-            return normalizeIp(ip);
-            
+            return IpAddressUtils.getClientIp(attributes.getRequest());
         } catch (Exception e) {
             log.warn("Failed to determine client IP address", e);
-            return UNKNOWN_IP;
+            return "unknown";
         }
-    }
-    
-    /**
-     * Normalize IP address format (handle IPv6 loopback addresses)
-     */
-    private String normalizeIp(String ip) {
-        if (ip == null) {
-            return UNKNOWN_IP;
-        }
-        
-        // Handle IPv6 loopback addresses
-        if (IPV6_LOCALHOST_LONG.equals(ip) || IPV6_LOCALHOST_SHORT.equals(ip)) {
-            return IPV4_LOCALHOST;
-        }
-        
-        return ip;
-    }
-    
-    /**
-     * Check if an IP address string is valid and not empty or "unknown"
-     */
-    private boolean isValidIp(String ip) {
-        if (ip == null || ip.isEmpty() || ip.length() > 45) {
-            return false;
-        }
-        
-        String[] excludedValues = {UNKNOWN_IP, "undefined", "null", "localhost", IPV4_LOCALHOST, IPV6_LOCALHOST_LONG, IPV6_LOCALHOST_SHORT};
-        for (String excluded : excludedValues) {
-            if (excluded.equalsIgnoreCase(ip)) {
-                // We'll still return local addresses from normalizeIp, but we don't want them from headers
-                if (excluded.equals(IPV4_LOCALHOST) || excluded.equals(IPV6_LOCALHOST_LONG) || excluded.equals(IPV6_LOCALHOST_SHORT)) {
-                    log.debug("Found local address in header: {}", ip);
-                }
-                return false;
-            }
-        }
-        
-        return true;
     }
 
 }

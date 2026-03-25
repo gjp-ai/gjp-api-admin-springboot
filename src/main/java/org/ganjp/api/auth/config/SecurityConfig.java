@@ -6,7 +6,6 @@ import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.auth.security.LoginRateLimitFilter;
 import org.ganjp.api.auth.blacklist.TokenBlacklistService;
 import org.ganjp.api.auth.session.ActiveUserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,9 +41,6 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
     private final SecurityProperties securityProperties;
-    
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
 
     public SecurityConfig(UserRepository userRepository, SecurityProperties securityProperties) {
         this.userRepository = userRepository;
@@ -85,30 +81,24 @@ public class SecurityConfig {
         return (request, response, authException) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            
-            // Format the current date and time in the required format
+
             java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String currentDateTime = java.time.LocalDateTime.now().format(formatter);
-            
-            // Build the JSON response with the required format
+
+            // Escape the error message to prevent JSON injection
+            String errorMsg = authException.getMessage() != null ? authException.getMessage() : "Authentication required";
+            String safeError = errorMsg
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r")
+                    .replace("\t", "\\t");
+
             String jsonResponse = String.format(
-                "{\n" +
-                "    \"status\": {\n" +
-                "        \"code\": 401,\n" +
-                "        \"message\": \"Unauthorized\",\n" +
-                "        \"errors\": {\n" +
-                "            \"error\": \"%s\"\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"data\": null,\n" +
-                "    \"meta\": {\n" +
-                "        \"serverDateTime\": \"%s\"\n" +
-                "    }\n" +
-                "}", 
-                authException.getMessage() != null ? authException.getMessage() : "Authentication required", 
-                currentDateTime
+                "{\"status\":{\"code\":401,\"message\":\"Unauthorized\",\"errors\":{\"error\":\"%s\"}},\"data\":null,\"meta\":{\"serverDateTime\":\"%s\"}}",
+                safeError, currentDateTime
             );
-            
+
             response.getWriter().write(jsonResponse);
         };
     }

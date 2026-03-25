@@ -1,13 +1,8 @@
 package org.ganjp.api.auth.role;
 
 import lombok.RequiredArgsConstructor;
+import org.ganjp.api.common.exception.DuplicateResourceException;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
-import org.ganjp.api.auth.role.RoleCreateRequest;
-import org.ganjp.api.auth.role.RoleUpdateRequest;
-import org.ganjp.api.auth.role.RoleResponse;
-import org.ganjp.api.auth.role.Role;
-import org.ganjp.api.auth.role.RoleRepository;
-import org.ganjp.api.auth.role.UserRoleRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +48,7 @@ public class RoleService {
     @Transactional
     public RoleResponse createRole(RoleCreateRequest roleCreateRequest, String userId) {
         if (roleRepository.existsByCode(roleCreateRequest.getCode())) {
-            throw new RuntimeException("Role with code " + roleCreateRequest.getCode() + " already exists");
+            throw DuplicateResourceException.of("Role", "code", roleCreateRequest.getCode());
         }
 
         Role role = new Role();
@@ -92,7 +87,7 @@ public class RoleService {
 
         // Check if code is being changed and if new code already exists
         if (!role.getCode().equals(roleUpdateRequest.getCode()) && roleRepository.existsByCode(roleUpdateRequest.getCode())) {
-            throw new RuntimeException("Role with code " + roleUpdateRequest.getCode() + " already exists");
+            throw DuplicateResourceException.of("Role", "code", roleUpdateRequest.getCode());
         }
 
         role.setCode(roleUpdateRequest.getCode());
@@ -100,12 +95,12 @@ public class RoleService {
         role.setDescription(roleUpdateRequest.getDescription());
         role.setSortOrder(roleUpdateRequest.getSortOrder() != null ? roleUpdateRequest.getSortOrder() : 999);
         role.setActive(roleUpdateRequest.getActive() != null ? roleUpdateRequest.getActive() : true);
-        
+
         // Update parent role if specified
         if (roleUpdateRequest.getParentRoleId() != null) {
             // Check for circular reference
             if (roleUpdateRequest.getParentRoleId().equals(id)) {
-                throw new RuntimeException("Role cannot be its own parent");
+                throw new IllegalArgumentException("Role cannot be its own parent");
             }
             
             // If parent role is changed
@@ -145,7 +140,7 @@ public class RoleService {
         // Check if code is being changed and if new code already exists
         if (rolePatchRequest.getCode() != null && !rolePatchRequest.getCode().equals(role.getCode())
                 && roleRepository.existsByCode(rolePatchRequest.getCode())) {
-            throw new RuntimeException("Role with code " + rolePatchRequest.getCode() + " already exists");
+            throw DuplicateResourceException.of("Role", "code", rolePatchRequest.getCode());
         }
 
         // Only update fields that are not null in the request
@@ -173,7 +168,7 @@ public class RoleService {
         if (rolePatchRequest.getParentRoleId() != null) {
             // Check for circular reference
             if (rolePatchRequest.getParentRoleId().equals(id)) {
-                throw new RuntimeException("Role cannot be its own parent");
+                throw new IllegalArgumentException("Role cannot be its own parent");
             }
             
             // If empty string, remove parent
@@ -244,7 +239,7 @@ public class RoleService {
     @Transactional
     public RoleResponse toggleRoleStatus(String id, String username) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
         
         role.setActive(!role.isActive());
         role.setUpdatedAt(LocalDateTime.now());

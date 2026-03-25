@@ -130,9 +130,8 @@ public class JwtUtils {
         UserDetails userDetails,
         long expiration
     ) {
-        // Add authorities to claims
-        extraClaims.put("authorities", extraClaims.get("authorities") != null ? extraClaims.get("authorities") : Collections.emptyList());
-        extraClaims.put("id", extraClaims.get("id")); // Assuming username is used as ID
+        // Ensure authorities claim is always present
+        extraClaims.putIfAbsent("authorities", Collections.emptyList());
         
         // Generate unique token ID for blacklisting support
         String tokenId = UUID.randomUUID().toString();

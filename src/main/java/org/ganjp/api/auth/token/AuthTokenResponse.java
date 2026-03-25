@@ -22,7 +22,7 @@ public class AuthTokenResponse {
     private String refreshToken;
     @Builder.Default
     private String tokenType = "Bearer";
-    private long expiresIn; // Access token expiration in seconds
+    private long expiresIn; // Access token expiration in milliseconds
     private String username;
     private String email;
     private String mobileCountryCode;

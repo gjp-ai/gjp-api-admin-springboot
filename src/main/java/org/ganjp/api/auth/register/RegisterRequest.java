@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegisterRequest {
 
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
     @Pattern(
         regexp = "^[A-Za-z0-9._-]{3,30}$",
         message = "Username must match the format: 3-30 characters, alphanumeric, dots, underscores, or hyphens"
@@ -50,10 +50,10 @@ public class RegisterRequest {
     private String mobileNumber;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+    @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
     @Pattern(
-        regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{6,}$",
-        message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and no whitespace"
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#^+=])(?=\\S+$).+$",
+        message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and no whitespace"
     )
     private String password;
 

@@ -32,7 +32,7 @@ public class AuditAspect {
     /**
      * Intercept all controller methods (all HTTP methods including GET)
      */
-    @Around("execution(* org.ganjp.api.*.controller.*.*(..))")
+    @Around("@within(org.springframework.web.bind.annotation.RestController)")
     public Object auditApiCall(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         

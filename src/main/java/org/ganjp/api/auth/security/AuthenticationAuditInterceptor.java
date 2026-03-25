@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.common.audit.AuditService;
+import org.ganjp.api.common.util.IpAddressUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -233,51 +233,12 @@ public class AuthenticationAuditInterceptor implements HandlerInterceptor {
                 .username(username)
                 .resultMessage(resultMessage)
                 .statusCode(response.getStatus())
-                .ipAddress(getClientIpAddress(request))
+                .ipAddress(IpAddressUtils.getClientIp(request))
                 .userAgent(getUserAgent(request))
                 .sessionId(getSessionId(request))
                 .requestId(getRequestId(request))
                 .durationMs(durationMs)
                 .build();
-    }
-
-    /**
-     * Get client IP address from request
-     */
-    private String getClientIpAddress(HttpServletRequest request) {
-        String[] headerNames = {
-            "X-Forwarded-For",
-            "X-Real-IP",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR"
-        };
-
-        for (String header : headerNames) {
-            String ip = request.getHeader(header);
-            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                String clientIp = ip.split(",")[0].trim();
-                // Normalize IPv6 localhost to IPv4 for better readability
-                if ("0:0:0:0:0:0:0:1".equals(clientIp) || "::1".equals(clientIp)) {
-                    return "127.0.0.1";
-                }
-                return clientIp;
-            }
-        }
-
-        String remoteAddr = request.getRemoteAddr();
-        // Normalize IPv6 localhost to IPv4 for better readability
-        if ("0:0:0:0:0:0:0:1".equals(remoteAddr) || "::1".equals(remoteAddr)) {
-            return "127.0.0.1";
-        }
-        return remoteAddr;
     }
 
     /**

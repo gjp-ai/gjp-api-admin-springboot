@@ -245,9 +245,10 @@ public class UserService {
                 .updatedBy(currentUserId)
                 .build();
 
-        if (userCreateRequest.getPassword() != null && !userCreateRequest.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
+        if (userCreateRequest.getPassword() == null || userCreateRequest.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password is required when creating a user");
         }
+        user.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
 
         User savedUser = userRepository.save(user);
 
@@ -387,7 +388,8 @@ public class UserService {
         }
 
         // Check email uniqueness if it's being changed
-        if (!userCreateRequest.getEmail().equals(user.getEmail())
+        if (userCreateRequest.getEmail() != null
+                && !userCreateRequest.getEmail().equals(user.getEmail())
                 && userRepository.existsByEmail(userCreateRequest.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }
@@ -572,8 +574,10 @@ public class UserService {
      * @return UserResponse
      */
     private UserResponse mapToUserResponse(User user) {
-        // Explicitly fetch user roles from the repository since they're marked as @Transient in User entity
-        List<UserRole> userRoles = userRoleRepository.findByUserId(user.getId());
+        // Use the JPA relationship; for paginated queries, roles are loaded lazily per user
+        List<UserRole> userRoles = user.getUserRoles() != null && !user.getUserRoles().isEmpty()
+                ? user.getUserRoles()
+                : userRoleRepository.findByUserId(user.getId());
         
         List<RoleResponse> roleResponses = userRoles.stream()
                 .filter(ur -> ur.isActive() && (ur.getExpiresAt() == null || ur.getExpiresAt().isAfter(LocalDateTime.now())))

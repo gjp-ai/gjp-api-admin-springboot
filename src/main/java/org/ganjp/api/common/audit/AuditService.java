@@ -3,6 +3,7 @@ package org.ganjp.api.common.audit;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.common.audit.AuditLog;
 import org.ganjp.api.common.audit.AuditLogRepository;
+import org.ganjp.api.common.util.IpAddressUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -327,32 +328,7 @@ public class AuditService {
      * Get client IP address from HTTP request
      */
     private String getClientIpAddress(HttpServletRequest request) {
-        String ipAddress = request.getHeader("X-Forwarded-For");
-        
-        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getHeader("X-Real-IP");
-        }
-        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getHeader("Proxy-Client-IP");
-        }
-        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getRemoteAddr();
-        }
-        
-        // Handle multiple IPs in X-Forwarded-For (take the first one)
-        if (ipAddress != null && ipAddress.contains(",")) {
-            ipAddress = ipAddress.split(",")[0].trim();
-        }
-        
-        // Normalize IPv6 localhost to IPv4 for better readability
-        if ("0:0:0:0:0:0:0:1".equals(ipAddress) || "::1".equals(ipAddress)) {
-            ipAddress = "127.0.0.1";
-        }
-        
-        return ipAddress;
+        return IpAddressUtils.getClientIp(request);
     }
 
     /**
