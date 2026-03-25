@@ -1,6 +1,7 @@
 package org.ganjp.api.auth.role;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.common.exception.DuplicateResourceException;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Sort;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoleService {
@@ -208,42 +210,44 @@ public class RoleService {
 
     /**
      * Delete a role by ID with enhanced validation
-     * 
+     *
      * @param id role ID
+     * @param userId ID of the user performing the deletion (for audit trail)
      * @throws ResourceNotFoundException if role not found
-     * @throws IllegalStateException if role has users assigned or has child roles
+     * @throws IllegalStateException if role is a system role, has users assigned, or has child roles
      */
     @Transactional
-    public void deleteRole(String id) {
+    public void deleteRole(String id, String userId) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
-        
+
         // Check if role is a system role (cannot be deleted)
         if (role.isSystemRole()) {
             throw new IllegalStateException("Cannot delete system role: " + role.getCode());
         }
-        
+
         // Check if any users currently have this role
         long userCount = userRoleRepository.countActiveUsersWithRole(role);
         if (userCount > 0) {
             throw new IllegalStateException(
                 String.format("Cannot delete role '%s' because %d user(s) currently have this role assigned. " +
-                             "Please remove the role from all users before deleting it.", 
+                             "Please remove the role from all users before deleting it.",
                              role.getCode(), userCount)
             );
         }
-        
+
         // Check if this role has any child roles
         long childRoleCount = roleRepository.countActiveChildRoles(role);
         if (childRoleCount > 0) {
             throw new IllegalStateException(
                 String.format("Cannot delete role '%s' because it has %d child role(s). " +
-                             "Please delete or reassign all child roles before deleting this role.", 
+                             "Please delete or reassign all child roles before deleting this role.",
                              role.getCode(), childRoleCount)
             );
         }
-        
+
         roleRepository.deleteById(id);
+        log.info("Role '{}' (id={}) deleted by user {}", role.getCode(), id, userId);
     }
 
     @Transactional

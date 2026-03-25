@@ -87,8 +87,11 @@ public class RoleController {
 
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable String id) {
-        roleService.deleteRole(id);
+    public ResponseEntity<ApiResponse<Void>> deleteRole(
+            @PathVariable String id,
+            HttpServletRequest request) {
+        String userId = jwtUtils.extractUserIdFromToken(request);
+        roleService.deleteRole(id, userId);
         return ResponseEntity.ok(ApiResponse.success(null, "Role deleted successfully"));
     }
 
