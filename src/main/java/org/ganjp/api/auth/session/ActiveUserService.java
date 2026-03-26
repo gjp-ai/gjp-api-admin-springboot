@@ -1,7 +1,11 @@
 package org.ganjp.api.auth.session;
 
 import jakarta.annotation.PreDestroy;
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,25 +16,25 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service to track active users in memory
- * This service maintains a map of currently active users based on their JWT token activity
+ * Service to track active users in memory.
+ * Maintains a map of currently active users based on their JWT token activity.
  */
-@Service
 @Slf4j
+@Service
 public class ActiveUserService {
 
     // Map to store active users: userId -> SessionInfo
     private final Map<String, SessionInfo> activeUsers = new ConcurrentHashMap<>();
     
-    // Session timeout in minutes (e.g., 30 minutes of inactivity)
     private static final long SESSION_TIMEOUT_MINUTES = 30;
-    
+    private static final long CLEANUP_INTERVAL_MINUTES = 5;
+
     // Scheduled executor for cleanup task
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    
+
     public ActiveUserService() {
-        // Schedule cleanup task to run every 5 minutes
-        scheduler.scheduleAtFixedRate(this::cleanupExpiredSessions, 5, 5, TimeUnit.MINUTES);
+        scheduler.scheduleAtFixedRate(this::cleanupExpiredSessions,
+                CLEANUP_INTERVAL_MINUTES, CLEANUP_INTERVAL_MINUTES, TimeUnit.MINUTES);
         log.info("ActiveUserService initialized with session timeout: {} minutes", SESSION_TIMEOUT_MINUTES);
     }
 
@@ -164,8 +168,10 @@ public class ActiveUserService {
     }
     
     /**
-     * Inner class to hold session information
+     * Inner class to hold session information.
      */
+    @Getter
+    @Setter
     public static class SessionInfo {
         private final String userId;
         private final String username;
@@ -173,8 +179,8 @@ public class ActiveUserService {
         private LocalDateTime lastActivity;
         private final String userAgent;
         private final String ipAddress;
-        
-        public SessionInfo(String userId, String username, LocalDateTime loginTime, 
+
+        public SessionInfo(String userId, String username, LocalDateTime loginTime,
                           String userAgent, String ipAddress) {
             this.userId = userId;
             this.username = username;
@@ -182,27 +188,6 @@ public class ActiveUserService {
             this.lastActivity = loginTime;
             this.userAgent = userAgent;
             this.ipAddress = ipAddress;
-        }
-        
-        // Getters and setters
-        public String getUserId() { return userId; }
-        public String getUsername() { return username; }
-        public LocalDateTime getLoginTime() { return loginTime; }
-        public LocalDateTime getLastActivity() { return lastActivity; }
-        public void setLastActivity(LocalDateTime lastActivity) { this.lastActivity = lastActivity; }
-        public String getUserAgent() { return userAgent; }
-        public String getIpAddress() { return ipAddress; }
-        
-        @Override
-        public String toString() {
-            return "SessionInfo{" +
-                "userId='" + userId + '\'' +
-                ", username='" + username + '\'' +
-                ", loginTime=" + loginTime +
-                ", lastActivity=" + lastActivity +
-                ", userAgent='" + userAgent + '\'' +
-                ", ipAddress='" + ipAddress + '\'' +
-                '}';
         }
     }
 }

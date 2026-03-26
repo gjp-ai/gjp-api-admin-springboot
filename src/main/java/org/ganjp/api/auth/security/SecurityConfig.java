@@ -1,5 +1,7 @@
 package org.ganjp.api.auth.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.session.ActiveUserService;
 import org.ganjp.api.auth.token.blacklist.TokenBlacklistService;
 import org.ganjp.api.auth.user.UserRepository;
+import org.ganjp.api.common.model.ApiResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +34,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Security configuration for the application.
@@ -113,30 +117,17 @@ public class SecurityConfig {
      * @return AuthenticationEntryPoint instance
      */
     @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        // TODO: migrate to ObjectMapper for consistent ApiResponse envelope (Rule 6.4)
+    public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
         return (request, response, authException) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
 
-            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String currentDateTime = java.time.LocalDateTime.now().format(formatter);
+            String errorMsg = authException.getMessage() != null
+                    ? authException.getMessage() : "Authentication required";
+            Map<String, String> errors = Map.of("error", errorMsg);
+            ApiResponse<?> apiResponse = ApiResponse.error(401, "Unauthorized", errors);
 
-            // Escape the error message to prevent JSON injection
-            String errorMsg = authException.getMessage() != null ? authException.getMessage() : "Authentication required";
-            String safeError = errorMsg
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\n", "\\n")
-                    .replace("\r", "\\r")
-                    .replace("\t", "\\t");
-
-            String jsonResponse = String.format(
-                "{\"status\":{\"code\":401,\"message\":\"Unauthorized\",\"errors\":{\"error\":\"%s\"}},\"data\":null,\"meta\":{\"serverDateTime\":\"%s\"}}",
-                safeError, currentDateTime
-            );
-
-            response.getWriter().write(jsonResponse);
+            response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         };
     }
 
@@ -170,7 +161,8 @@ public class SecurityConfig {
      * @throws Exception if security chain cannot be built
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter, LoginRateLimitFilter loginRateLimitFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter,
+                                                     LoginRateLimitFilter loginRateLimitFilter, ObjectMapper objectMapper) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -194,7 +186,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(authenticationEntryPoint())
+                .authenticationEntryPoint(authenticationEntryPoint(objectMapper))
             )
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.sameOrigin())

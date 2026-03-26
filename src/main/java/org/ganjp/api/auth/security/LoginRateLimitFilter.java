@@ -1,16 +1,20 @@
 package org.ganjp.api.auth.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.ganjp.api.common.model.ApiResponse;
+
 import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +41,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
 
     private final ConcurrentHashMap<String, RateLimitEntry> attempts = new ConcurrentHashMap<>();
     private final AtomicLong lastCleanup = new AtomicLong(System.currentTimeMillis());
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(
@@ -70,11 +75,10 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
             response.setStatus(429);
             response.setContentType("application/json;charset=UTF-8");
 
-            String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            String body = String.format(
-                    "{\"status\":{\"code\":429,\"message\":\"Too many login attempts. Please try again later.\",\"errors\":{\"error\":\"Rate limit exceeded\"}},\"data\":null,\"meta\":{\"serverDateTime\":\"%s\"}}",
-                    dateTime);
-            response.getWriter().write(body);
+            Map<String, String> errors = Map.of("error", "Rate limit exceeded");
+            ApiResponse<?> apiResponse = ApiResponse.error(429,
+                    "Too many login attempts. Please try again later.", errors);
+            response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
             return;
         }
 

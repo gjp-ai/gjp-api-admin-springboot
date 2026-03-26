@@ -4,6 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.ganjp.api.auth.session.ActiveUserService;
 import org.ganjp.api.auth.token.blacklist.TokenBlacklistService;
 import org.ganjp.api.common.util.IpAddressUtils;
@@ -25,6 +28,7 @@ import java.util.List;
  * This filter extracts JWT tokens from Authorization headers, validates them,
  * and sets the authenticated user in the Spring Security context.
  */
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
@@ -78,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (tokenBlacklistService != null) {
                 String tokenId = jwtUtils.extractTokenId(jwt);
                 if (tokenBlacklistService.isTokenBlacklisted(tokenId)) {
-                    logger.debug("Token is blacklisted (logged out): " + tokenId);
+                    log.debug("Token is blacklisted (logged out): {}", tokenId);
                     filterChain.doFilter(request, response);
                     return;
                 }
@@ -120,7 +124,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             // Log error but do not block the request
-            logger.error("JWT authentication failed: " + e.getMessage(), e);
+            log.error("JWT authentication failed: {}", e.getMessage(), e);
         }
         
         filterChain.doFilter(request, response);

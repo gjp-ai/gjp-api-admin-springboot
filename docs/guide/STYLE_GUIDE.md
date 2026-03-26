@@ -1116,8 +1116,7 @@ protected void doFilterInternal(HttpServletRequest request,
 
 | Location | Rule Violated | Deviation | Tracking |
 |----------|--------------|-----------|----------|
-| `LoginRateLimitFilter` | Rule 6.4 (no manual JSON) | Constructs JSON via `String.format()` because filter runs outside Spring MVC and cannot inject `ObjectMapper` easily | `// TODO: migrate to ObjectMapper (Rule 6.4)` |
-| `SecurityConfig.authenticationEntryPoint` | Rule 6.4 (no manual JSON) | Same reason — lambda-based entry point outside MVC | `// TODO: migrate to ObjectMapper (Rule 6.4)` |
+| *(none currently)* | — | — | — |
 
 > When adding a new deviation, always include a `// TODO` comment in the source code referencing the rule number, and add a row to this table.
 

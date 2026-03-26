@@ -6,8 +6,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
-import org.ganjp.api.auth.security.SecurityProperties;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,19 +45,47 @@ public class JwtUtils {
         this.issuer = securityProperties.getJwt().getIssuer();
     }
 
+    /**
+     * Extract the username (subject) from a JWT token.
+     *
+     * @param token JWT token string
+     * @return username stored in the token's subject claim
+     */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    /**
+     * Extract a specific claim from a JWT token using a resolver function.
+     *
+     * @param token JWT token string
+     * @param claimsResolver function to extract the desired claim
+     * @param <T> type of the claim value
+     * @return extracted claim value
+     */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
+    /**
+     * Generate an access token with default claims for a user.
+     *
+     * @param userDetails Spring Security user details
+     * @return signed JWT access token
+     */
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
     
+    /**
+     * Generate an access token with authorities and userId claims.
+     *
+     * @param userDetails Spring Security user details
+     * @param authorities granted authorities to include in the token
+     * @param userId user UUID to embed in the token
+     * @return signed JWT access token with authorities
+     */
     public String generateTokenWithAuthorities(UserDetails userDetails, Collection<SimpleGrantedAuthority> authorities, String userId) {
         Map<String, Object> extraClaims = new HashMap<>();
         List<String> authoritiesStrings = authorities.stream()
@@ -133,6 +162,13 @@ public class JwtUtils {
         return refreshExpiration;
     }
 
+    /**
+     * Generate an access token with custom extra claims.
+     *
+     * @param extraClaims additional claims to include
+     * @param userDetails Spring Security user details
+     * @return signed JWT access token
+     */
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
@@ -160,6 +196,13 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Validate a JWT token against user details (username match and not expired).
+     *
+     * @param token JWT token string
+     * @param userDetails Spring Security user details to validate against
+     * @return true if token is valid
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
@@ -183,6 +226,12 @@ public class JwtUtils {
                 .getBody();
     }
 
+    /**
+     * Extract granted authorities from a JWT token's "authorities" claim.
+     *
+     * @param token JWT token string
+     * @return list of granted authorities, empty if none present
+     */
     @SuppressWarnings("unchecked")
     public List<GrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
@@ -197,6 +246,12 @@ public class JwtUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Extract the user ID from a JWT token's "userId" claim.
+     *
+     * @param token JWT token string
+     * @return user UUID string
+     */
     public String extractUserId(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("userId", String.class);

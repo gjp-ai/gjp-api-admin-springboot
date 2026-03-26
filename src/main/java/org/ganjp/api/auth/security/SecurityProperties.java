@@ -43,9 +43,12 @@ public class SecurityProperties {
      */
     @Data
     public static class Jwt {
+        /** 30 days in milliseconds */
+        private static final long DEFAULT_REFRESH_EXPIRATION_MS = 30L * 24 * 60 * 60 * 1000;
+
         private String secretKey;
         private long expiration;
-        private long refreshExpiration = 2592000000L; // 30 days in milliseconds (default)
+        private long refreshExpiration = DEFAULT_REFRESH_EXPIRATION_MS;
         private String issuer = "gjp-api-admin";
     }
 }
