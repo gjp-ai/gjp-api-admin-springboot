@@ -1,6 +1,7 @@
 package org.ganjp.api.auth.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.role.RoleResponse;
 import org.ganjp.api.auth.role.Role;
 import org.ganjp.api.auth.role.UserRole;
@@ -24,6 +25,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service for user management operations including CRUD, search, and dashboard statistics.
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {

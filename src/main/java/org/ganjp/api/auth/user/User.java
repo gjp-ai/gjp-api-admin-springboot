@@ -1,10 +1,20 @@
 package org.ganjp.api.auth.user;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.ganjp.api.auth.role.Role;
 import org.ganjp.api.auth.role.UserRole;
 import org.ganjp.api.auth.refresh.RefreshToken;
@@ -16,8 +26,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-@Data
+/**
+ * Entity representing a user account in the authentication system.
+ * Implements Spring Security's UserDetails for authentication integration.
+ */
+@Getter
+@Setter
+@ToString(exclude = {"userRoles", "refreshTokens"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -220,5 +237,18 @@ public class User implements UserDetails {
      */
     public boolean isMobileNumberValid() {
         return mobileNumber == null || mobileNumber.matches("^\\d{4,15}$");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

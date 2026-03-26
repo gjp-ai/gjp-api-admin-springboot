@@ -3,6 +3,7 @@ package org.ganjp.api.auth.register;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.ganjp.api.common.model.ApiResponse;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import java.util.Map;
  * For account management operations, see {@link UserController}
  * For authentication operations, see {@link TokenController}
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/register")
 @RequiredArgsConstructor

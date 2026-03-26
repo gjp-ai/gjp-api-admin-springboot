@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.user.User;
 import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.common.exception.BusinessException;
+import org.ganjp.api.common.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,11 +113,15 @@ public class UserProfileService {
     }
 
     /**
-     * Get user by ID with validation
+     * Get user by ID with validation.
+     *
+     * @param userId user UUID
+     * @return User entity
+     * @throws ResourceNotFoundException if user not found
      */
     private User getUserById(String userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
     /**

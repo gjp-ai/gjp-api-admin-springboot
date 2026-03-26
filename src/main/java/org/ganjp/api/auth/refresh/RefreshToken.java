@@ -1,25 +1,38 @@
 package org.ganjp.api.auth.refresh;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.ganjp.api.auth.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Entity representing a refresh token for JWT authentication.
  * Refresh tokens are stored in the database to allow revocation and rotation.
  */
-@Entity
-@Table(name = "auth_refresh_tokens")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"user"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "auth_refresh_tokens")
 public class RefreshToken {
 
     @Id
@@ -104,5 +117,18 @@ public class RefreshToken {
      */
     public boolean isActive() {
         return isValid();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RefreshToken that = (RefreshToken) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

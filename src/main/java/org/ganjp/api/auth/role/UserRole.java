@@ -1,10 +1,19 @@
 package org.ganjp.api.auth.role;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.ganjp.api.auth.user.User;
 
 import java.time.LocalDateTime;
@@ -13,7 +22,9 @@ import java.time.LocalDateTime;
  * Entity representing the relationship between users and roles with enhanced tracking.
  * Maps to the auth_user_roles table.
  */
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"user", "role"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

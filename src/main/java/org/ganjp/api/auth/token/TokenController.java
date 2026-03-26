@@ -3,6 +3,7 @@ package org.ganjp.api.auth.token;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.ganjp.api.auth.refresh.RefreshTokenRequest;
 import org.ganjp.api.auth.refresh.TokenRefreshResponse;
@@ -38,6 +39,7 @@ import java.util.Map;
  * 
  * For user registration, see {@link RegisterController}
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/auth/tokens")
 @RequiredArgsConstructor

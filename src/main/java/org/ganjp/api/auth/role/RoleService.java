@@ -21,6 +21,11 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
+    /**
+     * Get all roles sorted by sort order and name.
+     *
+     * @return list of all roles
+     */
     public List<RoleResponse> getAllRoles() {
         return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "sortOrder", "name"))
                 .stream()
@@ -28,6 +33,11 @@ public class RoleService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get all active roles.
+     *
+     * @return list of active roles
+     */
     public List<RoleResponse> getActiveRoles() {
         return roleRepository.findByActiveTrue()
                 .stream()
@@ -35,18 +45,40 @@ public class RoleService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get a role by its ID.
+     *
+     * @param id role UUID
+     * @return role details
+     * @throws ResourceNotFoundException if role not found
+     */
     public RoleResponse getRoleById(String id) {
         return roleRepository.findById(id)
                 .map(this::mapToRoleResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
     }
 
+    /**
+     * Get a role by its unique code.
+     *
+     * @param code role code (e.g., ADMIN, USER)
+     * @return role details
+     * @throws ResourceNotFoundException if role not found
+     */
     public RoleResponse getRoleByCode(String code) {
         return roleRepository.findByCode(code)
                 .map(this::mapToRoleResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "code", code));
     }
 
+    /**
+     * Create a new role.
+     *
+     * @param roleCreateRequest role creation data
+     * @param userId ID of the user performing the operation
+     * @return created role details
+     * @throws DuplicateResourceException if role code already exists
+     */
     @Transactional
     public RoleResponse createRole(RoleCreateRequest roleCreateRequest, String userId) {
         if (roleRepository.existsByCode(roleCreateRequest.getCode())) {
@@ -82,6 +114,16 @@ public class RoleService {
         return mapToRoleResponse(savedRole);
     }
 
+    /**
+     * Replace a role entirely (full update).
+     *
+     * @param id role UUID
+     * @param roleUpdateRequest role data for complete replacement
+     * @param userId ID of the user performing the operation
+     * @return updated role details
+     * @throws ResourceNotFoundException if role not found
+     * @throws IllegalStateException if role is a system role
+     */
     @Transactional
     public RoleResponse updateRoleFully(String id, RoleCreateRequest roleUpdateRequest, String userId) {
         Role role = roleRepository.findById(id)
@@ -139,8 +181,18 @@ public class RoleService {
         return mapToRoleResponse(updatedRole);
     }
 
+    /**
+     * Partially update a role with only the provided fields.
+     *
+     * @param id role UUID
+     * @param rolePatchRequest partial role data
+     * @param userId ID of the user performing the operation
+     * @return updated role details
+     * @throws ResourceNotFoundException if role not found
+     * @throws IllegalStateException if role is a system role
+     */
     @Transactional
-    public RoleResponse updateRolePartially(String id, RoleUpdateRequest rolePatchRequest, String username) {
+    public RoleResponse updateRolePartially(String id, RoleUpdateRequest rolePatchRequest, String userId) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
 
@@ -202,7 +254,7 @@ public class RoleService {
         }
         
         role.setUpdatedAt(LocalDateTime.now());
-        role.setUpdatedBy(username);
+        role.setUpdatedBy(userId);
 
         Role updatedRole = roleRepository.save(role);
         return mapToRoleResponse(updatedRole);
@@ -250,15 +302,23 @@ public class RoleService {
         log.info("Role '{}' (id={}) deleted by user {}", role.getCode(), id, userId);
     }
 
+    /**
+     * Toggle a role's active status.
+     *
+     * @param id role UUID
+     * @param userId ID of the user performing the operation
+     * @return updated role details
+     * @throws ResourceNotFoundException if role not found
+     */
     @Transactional
-    public RoleResponse toggleRoleStatus(String id, String username) {
+    public RoleResponse toggleRoleStatus(String id, String userId) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
         
         role.setActive(!role.isActive());
         role.setUpdatedAt(LocalDateTime.now());
-        role.setUpdatedBy(username);
-        
+        role.setUpdatedBy(userId);
+
         Role updatedRole = roleRepository.save(role);
         return mapToRoleResponse(updatedRole);
     }

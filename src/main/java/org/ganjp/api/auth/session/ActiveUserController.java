@@ -1,6 +1,7 @@
 package org.ganjp.api.auth.session;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.common.model.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,7 @@ import java.util.Map;
  * Controller for managing active user sessions
  * Provides endpoints for administrators to monitor active user sessions
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/admin/sessions")
 @RequiredArgsConstructor
