@@ -26,6 +26,9 @@
 17. [Async & MDC Propagation](#17-async--mdc-propagation)
 18. [Filter & Interceptor Layer](#18-filter--interceptor-layer)
 19. [Known Deviations](#19-known-deviations)
+20. [Security](#20-security)
+21. [Database & Migrations](#21-database--migrations)
+22. [Error Handling Response Format](#22-error-handling-response-format)
 
 ---
 
@@ -33,7 +36,7 @@
 
 ### Rule 1.1: All Spring-managed classes must have `@Slf4j`
 
-Every `@Service`, `@RestController`, `@Component`, `@Configuration`, and `@ControllerAdvice` class must be annotated with `@Slf4j` from Lombok for structured logging.
+**MUST.** Every `@Service`, `@RestController`, `@Component`, `@Configuration`, and `@ControllerAdvice` class must be annotated with `@Slf4j` from Lombok for structured logging.
 
 ```java
 @Slf4j       // Always present
@@ -45,6 +48,8 @@ public class UserService { ... }
 > **Rationale:** Even if the class doesn't log today, adding @Slf4j upfront avoids importing a logger later and ensures every class is ready for debugging.
 
 ### Rule 1.2: Logging level guidelines
+
+**MUST.** Use the correct log level for each category:
 
 | Level | Usage |
 |-------|-------|
@@ -113,7 +118,7 @@ private Map<String, Object> sanitizeLoginRequest(LoginRequest request) {
 
 ### Rule 2.1: No wildcard imports
 
-Always use explicit imports. No `import java.util.*` or `import org.springframework.web.bind.annotation.*`.
+**MUST.** Always use explicit imports. No `import java.util.*` or `import org.springframework.web.bind.annotation.*`.
 
 ```java
 // WRONG
@@ -131,11 +136,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 ### Rule 2.2: No same-package imports
 
-Do not import classes from the same package — Java resolves them automatically.
+**MUST.** Do not import classes from the same package — Java resolves them automatically.
 
 ### Rule 2.3: Import ordering
 
-Follow this order (alphabetical within each group), separated by blank lines:
+**MUST.** Follow this order (alphabetical within each group), separated by blank lines:
 
 1. Third-party libraries (`io.*`, `com.*`, etc. — e.g., `io.jsonwebtoken`)
 2. `jakarta.*`
@@ -165,7 +170,7 @@ import java.util.List;                        // 6. Java standard
 
 ### Rule 3.1: Use `@Getter` / `@Setter` instead of `@Data` on entities
 
-JPA entities must not use `@Data` because it generates `equals()`, `hashCode()`, and `toString()` based on all fields, which causes issues with lazy-loaded relationships and Hibernate proxies.
+**MUST.** JPA entities must not use `@Data` because it generates `equals()`, `hashCode()`, and `toString()` based on all fields, which causes issues with lazy-loaded relationships and Hibernate proxies.
 
 ```java
 // CORRECT: Entity
@@ -184,9 +189,11 @@ public class User implements UserDetails { ... }
 
 ### Rule 3.2: Always exclude bidirectional relationships from `@ToString`
 
-Use `@ToString(exclude = {...})` to prevent `LazyInitializationException` and infinite recursion.
+**MUST.** Use `@ToString(exclude = {...})` to prevent `LazyInitializationException` and infinite recursion.
 
 ### Rule 3.3: Implement `equals()` and `hashCode()` based on ID only
+
+**MUST.** Entity equality must be based on the primary key only:
 
 ```java
 @Override
@@ -207,7 +214,7 @@ public int hashCode() {
 
 ### Rule 3.4: DTOs and configuration classes use `@Data`
 
-DTOs (Request/Response classes) and `@ConfigurationProperties` classes should use `@Data` since they are simple POJOs without JPA proxying concerns.
+**SHOULD.** DTOs (Request/Response classes) and `@ConfigurationProperties` classes should use `@Data` since they are simple POJOs without JPA proxying concerns.
 
 ```java
 // CORRECT: DTO
@@ -230,6 +237,8 @@ public class SecurityProperties { ... }
 
 ### Rule 4.1: Use project-specific exception types
 
+**MUST.** Map exceptions to the correct HTTP status:
+
 | Exception | HTTP Status | Usage |
 |-----------|------------|-------|
 | `IllegalArgumentException` | 400 | Invalid input, business rule violation on input |
@@ -241,11 +250,11 @@ public class SecurityProperties { ... }
 
 ### Rule 4.2: Never use generic `RuntimeException`
 
-Always use a specific exception type from the table above.
+**MUST.** Always use a specific exception type from the table above.
 
 ### Rule 4.3: Use `BusinessException` for user-facing self-service rule violations
 
-Use `BusinessException` for user-facing self-service violations (profile updates, password changes) where the user needs actionable feedback. Use `IllegalArgumentException` for admin-facing validation in management services.
+**MUST.** Use `BusinessException` for user-facing self-service violations (profile updates, password changes) where the user needs actionable feedback. Use `IllegalArgumentException` for admin-facing validation in management services.
 
 ```java
 // Self-service (UserProfileService)
@@ -256,6 +265,8 @@ throw new IllegalArgumentException("Username is already taken");
 ```
 
 ### Rule 4.4: Use `ResourceNotFoundException` consistently for entity lookups
+
+**MUST.** All entity-not-found scenarios must use `ResourceNotFoundException`:
 
 ```java
 // CORRECT
@@ -268,6 +279,8 @@ User user = userRepository.findById(id)
 ```
 
 ### Rule 4.5: Use `DuplicateResourceException.of()` factory method
+
+**MUST.** Use the static factory for consistent messages:
 
 ```java
 // CORRECT
@@ -283,7 +296,7 @@ throw new DuplicateResourceException("Role with code already exists");
 
 ### Rule 5.1: Constructor injection via `@RequiredArgsConstructor`
 
-All service and configuration classes must use Lombok's `@RequiredArgsConstructor` with `private final` fields. No manual constructors for dependency injection.
+**MUST.** All service and configuration classes must use Lombok's `@RequiredArgsConstructor` with `private final` fields. No manual constructors for dependency injection.
 
 ```java
 @Service
@@ -297,11 +310,11 @@ public class UserService {
 
 ### Rule 5.2: `@Transactional` on all data-modifying methods
 
-Every service method that creates, updates, or deletes data must be annotated with `@Transactional`.
+**MUST.** Every service method that creates, updates, or deletes data must be annotated with `@Transactional`.
 
 ### Rule 5.3: `@Transactional(readOnly = true)` on read-only methods
 
-Every service method that only reads data must be annotated with `@Transactional(readOnly = true)`. This applies to all `get*`, `find*`, `is*`, `count*`, and `check*` methods that issue database queries.
+**MUST.** Every service method that only reads data must be annotated with `@Transactional(readOnly = true)`. This applies to all `get*`, `find*`, `is*`, `count*`, and `check*` methods that issue database queries.
 
 ```java
 // CORRECT
@@ -338,7 +351,7 @@ public void recordFailedLogin(User user) {
 
 ### Rule 5.5: Consistent audit parameter naming
 
-Service methods that need to record the acting user must use `userId` (not `username`) as the parameter name, since the value comes from the JWT token's `userId` claim.
+**MUST.** Service methods that need to record the acting user must use `userId` (not `username`) as the parameter name, since the value comes from the JWT token's `userId` claim.
 
 ```java
 // CORRECT
@@ -354,7 +367,7 @@ public void deleteRole(String id, String username) { ... }
 
 ### Rule 6.1: Every endpoint must have `@PreAuthorize`
 
-No controller method should lack an authorization annotation:
+**MUST.** No controller method should lack an authorization annotation:
 
 ```java
 @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")  // Admin ops
@@ -364,7 +377,7 @@ No controller method should lack an authorization annotation:
 
 ### Rule 6.2: Consistent response pattern
 
-All endpoints must return `ResponseEntity<ApiResponse<T>>` using the `ApiResponse` envelope:
+**MUST.** All endpoints must return `ResponseEntity<ApiResponse<T>>` using the `ApiResponse` envelope:
 
 ```java
 return ResponseEntity.ok(ApiResponse.success(data, "Message"));
@@ -373,11 +386,11 @@ return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(data, 
 
 ### Rule 6.3: Extract `userId` from JWT consistently
 
-Always use `jwtUtils.extractUserIdFromToken(request)` — never duplicate extraction logic.
+**MUST.** Always use `jwtUtils.extractUserIdFromToken(request)` — never duplicate extraction logic.
 
 ### Rule 6.4: Avoid manual JSON construction
 
-Never construct JSON responses via `String.format()` or string concatenation. Use `ObjectMapper` or the `ApiResponse` envelope for all JSON responses, including error handlers and filters.
+**MUST.** Never construct JSON responses via `String.format()` or string concatenation. Use `ObjectMapper` or the `ApiResponse` envelope for all JSON responses, including error handlers and filters.
 
 ```java
 // WRONG
@@ -400,7 +413,7 @@ response.getWriter().write(mapper.writeValueAsString(apiResponse));
 
 ### Rule 7.1: All public methods must have Javadoc
 
-Every public method in controllers, services, and utility classes must have a Javadoc comment with at minimum a one-line description.
+**MUST.** Every public method in controllers, services, and utility classes must have a Javadoc comment with at minimum a one-line description.
 
 ```java
 /**
@@ -412,6 +425,8 @@ public List<RoleResponse> getAllRoles() { ... }
 ```
 
 ### Rule 7.2: Controller Javadoc should describe the endpoint
+
+**SHOULD.** Controller Javadoc should describe the HTTP semantics:
 
 ```java
 /**
@@ -426,7 +441,7 @@ public ResponseEntity<ApiResponse<List<RoleResponse>>> getAllRoles() { ... }
 
 ### Rule 7.3: Entity fields should have Javadoc for non-obvious fields
 
-Standard audit fields (`createdAt`, `updatedAt`) do not need Javadoc. Domain-specific fields should.
+**SHOULD.** Standard audit fields (`createdAt`, `updatedAt`) do not need Javadoc. Domain-specific fields should.
 
 ---
 
@@ -434,7 +449,7 @@ Standard audit fields (`createdAt`, `updatedAt`) do not need Javadoc. Domain-spe
 
 ### Rule 8.1: Unified password policy across all DTOs
 
-All DTOs accepting passwords must use the same constraints:
+**MUST.** All DTOs accepting passwords must use the same constraints:
 
 ```java
 @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
@@ -484,6 +499,8 @@ public ResponseEntity<ApiResponse<RoleResponse>> createRole(
 
 ## 9. Naming Conventions
 
+**MUST.** Follow these naming conventions throughout the project:
+
 | Element | Convention | Example |
 |---------|-----------|---------|
 | Entity class | Singular noun | `User`, `Role` |
@@ -501,6 +518,8 @@ public ResponseEntity<ApiResponse<RoleResponse>> createRole(
 
 ### Rule 10.1: Class-level annotation ordering
 
+**MUST.** Follow this annotation order:
+
 ```java
 @Slf4j                    // 1. Lombok utility
 @Getter @Setter           // 2. Lombok data (or @Data for DTOs)
@@ -515,12 +534,16 @@ public class Foo { ... }
 
 ### Rule 10.2: Method ordering in classes
 
+**SHOULD.** Follow this order:
+
 1. Static fields / constants
 2. Instance fields (injected dependencies)
 3. Public methods (CRUD order: create, read, update, delete)
 4. Private helper methods
 
 ### Rule 10.3: Blank lines
+
+**MUST.**
 
 - One blank line between methods
 - One blank line between logical sections within a method
@@ -532,7 +555,7 @@ public class Foo { ... }
 
 ### Rule 11.1: Extract magic numbers into named constants
 
-All numeric literals with domain meaning must be extracted into `private static final` constants with descriptive names.
+**MUST.** All numeric literals with domain meaning must be extracted into `private static final` constants with descriptive names.
 
 ```java
 // CORRECT
@@ -544,6 +567,8 @@ if (user.getFailedLoginAttempts() >= 5) { ... }
 ```
 
 ### Rule 11.2: `@Scheduled` rate/delay values should reference constants or config
+
+**SHOULD.** Externalize scheduled task intervals:
 
 ```java
 // ACCEPTABLE — clearly named constant
@@ -1095,3 +1120,331 @@ protected void doFilterInternal(HttpServletRequest request,
 | `SecurityConfig.authenticationEntryPoint` | Rule 6.4 (no manual JSON) | Same reason — lambda-based entry point outside MVC | `// TODO: migrate to ObjectMapper (Rule 6.4)` |
 
 > When adding a new deviation, always include a `// TODO` comment in the source code referencing the rule number, and add a row to this table.
+
+---
+
+## 20. Security
+
+### Rule 20.1: Stateless session — no server-side session state
+
+**MUST.** The API is stateless. Spring Security must be configured with `SessionCreationPolicy.STATELESS`. Never store user state in `HttpSession`.
+
+```java
+// CORRECT — SecurityConfig
+http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+```
+
+### Rule 20.2: CSRF disabled for stateless JWT APIs
+
+**MUST.** CSRF protection must be explicitly disabled since the API uses JWT bearer tokens (not cookies) for authentication. Document the reason in the security config.
+
+```java
+// CORRECT — justified by stateless JWT design
+http.csrf(AbstractHttpConfigurer::disable);
+```
+
+> **Rationale:** CSRF attacks exploit cookie-based authentication. Since this API authenticates via `Authorization: Bearer <token>` headers (not cookies), CSRF protection is unnecessary and would block legitimate API calls.
+
+### Rule 20.3: CORS — whitelist origins from configuration
+
+**MUST.** Allowed origins must come from `SecurityProperties.cors.allowedOrigins`, never hardcoded. Production must not allow `*` as an origin.
+
+```java
+// CORRECT — from config
+CorsConfiguration config = new CorsConfiguration();
+config.setAllowedOrigins(securityProperties.getCors().getAllowedOrigins());
+config.setAllowCredentials(true);
+
+// WRONG — hardcoded wildcard
+config.addAllowedOrigin("*");
+```
+
+### Rule 20.4: Dual token lifecycle (access + refresh)
+
+**MUST.** The API uses a dual token system:
+
+| Token | Lifetime | Contains | Storage |
+|-------|----------|----------|---------|
+| Access token | Short (configurable, default 1h) | `sub` (username), `authorities`, `userId`, `jti` | Client memory only |
+| Refresh token | Long (configurable, default 30d) | `sub` (username), `type: refresh`, `jti` | DB (`auth_refresh_tokens`) — **hash only** |
+
+Rules:
+- Access tokens are validated statelessly via signature + expiration
+- Refresh tokens are validated against the database (revocation check)
+- Token ID (`jti` claim) is a UUID that enables blacklisting
+- On refresh, the old refresh token is revoked and a new pair is issued (rotation)
+
+### Rule 20.5: Token blacklisting for logout and revocation
+
+**MUST.** When a user logs out or an admin revokes access, the access token's `jti` must be added to `auth_token_blacklist`. The `JwtAuthenticationFilter` checks the blacklist on every request.
+
+```java
+// CORRECT — JwtAuthenticationFilter checks blacklist before validation
+if (tokenBlacklistService != null && tokenBlacklistService.isTokenBlacklisted(tokenId)) {
+    log.debug("Token {} is blacklisted, skipping authentication", tokenId);
+    chain.doFilter(request, response);
+    return;
+}
+```
+
+### Rule 20.6: Never store plain tokens — hash before persisting
+
+**MUST.** Refresh tokens stored in the database must be hashed (SHA-256). Never store plain JWT strings in `auth_refresh_tokens`.
+
+> **Rationale:** If the database is compromised, hashed tokens cannot be used directly. The attacker would need the original JWT string, which is only held by the client.
+
+### Rule 20.7: Rate limiting on authentication endpoints
+
+**MUST.** The login endpoint (`POST /v1/auth/tokens`) must be protected by `LoginRateLimitFilter` with configurable limits (default: 10 attempts per IP per 60s window). Exceeding the limit returns HTTP 429.
+
+> **Limitation:** The current implementation uses in-memory `ConcurrentHashMap` — not shared across clustered deployments. For multi-instance deployments, migrate to Redis-based rate limiting.
+
+### Rule 20.8: `@PreAuthorize` expression patterns
+
+**MUST.** Use these standard expressions consistently:
+
+```java
+// Admin operations (user management, role CRUD)
+@PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
+
+// Destructive operations (hard delete, system config changes)
+@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+
+// Self-service operations (profile update, password change)
+@PreAuthorize("isAuthenticated()")
+```
+
+> **Rationale:** Using `hasAuthority()` (not `hasRole()`) matches the way authorities are stored in the JWT `authorities` claim. `hasRole()` prepends `ROLE_` automatically, which causes double-prefix issues since our roles already include the `ROLE_` prefix.
+
+### Rule 20.9: Security headers
+
+**MUST.** The security filter chain must set these headers:
+
+| Header | Value | Purpose |
+|--------|-------|---------|
+| `X-Frame-Options` | `SAMEORIGIN` | Prevent clickjacking |
+| `Content-Security-Policy` | `default-src 'self'` | Restrict resource loading |
+
+```java
+// CORRECT — SecurityConfig
+http.headers(headers -> {
+    headers.frameOptions(frame -> frame.sameOrigin());
+    headers.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"));
+});
+```
+
+### Rule 20.10: Use TCP remote address for IP detection — not headers
+
+**MUST.** Use `request.getRemoteAddr()` to identify client IPs. Do **not** trust `X-Forwarded-For` or `X-Real-IP` headers, as they can be spoofed.
+
+```java
+// CORRECT
+String clientIp = request.getRemoteAddr();
+
+// WRONG — spoofable
+String clientIp = request.getHeader("X-Forwarded-For");
+```
+
+> **Exception:** If the application runs behind a trusted reverse proxy (Nginx, AWS ALB), configure Spring's `ForwardedHeaderFilter` and document the trusted proxy IPs.
+
+---
+
+## 21. Database & Migrations
+
+### Rule 21.1: Table naming — module prefix + plural snake_case
+
+**MUST.** All tables must follow the pattern `{module}_{entity_plural}`:
+
+| Module | Table | Entity |
+|--------|-------|--------|
+| `auth` | `auth_users` | `User` |
+| `auth` | `auth_roles` | `Role` |
+| `auth` | `auth_user_roles` | `UserRole` |
+| `auth` | `auth_refresh_tokens` | `RefreshToken` |
+| `auth` | `auth_token_blacklist` | `BlacklistedToken` |
+| `audit` | `audit_logs` | `AuditLog` |
+
+Future modules (e.g., `cms`, `master`) must follow the same prefix convention.
+
+### Rule 21.2: Primary key — `CHAR(36)` UUID
+
+**MUST.** All primary keys must be `CHAR(36)` UUIDs. See [Rule 15.2](#rule-152-uuid-primary-key-as-char36) for the Java implementation.
+
+```sql
+-- CORRECT
+id CHAR(36) NOT NULL PRIMARY KEY
+
+-- WRONG — auto-increment
+id BIGINT AUTO_INCREMENT PRIMARY KEY
+```
+
+### Rule 21.3: Character set — `utf8mb4_unicode_ci`
+
+**MUST.** All tables and string columns must use `utf8mb4` charset with `unicode_ci` collation for full Unicode support (including emoji).
+
+```sql
+CREATE TABLE auth_users (
+    ...
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+### Rule 21.4: Standard audit columns on every table
+
+**MUST.** Every table must include these audit columns (provided by `BaseEntity` in Java):
+
+```sql
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL,
+created_by CHAR(36),
+updated_by CHAR(36)
+```
+
+### Rule 21.5: Constraint naming conventions
+
+**MUST.** Follow these naming patterns for database constraints:
+
+| Constraint | Pattern | Example |
+|------------|---------|---------|
+| Primary key | `pk_{table}` | `pk_auth_users` |
+| Unique | `uk_{table}_{column}` | `uk_auth_users_username` |
+| Foreign key | `fk_{table}_{referenced_table}` | `fk_auth_user_roles_user` |
+| Index | `idx_{table}_{column(s)}` | `idx_audit_logs_user_id` |
+| Check | `chk_{table}_{description}` | `chk_auth_users_username_format` |
+
+### Rule 21.6: Database-level validation for critical fields
+
+**SHOULD.** Use `CHECK` constraints for format validation on critical fields (username, email, phone) as a defense-in-depth layer alongside Java Bean Validation.
+
+```sql
+-- CORRECT — database enforces format even for direct SQL inserts
+CONSTRAINT chk_auth_users_username_format CHECK (username REGEXP '^[a-zA-Z0-9._-]{3,50}$'),
+CONSTRAINT chk_auth_users_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+```
+
+### Rule 21.7: Foreign key strategy
+
+**MUST.** Foreign keys must specify `ON DELETE` and `ON UPDATE` behavior explicitly:
+
+| Relationship | ON DELETE | ON UPDATE | Example |
+|-------------|-----------|-----------|---------|
+| Parent-child (composition) | `CASCADE` | `CASCADE` | `auth_user_roles` → `auth_users` |
+| Reference (association) | `SET NULL` | `CASCADE` | `audit_logs.user_id` → `auth_users` |
+| Append-only logs | No FK | — | `audit_logs` (no FK on `user_id` for performance) |
+
+### Rule 21.8: Migration file conventions
+
+**MUST.** SQL scripts in `scripts/database/mysql/` must follow:
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| `{NN}-{module}-{description}.sql` | `01-gjp-auth.sql` | Initial schema for a module |
+| `{NN}-{module}-{migration}.sql` | `02-gjp-auth-add-mfa-columns.sql` | Schema changes |
+
+- Scripts must be idempotent where possible (`CREATE TABLE IF NOT EXISTS`, `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`)
+- Include `DROP TABLE IF EXISTS` only in dev/test scripts, never in production migrations
+- Each script must include a header comment with author, date, and purpose
+
+### Rule 21.9: Index strategy
+
+**SHOULD.** Create indexes for:
+- All foreign key columns (MySQL does this automatically for InnoDB)
+- Columns used in `WHERE` clauses of frequent queries
+- Columns used in `ORDER BY` on large tables
+- Composite indexes for multi-column lookups (most selective column first)
+
+```sql
+-- CORRECT — composite index matching query patterns
+CREATE INDEX idx_audit_logs_user_action ON audit_logs(user_id, action_type, created_at);
+```
+
+---
+
+## 22. Error Handling Response Format
+
+### Rule 22.1: All errors go through `GlobalExceptionHandler`
+
+**MUST.** All exceptions thrown from controllers and services are caught by `GlobalExceptionHandler` (`@RestControllerAdvice`) and mapped to a consistent `ApiResponse` error envelope.
+
+### Rule 22.2: Exception-to-HTTP status mapping
+
+**MUST.** `GlobalExceptionHandler` maps exceptions to HTTP status codes as follows:
+
+| Exception | HTTP Status | Error Key | Example Message |
+|-----------|------------|-----------|-----------------|
+| `MethodArgumentNotValidException` | 400 | Field name from `FieldError` | `"Password must be between 8 and 128 characters"` |
+| `IllegalArgumentException` | 400 | `"error"` | `"Username is already taken"` |
+| `BusinessException` | 400 | `"error"` | `"Current password is incorrect"` |
+| `BadCredentialsException` | 401 | `"error"` | `"Invalid username or password"` |
+| `AccessDeniedException` | 403 | `"error"` | `"Access denied"` |
+| `ResourceNotFoundException` | 404 | `"error"` | `"User not found with id: abc-123"` |
+| `DuplicateResourceException` | 409 | `"error"` | `"Role already exists with code: ROLE_ADMIN"` |
+| `IllegalStateException` | 409 | `"error"` | `"Cannot modify system role"` |
+| `RuntimeException` | 400 | `"error"` | Exception message |
+| `Exception` (catch-all) | 500 | `"error"` | `"An unexpected error occurred"` |
+
+### Rule 22.3: Error response structure
+
+**MUST.** All error responses follow this JSON structure:
+
+```json
+{
+  "status": {
+    "code": 400,
+    "message": "Validation failed",
+    "errors": {
+      "username": "Username must be between 3 and 50 characters",
+      "password": "Password must contain at least one uppercase letter"
+    }
+  },
+  "data": null,
+  "meta": {
+    "serverDateTime": "2026-03-27 10:30:45",
+    "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "sessionId": "sess-xyz"
+  }
+}
+```
+
+Key rules:
+- `status.errors` is a `Map<String, String>` — field name to error message for validation errors, or `"error"` key for single errors
+- `data` is always `null` on errors
+- `meta` is always present (populated by `ApiResponse` constructor from MDC)
+
+### Rule 22.4: Never leak internal details in error messages
+
+**MUST.** The catch-all `Exception` handler must return a generic message. Never expose stack traces, SQL errors, class names, or internal paths to the client.
+
+```java
+// CORRECT — generic message, details logged server-side
+@ExceptionHandler(Exception.class)
+public ResponseEntity<ApiResponse<?>> handleGenericException(Exception ex) {
+    log.error("Unhandled exception", ex);  // Full stack trace in server logs
+    Map<String, String> errors = Map.of("error", "An unexpected error occurred");
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiResponse.error(500, "Internal server error", errors));
+}
+
+// WRONG — leaks SQL and class names
+return ResponseEntity.status(500)
+        .body(ApiResponse.error(500, ex.getMessage(), errors));
+```
+
+> **Rationale:** Error messages in API responses are visible to attackers. Internal details (table names, query structure, class paths) help them map the system. Log full details server-side; return generic messages to clients.
+
+### Rule 22.5: Validation errors — one entry per invalid field
+
+**MUST.** When `@Valid` fails, `GlobalExceptionHandler` must extract each `FieldError` and return a map with field names as keys:
+
+```java
+// CORRECT — GlobalExceptionHandler
+@ExceptionHandler(MethodArgumentNotValidException.class)
+public ResponseEntity<ApiResponse<?>> handleValidationException(MethodArgumentNotValidException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getFieldErrors()
+            .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+    return ResponseEntity.badRequest()
+            .body(ApiResponse.error(400, "Validation failed", errors));
+}
+```
+
+This allows the client to highlight specific form fields, rather than showing a single generic error.
