@@ -123,8 +123,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Log error but do not block the request
-            log.error("JWT authentication failed: {}", e.getMessage(), e);
+            // Log at debug level — expired/invalid tokens are normal operational events
+            log.debug("JWT authentication failed: {}", e.getMessage());
         }
         
         filterChain.doFilter(request, response);

@@ -19,7 +19,9 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"exec": [""]
+				"exec": [
+					""
+				]
 			}
 		}
 	],
@@ -98,6 +100,11 @@
 			"key": "settingId",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "verificationToken",
+			"value": "",
+			"type": "string"
 		}
 	],
 	"item": [
@@ -107,13 +114,19 @@
 				{
 					"name": "Welcome",
 					"request": {
-						"auth": { "type": "noauth" },
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/",
-							"host": ["{{baseUrl}}"],
-							"path": [""]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
 						}
 					}
 				}
@@ -151,10 +164,15 @@
 								}
 							],
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -162,8 +180,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/auth/tokens",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "auth", "tokens"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"tokens"
+									]
 								}
 							}
 						},
@@ -187,10 +211,15 @@
 								}
 							],
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -198,8 +227,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/auth/tokens",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "auth", "tokens"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"tokens"
+									]
 								}
 							}
 						},
@@ -223,10 +258,15 @@
 								}
 							],
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -234,8 +274,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/auth/tokens",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "auth", "tokens"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"tokens"
+									]
 								}
 							}
 						},
@@ -259,10 +305,15 @@
 								}
 							],
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -270,8 +321,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/auth/tokens",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "auth", "tokens"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"tokens"
+									]
 								}
 							}
 						},
@@ -294,7 +351,10 @@
 							"request": {
 								"method": "DELETE",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -302,8 +362,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/auth/tokens",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "auth", "tokens"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"tokens"
+									]
 								}
 							}
 						}
@@ -315,10 +381,15 @@
 						{
 							"name": "Register User",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -326,8 +397,147 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/register",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "register"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"register"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Email Verification",
+					"item": [
+						{
+							"name": "Verify Email",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"{{verificationToken}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/auth/email/verify",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"email",
+										"verify"
+									]
+								}
+							}
+						},
+						{
+							"name": "Resend Verification Email",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"testuser@example.com\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/auth/email/resend-verification",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"email",
+										"resend-verification"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Password Reset",
+					"item": [
+						{
+							"name": "Forgot Password",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"testuser@example.com\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/auth/password/forgot",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"password",
+										"forgot"
+									]
+								}
+							}
+						},
+						{
+							"name": "Reset Password",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"{{verificationToken}}\",\n    \"newPassword\": \"NewPass@123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/auth/password/reset",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"password",
+										"reset"
+									]
 								}
 							}
 						}
@@ -343,21 +553,70 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/users?page=0&size=10&sort=username&direction=asc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "10" },
-										{ "key": "sort", "value": "username" },
-										{ "key": "direction", "value": "asc" },
-										{ "key": "username", "value": "", "disabled": true },
-										{ "key": "nickname", "value": "", "disabled": true },
-										{ "key": "email", "value": "", "disabled": true },
-										{ "key": "mobileCountryCode", "value": "", "disabled": true },
-										{ "key": "mobileNumber", "value": "", "disabled": true },
-										{ "key": "accountStatus", "value": "ACTIVE", "disabled": true },
-										{ "key": "active", "value": "true", "disabled": true },
-										{ "key": "roleCode", "value": "", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										},
+										{
+											"key": "sort",
+											"value": "username"
+										},
+										{
+											"key": "direction",
+											"value": "asc"
+										},
+										{
+											"key": "username",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "nickname",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "mobileCountryCode",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "mobileNumber",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "accountStatus",
+											"value": "ACTIVE",
+											"disabled": true
+										},
+										{
+											"key": "active",
+											"value": "true",
+											"disabled": true
+										},
+										{
+											"key": "roleCode",
+											"value": "",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -369,8 +628,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/{{userId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"{{userId}}"
+									]
 								}
 							}
 						},
@@ -381,8 +646,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/username/gjpb",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "username", "gjpb"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"username",
+										"gjpb"
+									]
 								}
 							}
 						},
@@ -407,7 +679,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -415,8 +690,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/users",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users"
+									]
 								}
 							}
 						},
@@ -425,7 +705,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -433,8 +716,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/{{userId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"{{userId}}"
+									]
 								}
 							}
 						},
@@ -443,7 +732,10 @@
 							"request": {
 								"method": "PATCH",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -451,8 +743,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/{{userId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"{{userId}}"
+									]
 								}
 							}
 						},
@@ -461,7 +759,10 @@
 							"request": {
 								"method": "PATCH",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -469,8 +770,15 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/{{userId}}/password",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}", "password"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"{{userId}}",
+										"password"
+									]
 								}
 							}
 						},
@@ -481,8 +789,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/{{userId}}/toggle-status",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}", "toggle-status"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"{{userId}}",
+										"toggle-status"
+									]
 								}
 							}
 						},
@@ -493,8 +808,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/dashboard",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "dashboard"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"dashboard"
+									]
 								}
 							}
 						},
@@ -505,20 +826,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/users/{{userId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}"]
-								}
-							}
-						},
-						{
-							"name": "Delete User (permanent)",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/v1/users/{{userId}}/permanent",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "users", "{{userId}}", "permanent"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"{{userId}}"
+									]
 								}
 							}
 						}
@@ -534,8 +849,13 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/profile",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "profile"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"profile"
+									]
 								}
 							}
 						},
@@ -544,7 +864,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -552,8 +875,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/profile",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "profile"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"profile"
+									]
 								}
 							}
 						},
@@ -562,7 +890,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -570,8 +901,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/profile/password",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "profile", "password"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"profile",
+										"password"
+									]
 								}
 							}
 						},
@@ -582,10 +919,19 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/profile/check-email?email=test@example.com",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "profile", "check-email"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"profile",
+										"check-email"
+									],
 									"query": [
-										{ "key": "email", "value": "test@example.com" }
+										{
+											"key": "email",
+											"value": "test@example.com"
+										}
 									]
 								}
 							}
@@ -597,11 +943,23 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/profile/check-mobile?countryCode=65&number=91234567",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "profile", "check-mobile"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"profile",
+										"check-mobile"
+									],
 									"query": [
-										{ "key": "countryCode", "value": "65" },
-										{ "key": "number", "value": "91234567" }
+										{
+											"key": "countryCode",
+											"value": "65"
+										},
+										{
+											"key": "number",
+											"value": "91234567"
+										}
 									]
 								}
 							}
@@ -618,8 +976,13 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles"
+									]
 								}
 							}
 						},
@@ -630,8 +993,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/active",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "active"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"active"
+									]
 								}
 							}
 						},
@@ -642,8 +1011,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/{{roleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "{{roleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"{{roleId}}"
+									]
 								}
 							}
 						},
@@ -654,8 +1029,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/code/ADMIN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "code", "ADMIN"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"code",
+										"ADMIN"
+									]
 								}
 							}
 						},
@@ -680,7 +1062,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -688,8 +1073,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles"
+									]
 								}
 							}
 						},
@@ -698,7 +1088,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -706,8 +1099,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/{{roleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "{{roleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"{{roleId}}"
+									]
 								}
 							}
 						},
@@ -716,7 +1115,10 @@
 							"request": {
 								"method": "PATCH",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -724,8 +1126,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/{{roleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "{{roleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"{{roleId}}"
+									]
 								}
 							}
 						},
@@ -736,8 +1144,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/{{roleId}}/toggle-status",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "{{roleId}}", "toggle-status"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"{{roleId}}",
+										"toggle-status"
+									]
 								}
 							}
 						},
@@ -748,8 +1163,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/roles/{{roleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "roles", "{{roleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"roles",
+										"{{roleId}}"
+									]
 								}
 							}
 						}
@@ -765,8 +1186,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/admin/sessions/stats",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "admin", "sessions", "stats"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"admin",
+										"sessions",
+										"stats"
+									]
 								}
 							}
 						},
@@ -777,8 +1205,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/admin/sessions/active",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "admin", "sessions", "active"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"admin",
+										"sessions",
+										"active"
+									]
 								}
 							}
 						},
@@ -789,8 +1224,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/admin/sessions/cleanup",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "admin", "sessions", "cleanup"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"admin",
+										"sessions",
+										"cleanup"
+									]
 								}
 							}
 						}
@@ -811,17 +1253,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "title", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "title",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -833,8 +1308,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles/all",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles", "all"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles",
+										"all"
+									]
 								}
 							}
 						},
@@ -845,8 +1326,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles/{{articleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles", "{{articleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles",
+										"{{articleId}}"
+									]
 								}
 							}
 						},
@@ -871,7 +1358,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -879,8 +1369,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles"
+									]
 								}
 							}
 						},
@@ -908,19 +1403,53 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "title", "value": "Test Article with Cover", "type": "text" },
-										{ "key": "summary", "value": "Article with cover image", "type": "text" },
-										{ "key": "content", "value": "<p>Content here</p>", "type": "text" },
-										{ "key": "tags", "value": "test", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "isActive", "value": "true", "type": "text" },
-										{ "key": "coverImageFile", "type": "file", "src": "", "disabled": true }
+										{
+											"key": "title",
+											"value": "Test Article with Cover",
+											"type": "text"
+										},
+										{
+											"key": "summary",
+											"value": "Article with cover image",
+											"type": "text"
+										},
+										{
+											"key": "content",
+											"value": "<p>Content here</p>",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "test",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "coverImageFile",
+											"type": "file",
+											"src": "",
+											"disabled": true
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles"
+									]
 								}
 							}
 						},
@@ -929,7 +1458,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -937,8 +1469,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles/{{articleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles", "{{articleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles",
+										"{{articleId}}"
+									]
 								}
 							}
 						},
@@ -949,21 +1487,36 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles/{{articleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles", "{{articleId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles",
+										"{{articleId}}"
+									]
 								}
 							}
 						},
 						{
 							"name": "View Article Cover",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/articles/cover/sample.jpg",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "articles", "cover", "sample.jpg"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"articles",
+										"cover",
+										"sample.jpg"
+									]
 								}
 							}
 						}
@@ -979,12 +1532,28 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images?articleId={{articleId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images"
+									],
 									"query": [
-										{ "key": "articleId", "value": "{{articleId}}" },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "articleId",
+											"value": "{{articleId}}"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -996,8 +1565,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images/{{articleImageId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images", "{{articleImageId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images",
+										"{{articleImageId}}"
+									]
 								}
 							}
 						},
@@ -1022,7 +1597,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1030,8 +1608,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images"
+									]
 								}
 							}
 						},
@@ -1043,16 +1626,37 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "articleId", "value": "{{articleId}}", "type": "text" },
-										{ "key": "filename", "value": "article-img.jpg", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "file", "type": "file", "src": "" }
+										{
+											"key": "articleId",
+											"value": "{{articleId}}",
+											"type": "text"
+										},
+										{
+											"key": "filename",
+											"value": "article-img.jpg",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": ""
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images"
+									]
 								}
 							}
 						},
@@ -1061,7 +1665,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1069,8 +1676,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images/{{articleImageId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images", "{{articleImageId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images",
+										"{{articleImageId}}"
+									]
 								}
 							}
 						},
@@ -1081,8 +1694,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images/{{articleImageId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images", "{{articleImageId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images",
+										"{{articleImageId}}"
+									]
 								}
 							}
 						},
@@ -1093,21 +1712,37 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images/{{articleImageId}}/permanent",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images", "{{articleImageId}}", "permanent"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images",
+										"{{articleImageId}}",
+										"permanent"
+									]
 								}
 							}
 						},
 						{
 							"name": "View Article Image",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/article-images/view/sample.jpg",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "article-images", "view", "sample.jpg"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"article-images",
+										"view",
+										"sample.jpg"
+									]
 								}
 							}
 						}
@@ -1123,18 +1758,55 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/images?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "name", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true },
-										{ "key": "keyword", "value": "", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										},
+										{
+											"key": "keyword",
+											"value": "",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -1146,8 +1818,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/images/all",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images", "all"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images",
+										"all"
+									]
 								}
 							}
 						},
@@ -1158,8 +1836,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/images/{{imageId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images", "{{imageId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images",
+										"{{imageId}}"
+									]
 								}
 							}
 						},
@@ -1187,17 +1871,42 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "name", "value": "Test Image", "type": "text" },
-										{ "key": "tags", "value": "test,postman", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "isActive", "value": "true", "type": "text" },
-										{ "key": "file", "type": "file", "src": "" }
+										{
+											"key": "name",
+											"value": "Test Image",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "test,postman",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": ""
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/images",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images"
+									]
 								}
 							}
 						},
@@ -1222,7 +1931,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1230,8 +1942,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/images",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images"
+									]
 								}
 							}
 						},
@@ -1240,7 +1957,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1248,8 +1968,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/images/{{imageId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images", "{{imageId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images",
+										"{{imageId}}"
+									]
 								}
 							}
 						},
@@ -1260,21 +1986,36 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/images/{{imageId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images", "{{imageId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images",
+										"{{imageId}}"
+									]
 								}
 							}
 						},
 						{
 							"name": "View Image",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/images/view/sample.jpg",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "images", "view", "sample.jpg"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"images",
+										"view",
+										"sample.jpg"
+									]
 								}
 							}
 						}
@@ -1290,17 +2031,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "name", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -1312,8 +2086,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos/all",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos", "all"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos",
+										"all"
+									]
 								}
 							}
 						},
@@ -1324,8 +2104,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos/{{videoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos", "{{videoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos",
+										"{{videoId}}"
+									]
 								}
 							}
 						},
@@ -1353,17 +2139,42 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "name", "value": "Test Video", "type": "text" },
-										{ "key": "tags", "value": "test", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "isActive", "value": "true", "type": "text" },
-										{ "key": "file", "type": "file", "src": "" }
+										{
+											"key": "name",
+											"value": "Test Video",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "test",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": ""
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos"
+									]
 								}
 							}
 						},
@@ -1375,15 +2186,33 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "name", "value": "Updated Video", "type": "text" },
-										{ "key": "tags", "value": "updated", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" }
+										{
+											"key": "name",
+											"value": "Updated Video",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "updated",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos/{{videoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos", "{{videoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos",
+										"{{videoId}}"
+									]
 								}
 							}
 						},
@@ -1392,7 +2221,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1400,8 +2232,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos/{{videoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos", "{{videoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos",
+										"{{videoId}}"
+									]
 								}
 							}
 						},
@@ -1412,23 +2250,42 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos/{{videoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos", "{{videoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos",
+										"{{videoId}}"
+									]
 								}
 							}
 						},
 						{
 							"name": "Stream Video",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [
-									{ "key": "Range", "value": "bytes=0-", "disabled": true }
+									{
+										"key": "Range",
+										"value": "bytes=0-",
+										"disabled": true
+									}
 								],
 								"url": {
 									"raw": "{{baseUrl}}/v1/videos/view/sample.mp4",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "videos", "view", "sample.mp4"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"videos",
+										"view",
+										"sample.mp4"
+									]
 								}
 							}
 						}
@@ -1444,17 +2301,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "name", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -1466,8 +2356,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios/all",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios", "all"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios",
+										"all"
+									]
 								}
 							}
 						},
@@ -1478,8 +2374,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios/{{audioId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios", "{{audioId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios",
+										"{{audioId}}"
+									]
 								}
 							}
 						},
@@ -1507,18 +2409,47 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "name", "value": "Test Audio", "type": "text" },
-										{ "key": "artist", "value": "Test Artist", "type": "text" },
-										{ "key": "tags", "value": "test", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "isActive", "value": "true", "type": "text" },
-										{ "key": "file", "type": "file", "src": "" }
+										{
+											"key": "name",
+											"value": "Test Audio",
+											"type": "text"
+										},
+										{
+											"key": "artist",
+											"value": "Test Artist",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "test",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": ""
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios"
+									]
 								}
 							}
 						},
@@ -1527,7 +2458,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1535,8 +2469,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios/{{audioId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios", "{{audioId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios",
+										"{{audioId}}"
+									]
 								}
 							}
 						},
@@ -1547,23 +2487,42 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios/{{audioId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios", "{{audioId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios",
+										"{{audioId}}"
+									]
 								}
 							}
 						},
 						{
 							"name": "Stream Audio",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [
-									{ "key": "Range", "value": "bytes=0-", "disabled": true }
+									{
+										"key": "Range",
+										"value": "bytes=0-",
+										"disabled": true
+									}
 								],
 								"url": {
 									"raw": "{{baseUrl}}/v1/audios/view/sample.mp3",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "audios", "view", "sample.mp3"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"audios",
+										"view",
+										"sample.mp3"
+									]
 								}
 							}
 						}
@@ -1579,17 +2538,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/files?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "name", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -1601,8 +2593,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/files/{{fileId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files", "{{fileId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files",
+										"{{fileId}}"
+									]
 								}
 							}
 						},
@@ -1630,17 +2628,42 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "name", "value": "Test File", "type": "text" },
-										{ "key": "tags", "value": "test", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "isActive", "value": "true", "type": "text" },
-										{ "key": "file", "type": "file", "src": "" }
+										{
+											"key": "name",
+											"value": "Test File",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "test",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": ""
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/files",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files"
+									]
 								}
 							}
 						},
@@ -1649,7 +2672,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1657,8 +2683,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/files",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files"
+									]
 								}
 							}
 						},
@@ -1667,7 +2698,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1675,8 +2709,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/files/{{fileId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files", "{{fileId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files",
+										"{{fileId}}"
+									]
 								}
 							}
 						},
@@ -1687,21 +2727,36 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/files/{{fileId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files", "{{fileId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files",
+										"{{fileId}}"
+									]
 								}
 							}
 						},
 						{
 							"name": "Download File",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/files/download/sample.pdf",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "files", "download", "sample.pdf"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"files",
+										"download",
+										"sample.pdf"
+									]
 								}
 							}
 						}
@@ -1717,17 +2772,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "name", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -1739,8 +2827,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/all",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "all"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"all"
+									]
 								}
 							}
 						},
@@ -1751,8 +2845,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/{{logoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "{{logoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"{{logoId}}"
+									]
 								}
 							}
 						},
@@ -1763,10 +2863,19 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/tag?tag=tech",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "tag"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"tag"
+									],
 									"query": [
-										{ "key": "tag", "value": "tech" }
+										{
+											"key": "tag",
+											"value": "tech"
+										}
 									]
 								}
 							}
@@ -1795,17 +2904,42 @@
 								"body": {
 									"mode": "formdata",
 									"formdata": [
-										{ "key": "name", "value": "Test Logo", "type": "text" },
-										{ "key": "tags", "value": "test,logo", "type": "text" },
-										{ "key": "lang", "value": "EN", "type": "text" },
-										{ "key": "isActive", "value": "true", "type": "text" },
-										{ "key": "file", "type": "file", "src": "" }
+										{
+											"key": "name",
+											"value": "Test Logo",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "test,logo",
+											"type": "text"
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"type": "text"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": ""
+										}
 									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos"
+									]
 								}
 							}
 						},
@@ -1814,7 +2948,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1822,8 +2959,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos"
+									]
 								}
 							}
 						},
@@ -1832,7 +2974,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -1840,8 +2985,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/{{logoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "{{logoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"{{logoId}}"
+									]
 								}
 							}
 						},
@@ -1852,8 +3003,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/{{logoId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "{{logoId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"{{logoId}}"
+									]
 								}
 							}
 						},
@@ -1864,21 +3021,37 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/{{logoId}}/permanent",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "{{logoId}}", "permanent"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"{{logoId}}",
+										"permanent"
+									]
 								}
 							}
 						},
 						{
 							"name": "View Logo",
 							"request": {
-								"auth": { "type": "noauth" },
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/logos/view/sample.svg",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "logos", "view", "sample.svg"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"logos",
+										"view",
+										"sample.svg"
+									]
 								}
 							}
 						}
@@ -1894,17 +3067,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "name", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -1916,8 +3122,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/{{websiteId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "{{websiteId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"{{websiteId}}"
+									]
 								}
 							}
 						},
@@ -1928,10 +3140,20 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/by-language/EN?activeOnly=false",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "by-language", "EN"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"by-language",
+										"EN"
+									],
 									"query": [
-										{ "key": "activeOnly", "value": "false" }
+										{
+											"key": "activeOnly",
+											"value": "false"
+										}
 									]
 								}
 							}
@@ -1943,11 +3165,23 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/by-tag?tag=tech&activeOnly=true",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "by-tag"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"by-tag"
+									],
 									"query": [
-										{ "key": "tag", "value": "tech" },
-										{ "key": "activeOnly", "value": "true" }
+										{
+											"key": "tag",
+											"value": "tech"
+										},
+										{
+											"key": "activeOnly",
+											"value": "true"
+										}
 									]
 								}
 							}
@@ -1959,10 +3193,19 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/top?limit=10",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "top"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"top"
+									],
 									"query": [
-										{ "key": "limit", "value": "10" }
+										{
+											"key": "limit",
+											"value": "10"
+										}
 									]
 								}
 							}
@@ -1974,8 +3217,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/statistics",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "statistics"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"statistics"
+									]
 								}
 							}
 						},
@@ -2000,7 +3249,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2008,8 +3260,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites"
+									]
 								}
 							}
 						},
@@ -2018,7 +3275,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2026,8 +3286,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/{{websiteId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "{{websiteId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"{{websiteId}}"
+									]
 								}
 							}
 						},
@@ -2038,8 +3304,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/{{websiteId}}/activate",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "{{websiteId}}", "activate"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"{{websiteId}}",
+										"activate"
+									]
 								}
 							}
 						},
@@ -2050,8 +3323,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/{{websiteId}}/deactivate",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "{{websiteId}}", "deactivate"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"{{websiteId}}",
+										"deactivate"
+									]
 								}
 							}
 						},
@@ -2060,7 +3340,10 @@
 							"request": {
 								"method": "PATCH",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2068,8 +3351,15 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/bulk/activate",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "bulk", "activate"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"bulk",
+										"activate"
+									]
 								}
 							}
 						},
@@ -2078,7 +3368,10 @@
 							"request": {
 								"method": "PATCH",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2086,8 +3379,15 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/bulk/deactivate",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "bulk", "deactivate"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"bulk",
+										"deactivate"
+									]
 								}
 							}
 						},
@@ -2098,8 +3398,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/websites/{{websiteId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "websites", "{{websiteId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"websites",
+										"{{websiteId}}"
+									]
 								}
 							}
 						}
@@ -2115,17 +3421,50 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/questions?page=0&size=20&sort=updatedAt&direction=desc",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "questions"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"questions"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "sort", "value": "updatedAt" },
-										{ "key": "direction", "value": "desc" },
-										{ "key": "question", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "tags", "value": "", "disabled": true },
-										{ "key": "isActive", "value": "true", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "sort",
+											"value": "updatedAt"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										},
+										{
+											"key": "question",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -2137,8 +3476,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/questions/{{questionId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "questions", "{{questionId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"questions",
+										"{{questionId}}"
+									]
 								}
 							}
 						},
@@ -2149,10 +3494,20 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/questions/by-language/EN?activeOnly=false",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "questions", "by-language", "EN"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"questions",
+										"by-language",
+										"EN"
+									],
 									"query": [
-										{ "key": "activeOnly", "value": "false" }
+										{
+											"key": "activeOnly",
+											"value": "false"
+										}
 									]
 								}
 							}
@@ -2178,7 +3533,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2186,8 +3544,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/questions",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "questions"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"questions"
+									]
 								}
 							}
 						},
@@ -2196,7 +3559,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2204,8 +3570,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/questions/{{questionId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "questions", "{{questionId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"questions",
+										"{{questionId}}"
+									]
 								}
 							}
 						},
@@ -2216,8 +3588,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/questions/{{questionId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "questions", "{{questionId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"questions",
+										"{{questionId}}"
+									]
 								}
 							}
 						}
@@ -2238,15 +3616,42 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings?page=0&size=20",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings"
+									],
 									"query": [
-										{ "key": "page", "value": "0" },
-										{ "key": "size", "value": "20" },
-										{ "key": "searchTerm", "value": "", "disabled": true },
-										{ "key": "lang", "value": "EN", "disabled": true },
-										{ "key": "isPublic", "value": "true", "disabled": true },
-										{ "key": "isSystem", "value": "false", "disabled": true }
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										},
+										{
+											"key": "searchTerm",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "lang",
+											"value": "EN",
+											"disabled": true
+										},
+										{
+											"key": "isPublic",
+											"value": "true",
+											"disabled": true
+										},
+										{
+											"key": "isSystem",
+											"value": "false",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -2258,8 +3663,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/{{settingId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "{{settingId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"{{settingId}}"
+									]
 								}
 							}
 						},
@@ -2270,11 +3681,23 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/by-name?name=app_name&lang=EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "by-name"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"by-name"
+									],
 									"query": [
-										{ "key": "name", "value": "app_name" },
-										{ "key": "lang", "value": "EN" }
+										{
+											"key": "name",
+											"value": "app_name"
+										},
+										{
+											"key": "lang",
+											"value": "EN"
+										}
 									]
 								}
 							}
@@ -2286,8 +3709,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/by-name/app_name",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "by-name", "app_name"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"by-name",
+										"app_name"
+									]
 								}
 							}
 						},
@@ -2298,8 +3728,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/by-language/EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "by-language", "EN"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"by-language",
+										"EN"
+									]
 								}
 							}
 						},
@@ -2310,8 +3747,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/public",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "public"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"public"
+									]
 								}
 							}
 						},
@@ -2322,8 +3765,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/public/EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "public", "EN"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"public",
+										"EN"
+									]
 								}
 							}
 						},
@@ -2334,8 +3784,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/user-editable",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "user-editable"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"user-editable"
+									]
 								}
 							}
 						},
@@ -2346,8 +3802,15 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/user-editable/EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "user-editable", "EN"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"user-editable",
+										"EN"
+									]
 								}
 							}
 						},
@@ -2358,12 +3821,28 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/value?name=app_name&lang=EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "value"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"value"
+									],
 									"query": [
-										{ "key": "name", "value": "app_name" },
-										{ "key": "lang", "value": "EN" },
-										{ "key": "defaultValue", "value": "default", "disabled": true }
+										{
+											"key": "name",
+											"value": "app_name"
+										},
+										{
+											"key": "lang",
+											"value": "EN"
+										},
+										{
+											"key": "defaultValue",
+											"value": "default",
+											"disabled": true
+										}
 									]
 								}
 							}
@@ -2375,8 +3854,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/names",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "names"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"names"
+									]
 								}
 							}
 						},
@@ -2387,8 +3872,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/statistics",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "statistics"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"statistics"
+									]
 								}
 							}
 						},
@@ -2399,11 +3890,23 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/exists?name=app_name&lang=EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "exists"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"exists"
+									],
 									"query": [
-										{ "key": "name", "value": "app_name" },
-										{ "key": "lang", "value": "EN" }
+										{
+											"key": "name",
+											"value": "app_name"
+										},
+										{
+											"key": "lang",
+											"value": "EN"
+										}
 									]
 								}
 							}
@@ -2429,7 +3932,10 @@
 							"request": {
 								"method": "POST",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2437,8 +3943,13 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings"
+									]
 								}
 							}
 						},
@@ -2447,7 +3958,10 @@
 							"request": {
 								"method": "PUT",
 								"header": [
-									{ "key": "Content-Type", "value": "application/json" }
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
 								],
 								"body": {
 									"mode": "raw",
@@ -2455,8 +3969,14 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/{{settingId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "{{settingId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"{{settingId}}"
+									]
 								}
 							}
 						},
@@ -2467,12 +3987,27 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/value?name=test_setting&lang=EN&value=quick_update",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "value"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"value"
+									],
 									"query": [
-										{ "key": "name", "value": "test_setting" },
-										{ "key": "lang", "value": "EN" },
-										{ "key": "value", "value": "quick_update" }
+										{
+											"key": "name",
+											"value": "test_setting"
+										},
+										{
+											"key": "lang",
+											"value": "EN"
+										},
+										{
+											"key": "value",
+											"value": "quick_update"
+										}
 									]
 								}
 							}
@@ -2484,8 +4019,14 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/{{settingId}}",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "{{settingId}}"]
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"{{settingId}}"
+									]
 								}
 							}
 						},
@@ -2496,11 +4037,23 @@
 								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/v1/app-settings/by-name?name=test_setting&lang=EN",
-									"host": ["{{baseUrl}}"],
-									"path": ["v1", "app-settings", "by-name"],
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"app-settings",
+										"by-name"
+									],
 									"query": [
-										{ "key": "name", "value": "test_setting" },
-										{ "key": "lang", "value": "EN" }
+										{
+											"key": "name",
+											"value": "test_setting"
+										},
+										{
+											"key": "lang",
+											"value": "EN"
+										}
 									]
 								}
 							}
@@ -2519,21 +4072,71 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit?page=0&size=20&sort=createdAt,desc",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit"
+							],
 							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "20" },
-								{ "key": "sort", "value": "createdAt,desc" },
-								{ "key": "userId", "value": "", "disabled": true },
-								{ "key": "username", "value": "", "disabled": true },
-								{ "key": "httpMethod", "value": "GET", "disabled": true },
-								{ "key": "endpoint", "value": "", "disabled": true },
-								{ "key": "result", "value": "SUCCESS", "disabled": true },
-								{ "key": "statusCode", "value": "200", "disabled": true },
-								{ "key": "ipAddress", "value": "", "disabled": true },
-								{ "key": "startDate", "value": "2026-01-01", "disabled": true },
-								{ "key": "endDate", "value": "2026-12-31", "disabled": true }
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								},
+								{
+									"key": "sort",
+									"value": "createdAt,desc"
+								},
+								{
+									"key": "userId",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "httpMethod",
+									"value": "GET",
+									"disabled": true
+								},
+								{
+									"key": "endpoint",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "result",
+									"value": "SUCCESS",
+									"disabled": true
+								},
+								{
+									"key": "statusCode",
+									"value": "200",
+									"disabled": true
+								},
+								{
+									"key": "ipAddress",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "2026-01-01",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "2026-12-31",
+									"disabled": true
+								}
 							]
 						}
 					}
@@ -2545,8 +4148,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/some-audit-id",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "some-audit-id"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"some-audit-id"
+							]
 						}
 					}
 				},
@@ -2557,11 +4166,24 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/user/{{userId}}?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "user", "{{userId}}"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"user",
+								"{{userId}}"
+							],
 							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "20" }
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
 							]
 						}
 					}
@@ -2573,11 +4195,25 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/user/{{userId}}/failures?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "user", "{{userId}}", "failures"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"user",
+								"{{userId}}",
+								"failures"
+							],
 							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "20" }
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
 							]
 						}
 					}
@@ -2589,11 +4225,25 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/resource/USER/{{userId}}?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "resource", "USER", "{{userId}}"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"resource",
+								"USER",
+								"{{userId}}"
+							],
 							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "20" }
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
 							]
 						}
 					}
@@ -2605,11 +4255,24 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/ip/127.0.0.1?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "ip", "127.0.0.1"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"ip",
+								"127.0.0.1"
+							],
 							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "20" }
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
 							]
 						}
 					}
@@ -2621,8 +4284,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/recent",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "recent"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"recent"
+							]
 						}
 					}
 				},
@@ -2633,10 +4302,19 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/statistics?days=7",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "statistics"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"statistics"
+							],
 							"query": [
-								{ "key": "days", "value": "7" }
+								{
+									"key": "days",
+									"value": "7"
+								}
 							]
 						}
 					}
@@ -2648,10 +4326,21 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/failed-logins/user/{{userId}}?hours=24",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "failed-logins", "user", "{{userId}}"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"failed-logins",
+								"user",
+								"{{userId}}"
+							],
 							"query": [
-								{ "key": "hours", "value": "24" }
+								{
+									"key": "hours",
+									"value": "24"
+								}
 							]
 						}
 					}
@@ -2663,10 +4352,21 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/failed-logins/ip/127.0.0.1?hours=24",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "failed-logins", "ip", "127.0.0.1"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"failed-logins",
+								"ip",
+								"127.0.0.1"
+							],
 							"query": [
-								{ "key": "hours", "value": "24" }
+								{
+									"key": "hours",
+									"value": "24"
+								}
 							]
 						}
 					}
@@ -2678,10 +4378,19 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/v1/audit/cleanup?retentionDays=90",
-							"host": ["{{baseUrl}}"],
-							"path": ["v1", "audit", "cleanup"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"audit",
+								"cleanup"
+							],
 							"query": [
-								{ "key": "retentionDays", "value": "90" }
+								{
+									"key": "retentionDays",
+									"value": "90"
+								}
 							]
 						}
 					}
@@ -2694,13 +4403,20 @@
 				{
 					"name": "Actuator Health",
 					"request": {
-						"auth": { "type": "noauth" },
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/actuator/health",
-							"host": ["{{baseUrl}}"],
-							"path": ["actuator", "health"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
 						}
 					}
 				}

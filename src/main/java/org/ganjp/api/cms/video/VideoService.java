@@ -1,16 +1,18 @@
 package org.ganjp.api.cms.video;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.ganjp.api.cms.video.VideoUploadProperties;
 import org.ganjp.api.cms.video.VideoCreateRequest;
 import org.ganjp.api.cms.video.VideoResponse;
 import org.ganjp.api.cms.video.VideoUpdateRequest;
 import org.ganjp.api.cms.video.Video;
 import org.ganjp.api.cms.video.VideoRepository;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,10 +24,13 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
  
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VideoService {
     private final VideoRepository videoRepository;
     private final VideoUploadProperties uploadProperties;

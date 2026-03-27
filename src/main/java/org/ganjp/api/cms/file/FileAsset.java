@@ -1,13 +1,22 @@
 package org.ganjp.api.cms.file;
 
 import jakarta.persistence.*;
-import lombok.Data;
+
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
+@Slf4j
+@Getter
+@Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "cms_file")
-@Data
 public class FileAsset {
     @Id
     private String id;
@@ -35,9 +44,11 @@ public class FileAsset {
     public enum Language { EN, ZH }
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Language lang = Language.EN;
 
     @Column(name = "display_order")
+    @Builder.Default
     private Integer displayOrder = 0;
 
     @Column(name = "created_at")
@@ -53,5 +64,19 @@ public class FileAsset {
     private String updatedBy;
 
     @Column(name = "is_active")
+    @Builder.Default
     private Boolean isActive = true;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FileAsset that = (FileAsset) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

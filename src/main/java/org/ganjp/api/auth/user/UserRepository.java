@@ -49,6 +49,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "UPDATE auth_users SET failed_login_attempts = COALESCE(failed_login_attempts, 0) + 1, last_failed_login_at = :now WHERE id = :userId", nativeQuery = true)
     int updateLoginFailureByIdNative(@Param("userId") String userId, @Param("now") LocalDateTime now);
 
+    @Query(value = "SELECT failed_login_attempts FROM auth_users WHERE id = :userId", nativeQuery = true)
+    int findFailedLoginAttemptsById(@Param("userId") String userId);
+
     @Query("SELECT u FROM User u WHERE u.accountLockedUntil IS NOT NULL AND u.accountLockedUntil <= :now")
     List<User> findUsersWithExpiredLocks(@Param("now") LocalDateTime now);
     

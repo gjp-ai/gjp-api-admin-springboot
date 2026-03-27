@@ -148,7 +148,7 @@ Authorization is enforced via `@PreAuthorize` annotations on every controller me
 
 | Level | Authorities | Typical Endpoints |
 |-------|------------|-------------------|
-| Public | None | Register, Login, Token Refresh |
+| Public | None | Register, Login, Token Refresh, Email Verification, Password Reset |
 | Authenticated | Any valid token | Profile endpoints |
 | Admin | `ROLE_ADMIN` or `ROLE_SUPER_ADMIN` | User listing, session stats |
 | Super Admin | `ROLE_SUPER_ADMIN` only | Role management, user deletion |
@@ -161,6 +161,10 @@ Authorization is enforced via `@PreAuthorize` annotations on every controller me
 | `POST /v1/auth/tokens` | POST | Public |
 | `PUT /v1/auth/tokens` | PUT | Public |
 | `DELETE /v1/auth/tokens` | DELETE | Authenticated |
+| `POST /v1/auth/email/verify` | POST | Public |
+| `POST /v1/auth/email/resend-verification` | POST | Public |
+| `POST /v1/auth/password/forgot` | POST | Public |
+| `POST /v1/auth/password/reset` | POST | Public |
 | `GET /v1/profile` | GET | Authenticated |
 | `PUT /v1/profile` | PUT | Authenticated |
 | `PUT /v1/profile/password` | PUT | Authenticated |

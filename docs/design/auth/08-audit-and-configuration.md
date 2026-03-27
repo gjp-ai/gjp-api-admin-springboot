@@ -208,6 +208,10 @@ security:
       - http://localhost:8082
       - http://127.0.0.1:8082
       - http://localhost:3000
+
+  verification:
+    password-reset-expiration: 3600000        # Password reset token: 1 hour (ms)
+    email-verification-expiration: 86400000   # Email verification token: 24 hours (ms)
 ```
 
 ### 4.3 Security Properties Java Mapping
@@ -219,6 +223,7 @@ public class SecurityProperties {
     private List<AuthorizedEndpoint> authorizedEndpoints;
     private Cors cors;
     private Jwt jwt;
+    private Verification verification;
 
     @Data
     public static class AuthorizedEndpoint {
@@ -237,6 +242,12 @@ public class SecurityProperties {
         private long expiration;
         private long refreshExpiration = 2592000000L;  // 30 days default
         private String issuer = "gjp-api-admin";
+    }
+
+    @Data
+    public static class Verification {
+        private long passwordResetExpiration = 3_600_000L;   // 1 hour default
+        private long emailVerificationExpiration = 86_400_000L; // 24 hours default
     }
 }
 ```
@@ -292,6 +303,8 @@ spring:
 |----------|-----|--------------------------|
 | `security.jwt.secret-key` | Dev key | Strong random key (env var) |
 | `security.jwt.expiration` | 1800000 (30 min) | 900000 (15 min) |
+| `security.verification.password-reset-expiration` | 3600000 (1 hr) | 3600000 (1 hr) |
+| `security.verification.email-verification-expiration` | 86400000 (24 hr) | 86400000 (24 hr) |
 | `audit.include-sensitive-data` | false | false |
 | `audit.async-processing` | true | true |
 | `spring.jpa.properties.hibernate.format_sql` | true | false |
@@ -329,7 +342,19 @@ Based on `audit.retention-days` (default: 300 days):
 DELETE FROM audit_logs WHERE timestamp < DATE_SUB(NOW(), INTERVAL 300 DAY);
 ```
 
-### 6.4 Session Cleanup
+### 6.4 Verification Token Cleanup
+
+The `VerificationTokenRepository.deleteExpiredTokens()` method removes expired verification tokens:
+
+```java
+@Modifying
+@Query("DELETE FROM VerificationToken v WHERE v.expiresAt < :cutoffTime")
+int deleteExpiredTokens(@Param("cutoffTime") LocalDateTime cutoffTime);
+```
+
+This should be scheduled as a periodic job (e.g., daily cron) to clean up expired password reset and email verification tokens.
+
+### 6.5 Session Cleanup
 
 Active sessions are cleaned up automatically when they exceed the timeout. A manual cleanup can be triggered via:
 

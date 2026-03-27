@@ -1,16 +1,18 @@
 package org.ganjp.api.cms.audio;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.ganjp.api.cms.audio.AudioUploadProperties;
 import org.ganjp.api.cms.audio.AudioCreateRequest;
 import org.ganjp.api.cms.audio.AudioResponse;
 import org.ganjp.api.cms.audio.AudioUpdateRequest;
 import org.ganjp.api.cms.audio.Audio;
 import org.ganjp.api.cms.audio.AudioRepository;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,9 +24,12 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AudioService {
     private final AudioRepository audioRepository;
     private final AudioUploadProperties uploadProperties;

@@ -55,7 +55,7 @@ done
 
 # ── Resolve SQL directory ────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SQL_DIR="${SCRIPT_DIR}/database/mysql"
+SQL_DIR="${SCRIPT_DIR}/../database/mysql"
 
 # ── SQL files in execution order ─────────────────────────────────────────────
 SQL_FILES=(

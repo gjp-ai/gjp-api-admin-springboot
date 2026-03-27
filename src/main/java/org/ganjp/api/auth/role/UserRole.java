@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.user.User;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
  * Entity representing the relationship between users and roles with enhanced tracking.
  * Maps to the auth_user_roles table.
  */
+@Slf4j
 @Getter
 @Setter
 @ToString(exclude = {"user", "role"})

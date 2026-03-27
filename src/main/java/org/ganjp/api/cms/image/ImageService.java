@@ -12,6 +12,7 @@ import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -32,9 +33,10 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Transactional
 public class ImageService {
     private final ImageRepository imageRepository;
     private final ImageUploadProperties imageUploadProperties;
@@ -109,7 +111,7 @@ public class ImageService {
                 try { image.setSizeBytes(Files.size(newImagePath)); } catch (Exception ignored) {}
             } catch (IOException e) {
                 log.error("Failed to convert image files to new extension {} for image {}", request.getExtension(), id, e);
-                throw new RuntimeException("Failed to convert image files to new extension: " + e.getMessage(), e);
+                throw new IllegalStateException("Failed to convert image files to new extension: " + e.getMessage(), e);
             }
         } else {
             // Extension not changed, but filename might have
@@ -121,7 +123,7 @@ public class ImageService {
                     Files.move(oldPath, newPath);
                     image.setFilename(request.getFilename());
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to rename image file: " + e.getMessage(), e);
+                    throw new IllegalStateException("Failed to rename image file: " + e.getMessage(), e);
                 }
             }
             if (request.getThumbnailFilename() != null && !request.getThumbnailFilename().equals(oldThumbnail)) {
@@ -132,7 +134,7 @@ public class ImageService {
                     Files.move(oldPath, newPath);
                     image.setThumbnailFilename(request.getThumbnailFilename());
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to rename thumbnail file: " + e.getMessage(), e);
+                    throw new IllegalStateException("Failed to rename thumbnail file: " + e.getMessage(), e);
                 }
             }
             if (request.getExtension() != null) {

@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,6 +50,7 @@ public class ArticleController {
      * @return List of articles
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<PaginatedResponse<ArticleResponse>>> searchArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -74,6 +76,7 @@ public class ArticleController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<ArticleResponse>>> listArticles() {
         try {
             List<ArticleResponse> list = articleService.listArticles();
@@ -85,6 +88,7 @@ public class ArticleController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleResponse>> createArticle(@Valid @ModelAttribute ArticleCreateRequest request, HttpServletRequest httpRequest) {
         try {
             String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -99,6 +103,7 @@ public class ArticleController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleResponse>> createArticleJson(@Valid @RequestBody ArticleCreateRequest request, HttpServletRequest httpRequest) {
         try {
             String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -113,6 +118,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleResponse>> getArticle(@PathVariable String id) {
         try {
             ArticleResponse r = articleService.getArticleById(id);
@@ -125,6 +131,7 @@ public class ArticleController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleResponse>> updateArticle(@PathVariable String id, @Valid @ModelAttribute ArticleUpdateRequest request, HttpServletRequest httpRequest) {
         try {
             String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -138,6 +145,7 @@ public class ArticleController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleResponse>> updateArticleJson(@PathVariable String id, @Valid @RequestBody ArticleUpdateRequest request, HttpServletRequest httpRequest) {
         try {
             String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -151,6 +159,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteArticle(@PathVariable String id, HttpServletRequest httpRequest) {
         try {
             String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -165,6 +174,7 @@ public class ArticleController {
 
     // serve cover image (supports Range)
     @GetMapping("/cover/{filename}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<?> viewCover(@PathVariable String filename, @RequestHeader(value = "Range", required = false) String rangeHeader) {
         try {
             java.io.File file = articleService.getCoverImageFileByFilename(filename);

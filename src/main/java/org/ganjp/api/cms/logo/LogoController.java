@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -60,6 +61,7 @@ public class LogoController {
      * @return List of logos
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<PaginatedResponse<LogoResponse>>> searchLogos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -84,6 +86,7 @@ public class LogoController {
      * GET /v1/logos/all
      */
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<LogoResponse>>> getAllLogos() {
         List<LogoResponse> logos = logoService.getAllLogos();
         return ResponseEntity.ok(ApiResponse.success(logos, "All logos retrieved successfully"));
@@ -94,6 +97,7 @@ public class LogoController {
      * POST /v1/logos
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<LogoResponse>> createLogo(
             @Valid @ModelAttribute LogoCreateRequest request,
             HttpServletRequest httpRequest) {
@@ -119,6 +123,7 @@ public class LogoController {
      * Request body: { "originalUrl": "https://...", "name": "Logo Name", "tags": "tag1,tag2" }
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<LogoResponse>> createLogoFromUrl(
             @Valid @RequestBody LogoCreateRequest request,
             HttpServletRequest httpRequest) {
@@ -149,6 +154,7 @@ public class LogoController {
      * PUT /v1/logos/{id}
      */
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<LogoResponse>> updateLogo(
             @PathVariable String id,
             @Valid @RequestBody LogoUpdateRequest request,
@@ -173,6 +179,7 @@ public class LogoController {
      * GET /v1/logos/{id}
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<LogoResponse>> getLogoById(@PathVariable String id) {
         try {
             LogoResponse response = logoService.getLogoById(id);
@@ -190,6 +197,7 @@ public class LogoController {
      * Returns the actual image file to be displayed in browser
      */
     @GetMapping("/view/{filename}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<Resource> viewLogo(@PathVariable String filename) {
         try {
             File logoFile = logoService.getLogoFileByFilename(filename);
@@ -216,6 +224,7 @@ public class LogoController {
      * GET /v1/logos/tag?tag=xxx
      */
     @GetMapping("/tag")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<LogoResponse>>> findLogosByTag(@RequestParam String tag) {
         List<LogoResponse> logos = logoService.findLogosByTag(tag);
         return ResponseEntity.ok(ApiResponse.success(logos, "Logos retrieved successfully"));
@@ -226,6 +235,7 @@ public class LogoController {
      * DELETE /v1/logos/{id}
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteLogo(
             @PathVariable String id,
             HttpServletRequest httpRequest) {
@@ -245,6 +255,7 @@ public class LogoController {
      * DELETE /v1/logos/{id}/permanent
      */
     @DeleteMapping("/{id}/permanent")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> permanentlyDeleteLogo(@PathVariable String id) {
         try {
             logoService.permanentlyDeleteLogo(id);

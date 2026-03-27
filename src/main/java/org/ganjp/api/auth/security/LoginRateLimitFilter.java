@@ -34,14 +34,17 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class LoginRateLimitFilter extends OncePerRequestFilter {
 
-    private static final int MAX_ATTEMPTS = 10;
-    private static final long WINDOW_MS = 60_000; // 1 minute
     private static final long CLEANUP_INTERVAL_MS = 300_000; // 5 minutes
     private static final String LOGIN_PATH = "/v1/auth/tokens";
 
+    private final SecurityProperties securityProperties;
     private final ConcurrentHashMap<String, RateLimitEntry> attempts = new ConcurrentHashMap<>();
     private final AtomicLong lastCleanup = new AtomicLong(System.currentTimeMillis());
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public LoginRateLimitFilter(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
+    }
 
     @Override
     protected void doFilterInternal(
@@ -58,19 +61,21 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
 
         String clientIp = getClientIp(request);
         long now = System.currentTimeMillis();
+        long windowMs = securityProperties.getRateLimit().getWindowMs();
+        int maxAttempts = securityProperties.getRateLimit().getMaxAttempts();
 
         // Periodically remove stale entries to prevent unbounded memory growth
         evictStaleEntries(now);
 
         RateLimitEntry entry = attempts.compute(clientIp, (key, existing) -> {
-            if (existing == null || now - existing.windowStart > WINDOW_MS) {
+            if (existing == null || now - existing.windowStart > windowMs) {
                 return new RateLimitEntry(now, new AtomicInteger(1));
             }
             existing.count.incrementAndGet();
             return existing;
         });
 
-        if (entry.count.get() > MAX_ATTEMPTS) {
+        if (entry.count.get() > maxAttempts) {
             log.warn("Rate limit exceeded for IP: {} ({} attempts in window)", clientIp, entry.count.get());
             response.setStatus(429);
             response.setContentType("application/json;charset=UTF-8");
@@ -90,13 +95,14 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
      * CLEANUP_INTERVAL_MS to avoid scanning on every request.
      */
     private void evictStaleEntries(long now) {
+        long windowMs = securityProperties.getRateLimit().getWindowMs();
         long last = lastCleanup.get();
         if (now - last > CLEANUP_INTERVAL_MS && lastCleanup.compareAndSet(last, now)) {
             int removed = 0;
             Iterator<Map.Entry<String, RateLimitEntry>> it = attempts.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, RateLimitEntry> e = it.next();
-                if (now - e.getValue().windowStart > WINDOW_MS) {
+                if (now - e.getValue().windowStart > windowMs) {
                     it.remove();
                     removed++;
                 }

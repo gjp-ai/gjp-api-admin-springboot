@@ -14,6 +14,7 @@ import org.ganjp.api.common.model.ApiResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -57,7 +58,7 @@ public class SecurityConfig {
      */
     @Bean
     public LoginRateLimitFilter loginRateLimitFilter() {
-        return new LoginRateLimitFilter();
+        return new LoginRateLimitFilter(securityProperties);
     }
 
     /**
@@ -167,8 +168,12 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> {
-                // First add all public endpoints that don't require authentication
+                // Public endpoints driven by YAML config
                 auth.requestMatchers(securityProperties.getPublicEndpoints().toArray(new String[0])).permitAll();
+
+                // Token endpoint: POST (login) and PUT (refresh) are public; DELETE (logout) requires authentication
+                auth.requestMatchers(HttpMethod.POST, "/v1/auth/tokens").permitAll();
+                auth.requestMatchers(HttpMethod.PUT, "/v1/auth/tokens").permitAll();
 
                 // Then add all role-restricted endpoints from configuration
                 if (securityProperties.getAuthorizedEndpoints() != null) {

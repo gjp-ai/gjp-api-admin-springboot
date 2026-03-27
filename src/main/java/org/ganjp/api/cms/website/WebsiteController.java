@@ -3,9 +3,9 @@ package org.ganjp.api.cms.website;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.security.JwtUtils;
 
-import org.ganjp.api.cms.article.ArticleResponse;
 import org.ganjp.api.cms.website.WebsiteCreateRequest;
 import org.ganjp.api.cms.website.WebsiteUpdateRequest;
 import org.ganjp.api.cms.website.WebsiteResponse;
@@ -27,6 +27,7 @@ import java.util.List;
 /**
  * REST Controller for Website management
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/websites")
 @RequiredArgsConstructor
@@ -53,6 +54,7 @@ public class WebsiteController {
      * @return Paginated list of websites
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<PaginatedResponse<WebsiteResponse>>> getWebsites(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -81,6 +83,7 @@ public class WebsiteController {
      * Get website by ID
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<WebsiteResponse>> getWebsiteById(@PathVariable String id) {
         WebsiteResponse website = websiteService.getWebsiteById(id);
         return ResponseEntity.ok(ApiResponse.success(website, "Website retrieved successfully"));
@@ -90,6 +93,7 @@ public class WebsiteController {
      * Get websites by language
      */
     @GetMapping("/by-language/{lang}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<WebsiteResponse>>> getWebsitesByLanguage(
             @PathVariable Website.Language lang,
             @RequestParam(defaultValue = "false") boolean activeOnly
@@ -102,6 +106,7 @@ public class WebsiteController {
      * Get websites by tag
      */
     @GetMapping("/by-tag")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<WebsiteResponse>>> getWebsitesByTag(
             @RequestParam String tag,
             @RequestParam(defaultValue = "true") boolean activeOnly
@@ -114,6 +119,7 @@ public class WebsiteController {
      * Get top websites
      */
     @GetMapping("/top")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<WebsiteResponse>>> getTopWebsites(
             @RequestParam(defaultValue = "10") int limit
     ) {

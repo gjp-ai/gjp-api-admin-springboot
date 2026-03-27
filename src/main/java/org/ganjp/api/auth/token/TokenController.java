@@ -11,7 +11,7 @@ import org.ganjp.api.common.model.ApiResponse;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.auth.session.ActiveUserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,130 +53,92 @@ public class TokenController {
      * Create new access and refresh tokens (authentication)
      * This is the recommended authentication method with token rotation support
      */
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<ApiResponse<AuthTokenResponse>> createTokens(
             @Valid @RequestBody LoginRequest loginRequest,
             HttpServletRequest request) {
-        try {
-            // Store request data for audit logging
-            String username = extractUsernameFromLoginRequest(loginRequest);
-            request.setAttribute("loginUsername", username);
-            request.setAttribute("loginRequestData", sanitizeLoginRequest(loginRequest));
+        // Store request data for audit logging (before service call so it's available on exception)
+        String username = extractUsernameFromLoginRequest(loginRequest);
+        request.setAttribute("loginUsername", username);
+        request.setAttribute("loginRequestData", sanitizeLoginRequest(loginRequest));
 
-            AuthTokenResponse authResponse = authService.loginWithDualTokens(loginRequest);
-            
-            // Store response data and user info for audit logging
-            request.setAttribute("loginResponseData", sanitizeAuthTokenResponse(authResponse));
-            request.setAttribute("loginResourceId", authResponse.getUsername());
-            request.setAttribute("loginUserId", jwtUtils.extractUserId(authResponse.getAccessToken()));
-            
-            ApiResponse<AuthTokenResponse> response = ApiResponse.<AuthTokenResponse>success(authResponse, "Authentication successful");
-            return ResponseEntity.ok()
-                .header("Cache-Control", "no-store")
-                .header("Pragma", "no-cache")
-                .body(response);
-        } catch (BadCredentialsException e) {
-            // Store username even for failed login
-            String username = extractUsernameFromLoginRequest(loginRequest);
-            request.setAttribute("loginUsername", username);
-            request.setAttribute("loginRequestData", sanitizeLoginRequest(loginRequest));
-            
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<AuthTokenResponse> response = ApiResponse.<AuthTokenResponse>error(401, "Unauthorized", errors);
-            return ResponseEntity.status(401).body(response);
-        } catch (Exception e) {
-            // Store username even for failed login
-            String username = extractUsernameFromLoginRequest(loginRequest);
-            request.setAttribute("loginUsername", username);
-            request.setAttribute("loginRequestData", sanitizeLoginRequest(loginRequest));
-            
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<AuthTokenResponse> response = ApiResponse.<AuthTokenResponse>error(500, "Internal Server Error", errors);
-            return ResponseEntity.status(500).body(response);
-        }
+        AuthTokenResponse authResponse = authService.loginWithDualTokens(loginRequest);
+        
+        // Store response data and user info for audit logging
+        request.setAttribute("loginResponseData", sanitizeAuthTokenResponse(authResponse));
+        request.setAttribute("loginResourceId", authResponse.getUsername());
+        request.setAttribute("loginUserId", jwtUtils.extractUserId(authResponse.getAccessToken()));
+        
+        ApiResponse<AuthTokenResponse> response = ApiResponse.<AuthTokenResponse>success(authResponse, "Authentication successful");
+        return ResponseEntity.ok()
+            .header("Cache-Control", "no-store")
+            .header("Pragma", "no-cache")
+            .body(response);
     }
 
     /**
      * Refresh access token using a valid refresh token
      * Implements token rotation - old refresh token is invalidated and new tokens are issued
      */
+    @PreAuthorize("permitAll()")
     @PutMapping
     public ResponseEntity<ApiResponse<TokenRefreshResponse>> refreshTokens(
             @Valid @RequestBody RefreshTokenRequest refreshRequest,
             HttpServletRequest request) {
-        try {
-            // Store request data for audit logging (excluding sensitive token data)
-            request.setAttribute("refreshTokenRequest", sanitizeRefreshTokenRequest(refreshRequest));
+        // Store request data for audit logging (before service call so it's available on exception)
+        request.setAttribute("refreshTokenRequest", sanitizeRefreshTokenRequest(refreshRequest));
 
-            TokenRefreshResponse refreshResponse = authService.refreshToken(refreshRequest);
-            
-            // Store response data for audit logging
-            request.setAttribute("refreshTokenResponse", sanitizeTokenRefreshResponse(refreshResponse));
-            
-            ApiResponse<TokenRefreshResponse> response = ApiResponse.<TokenRefreshResponse>success(refreshResponse, "Token refresh successful");
-            return ResponseEntity.ok()
-                .header("Cache-Control", "no-store")
-                .header("Pragma", "no-cache")
-                .body(response);
-        } catch (BadCredentialsException e) {
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<TokenRefreshResponse> response = ApiResponse.<TokenRefreshResponse>error(401, "Invalid or expired refresh token", errors);
-            return ResponseEntity.status(401).body(response);
-        } catch (Exception e) {
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<TokenRefreshResponse> response = ApiResponse.<TokenRefreshResponse>error(500, "Internal Server Error", errors);
-            return ResponseEntity.status(500).body(response);
-        }
+        TokenRefreshResponse refreshResponse = authService.refreshToken(refreshRequest);
+        
+        // Store response data for audit logging
+        request.setAttribute("refreshTokenResponse", sanitizeTokenRefreshResponse(refreshResponse));
+        
+        ApiResponse<TokenRefreshResponse> response = ApiResponse.<TokenRefreshResponse>success(refreshResponse, "Token refresh successful");
+        return ResponseEntity.ok()
+            .header("Cache-Control", "no-store")
+            .header("Pragma", "no-cache")
+            .body(response);
     }
 
     /**
      * Revoke tokens (logout)
      * This is the recommended logout method that revokes both access and refresh tokens
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> revokeTokens(
             @Valid @RequestBody LogoutRequest logoutRequest,
             HttpServletRequest request) {
-        try {
-            // Store request data for audit logging (excluding sensitive token data)
-            request.setAttribute("LogoutRequest", sanitizeLogoutRequest(logoutRequest));
+        // Store request data for audit logging (before service call so it's available on exception)
+        request.setAttribute("LogoutRequest", sanitizeLogoutRequest(logoutRequest));
 
-            // Extract user ID from the Authorization header before revoking tokens
-            String authHeader = request.getHeader("Authorization");
-            String userId = null;
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                try {
-                    String token = authHeader.substring(7);
-                    userId = jwtUtils.extractUserId(token);
-                } catch (Exception e) {
-                    // Log the error but continue with logout
-                    // User might be logging out with an expired token
-                }
+        // Extract user ID from the Authorization header before revoking tokens
+        String authHeader = request.getHeader("Authorization");
+        String userId = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            try {
+                String token = authHeader.substring(7);
+                userId = jwtUtils.extractUserId(token);
+            } catch (Exception e) {
+                // Log the error but continue with logout
+                // User might be logging out with an expired token
             }
-
-            // Revoke tokens through auth service
-            authService.revokeTokens(logoutRequest, request);
-            
-            // Remove user from active user tracking
-            if (userId != null) {
-                activeUserService.removeActiveUser(userId);
-            }
-            
-            ApiResponse<Void> response = ApiResponse.<Void>success(null, "Logout successful - all tokens revoked");
-            return ResponseEntity.ok()
-                .header("Cache-Control", "no-store")
-                .header("Pragma", "no-cache")
-                .body(response);
-        } catch (Exception e) {
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<Void> response = ApiResponse.<Void>error(500, "Internal Server Error", errors);
-            return ResponseEntity.status(500).body(response);
         }
+
+        // Revoke tokens through auth service
+        authService.revokeTokens(logoutRequest, request);
+        
+        // Remove user from active user tracking
+        if (userId != null) {
+            activeUserService.removeActiveUser(userId);
+        }
+        
+        ApiResponse<Void> response = ApiResponse.<Void>success(null, "Logout successful - all tokens revoked");
+        return ResponseEntity.ok()
+            .header("Cache-Control", "no-store")
+            .header("Pragma", "no-cache")
+            .body(response);
     }
 
     /**

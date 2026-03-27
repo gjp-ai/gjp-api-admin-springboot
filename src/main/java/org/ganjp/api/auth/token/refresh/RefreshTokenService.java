@@ -99,8 +99,9 @@ public class RefreshTokenService {
      */
     @Transactional
     public RefreshToken rotateRefreshToken(String oldTokenValue, String userId) {
-        // Validate and revoke the old token
-        Optional<RefreshToken> oldTokenOpt = validateRefreshToken(oldTokenValue);
+        // Find the old token directly (skip validateRefreshToken to avoid double-save)
+        String tokenHash = hashToken(oldTokenValue);
+        Optional<RefreshToken> oldTokenOpt = refreshTokenRepository.findValidTokenByHash(tokenHash, LocalDateTime.now());
         if (oldTokenOpt.isEmpty()) {
             throw new IllegalArgumentException("Invalid refresh token provided for rotation");
         }
@@ -112,9 +113,12 @@ public class RefreshTokenService {
             throw new IllegalArgumentException("Refresh token does not belong to the specified user");
         }
         
-        // Revoke the old token
+        // Revoke the old token (single save instead of two)
+        LocalDateTime now = LocalDateTime.now();
+        oldToken.setLastUsedAt(now);
         oldToken.setIsRevoked(true);
-        oldToken.setRevokedAt(LocalDateTime.now());
+        oldToken.setRevokedAt(now);
+        oldToken.setUpdatedAt(now);
         refreshTokenRepository.save(oldToken);
         
         // Create new refresh token

@@ -1,6 +1,8 @@
 package org.ganjp.api.cms.article;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.ganjp.api.cms.article.ArticleProperties;
 import org.ganjp.api.cms.article.ArticleCreateRequest;
 import org.ganjp.api.cms.article.ArticleResponse;
@@ -10,6 +12,7 @@ import org.ganjp.api.cms.article.ArticleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -23,8 +26,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleProperties articleProperties;

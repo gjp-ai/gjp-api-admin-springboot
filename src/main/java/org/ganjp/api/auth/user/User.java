@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.role.Role;
 import org.ganjp.api.auth.role.UserRole;
 import org.ganjp.api.auth.token.refresh.RefreshToken;
@@ -32,6 +33,7 @@ import java.util.Objects;
  * Entity representing a user account in the authentication system.
  * Implements Spring Security's UserDetails for authentication integration.
  */
+@Slf4j
 @Getter
 @Setter
 @ToString(exclude = {"userRoles", "refreshTokens"})

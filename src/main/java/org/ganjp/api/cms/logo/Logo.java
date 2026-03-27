@@ -1,23 +1,31 @@
 package org.ganjp.api.cms.logo;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
 import org.ganjp.api.common.model.BaseEntity;
+
+import java.util.Objects;
 
 /**
  * Logo Entity for CMS
  */
-@Entity
-@Table(name = "cms_logo")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Slf4j
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "cms_logo")
 public class Logo extends BaseEntity {
 
     @Id
@@ -86,5 +94,18 @@ public class Logo extends BaseEntity {
         } else {
             this.tags = String.join(",", tagsArray);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Logo that = (Logo) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

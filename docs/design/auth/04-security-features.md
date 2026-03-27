@@ -30,12 +30,13 @@ A **unified password policy** is enforced across all entry points (registration,
 ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^+=])(?=\S+$).+$
 ```
 
-This policy is enforced via Jakarta Bean Validation annotations on all 5 DTOs:
+This policy is enforced via Jakarta Bean Validation annotations on all 6 DTOs:
 - `RegisterRequest`
 - `UserCreateRequest`
 - `UserUpdateRequest`
 - `ChangePasswordRequest`
 - `AdminResetPasswordRequest`
+- `ResetPasswordRequest` (password reset flow)
 
 ## 2. Rate Limiting
 
@@ -61,14 +62,7 @@ An in-memory rate limiter protects the login endpoint from brute-force attacks:
 
 ### 2.3 IP Address Extraction
 
-The rate limiter uses `IpAddressUtils.getClientIp()` which checks headers in order:
-1. `X-Forwarded-For` (first IP in comma-separated list)
-2. `X-Real-IP`
-3. `Proxy-Client-IP`
-4. `WL-Proxy-Client-IP`
-5. `HTTP_CLIENT_IP`
-6. `HTTP_X_FORWARDED_FOR`
-7. `request.getRemoteAddr()` (fallback)
+The rate limiter uses `request.getRemoteAddr()` for IP extraction. In a deployment behind a reverse proxy (e.g., Nginx, AWS ALB), configure the proxy to set the remote address correctly via protocol-level mechanisms (e.g., PROXY protocol) rather than relying on headers that can be spoofed.
 
 ## 3. Account Locking
 
@@ -172,8 +166,45 @@ Database role code: SUPER_ADMIN → JWT authority: ROLE_SUPER_ADMIN
 | `/v1/admin/sessions` | ADMIN, SUPER_ADMIN | SUPER_ADMIN | — | — | — |
 | `/v1/auth/tokens` | — | Public | Public | — | Authenticated |
 | `/v1/register` | — | Public | — | — | — |
+| `/v1/auth/email/*` | — | Public | — | — | — |
+| `/v1/auth/password/*` | — | Public | — | — | — |
 
-## 7. Soft Delete
+## 7. Verification Token Security
+
+### 7.1 Token Generation & Storage
+
+Verification tokens (email verification and password reset) follow the same security pattern as refresh tokens:
+
+| Property | Value |
+|----------|-------|
+| Generation | 32 bytes from `SecureRandom`, hex-encoded (64 chars) |
+| Storage | SHA-256 hash only — plain-text token never persisted |
+| Table | `auth_verification_tokens` |
+| Types | `PASSWORD_RESET`, `EMAIL_VERIFICATION` |
+
+### 7.2 Token Lifecycle
+
+- **One-time use**: Tokens are marked with `used_at` timestamp after successful use
+- **Auto-invalidation**: Requesting a new token invalidates all existing tokens of the same type for that user
+- **Configurable expiration**: Password reset tokens expire after 1 hour; email verification tokens after 24 hours
+- **Cleanup**: Expired tokens can be purged via `deleteExpiredTokens()` repository method
+
+### 7.3 Anti-Enumeration
+
+All verification endpoints return **generic success messages** regardless of whether the user was found:
+- "Password reset instructions sent" (even if email doesn't exist)
+- "Verification email sent" (even if email doesn't exist)
+
+This prevents attackers from discovering which email addresses are registered.
+
+### 7.4 Account Status Restrictions
+
+| Token Type | `active` | `locked` | `suspended` | `pending_verification` |
+|-----------|----------|----------|-------------|-------------------------|
+| Password Reset | ✓ | ✓ (unlocks on success) | ✗ | ✗ |
+| Email Verification | ✗ | ✗ | ✗ | ✓ |
+
+## 8. Soft Delete
 
 Users are never physically deleted from the database. The delete operation performs a soft delete:
 
@@ -187,9 +218,9 @@ Additionally:
 - The user is removed from active session tracking
 - The audit trail is preserved (created_by, updated_by, timestamps)
 
-## 8. Input Validation
+## 9. Input Validation
 
-### 8.1 Validation Annotations
+### 9.1 Validation Annotations
 
 All DTOs use Jakarta Bean Validation:
 
@@ -202,13 +233,13 @@ All DTOs use Jakarta Bean Validation:
 | Password | `@Size(8-128)`, `@Pattern(complex)` |
 | Nickname | `@Size(max=30)` |
 
-### 8.2 Cross-Field Validation
+### 9.2 Cross-Field Validation
 
 Custom `@AssertTrue` validators ensure:
 - **Mobile info**: Both country code and number must be provided together, or neither
 - **Contact method**: At least one contact method (email or mobile) is required for registration
 
-### 8.3 Database-Level Validation
+### 9.3 Database-Level Validation
 
 MySQL CHECK constraints provide a second layer of defense:
 
@@ -220,7 +251,7 @@ CONSTRAINT chk_auth_users_mobile_number_fmt CHECK (...)
 CONSTRAINT chk_auth_roles_code_format CHECK (code REGEXP '^[A-Z][A-Z0-9_]*$')
 ```
 
-## 9. CORS Configuration
+## 10. CORS Configuration
 
 CORS is configured with specific allowed origins (no wildcards):
 
@@ -235,13 +266,14 @@ security:
       - http://localhost:3000
 ```
 
-## 10. Sensitive Data Protection
+## 11. Sensitive Data Protection
 
 | Data | Protection |
 |------|-----------|
 | Passwords | Hashed with BCrypt, never logged or returned |
 | Access tokens | Not logged in audit records (sanitized) |
 | Refresh tokens | Not stored in DB (only SHA-256 hash), not logged |
+| Verification tokens | Not stored in DB (only SHA-256 hash), not logged |
 | Login requests | Password stripped before audit logging |
 | Error responses | Internal error details suppressed in catch-all handler |
 | Audit config | `include-sensitive-data: false` by default |

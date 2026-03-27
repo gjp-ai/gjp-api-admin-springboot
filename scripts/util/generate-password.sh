@@ -32,7 +32,11 @@ if [[ ${#PASSWORD} -lt 6 ]]; then
     exit 1
 fi
 
-if ! echo "${PASSWORD}" | grep -qP '(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])'; then
+HAS_LOWER=$(echo "${PASSWORD}" | grep -q '[a-z]' && echo 1 || echo 0)
+HAS_UPPER=$(echo "${PASSWORD}" | grep -q '[A-Z]' && echo 1 || echo 0)
+HAS_DIGIT=$(echo "${PASSWORD}" | grep -q '[0-9]' && echo 1 || echo 0)
+HAS_SPECIAL=$(echo "${PASSWORD}" | grep -q '[@$!%*?&]' && echo 1 || echo 0)
+if [[ "${HAS_LOWER}" -eq 0 || "${HAS_UPPER}" -eq 0 || "${HAS_DIGIT}" -eq 0 || "${HAS_SPECIAL}" -eq 0 ]]; then
     echo "WARNING: Password should contain at least one uppercase, one lowercase, one digit, and one special character (@\$!%*?&)."
 fi
 
@@ -41,9 +45,9 @@ fi
 if command -v python3 &>/dev/null; then
     # Check if bcrypt module is available
     if python3 -c "import bcrypt" 2>/dev/null; then
-        HASH=$(python3 -c "
-import bcrypt
-password = '${PASSWORD}'.encode('utf-8')
+        HASH=$(echo -n "${PASSWORD}" | python3 -c "
+import sys, bcrypt
+password = sys.stdin.buffer.read()
 salt = bcrypt.gensalt(rounds=10)
 hashed = bcrypt.hashpw(password, salt)
 print(hashed.decode('utf-8'))
@@ -61,9 +65,11 @@ print(hashed.decode('utf-8'))
 
     # Fallback: try passlib
     if python3 -c "from passlib.hash import bcrypt" 2>/dev/null; then
-        HASH=$(python3 -c "
+        HASH=$(echo -n "${PASSWORD}" | python3 -c "
+import sys
 from passlib.hash import bcrypt
-print(bcrypt.using(rounds=10).hash('${PASSWORD}'))
+password = sys.stdin.read()
+print(bcrypt.using(rounds=10).hash(password))
 ")
         echo ""
         echo "BCrypt Hash (cost factor 10):"

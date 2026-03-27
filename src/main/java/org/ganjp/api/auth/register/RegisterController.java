@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.common.model.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,58 +46,23 @@ public class RegisterController {
      * @param registerRequest The registration request data
      * @return The created user data
      */
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<ApiResponse<RegisterResponse>> registerUser(
             @Valid @RequestBody RegisterRequest registerRequest,
             HttpServletRequest request) {
-        try {
-            // Store request data for audit logging
-            request.setAttribute("loginUsername", registerRequest.getUsername());
-            request.setAttribute("loginRequestData", sanitizeRegisterRequest(registerRequest));
+        // Store request data for audit logging (before service call so it's available on exception)
+        request.setAttribute("loginUsername", registerRequest.getUsername());
+        request.setAttribute("loginRequestData", sanitizeRegisterRequest(registerRequest));
 
-            RegisterResponse registerResponse = registerService.register(registerRequest);
-            
-            // Store response data and resource ID for audit logging
-            request.setAttribute("loginResponseData", sanitizeRegisterResponse(registerResponse));
-            request.setAttribute("loginResourceId", registerResponse.getId());
-            
-            ApiResponse<RegisterResponse> response = ApiResponse.<RegisterResponse>builder()
-                            .status(ApiResponse.Status.builder()
-                                    .code(HttpStatus.CREATED.value())
-                                    .message("User registered successfully")
-                                    .errors(null)
-                                    .build())
-                            .data(registerResponse)
-                            .meta(ApiResponse.Meta.builder()
-                                    .serverDateTime(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                                            .format(java.time.LocalDateTime.now()))
-                                    .build())
-                            .build();
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(response);
-        } catch (IllegalArgumentException e) {
-            // Store username even for failed registration
-            request.setAttribute("loginUsername", registerRequest.getUsername());
-            request.setAttribute("loginRequestData", sanitizeRegisterRequest(registerRequest));
-            
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<RegisterResponse> response = ApiResponse.<RegisterResponse>error(400, "Registration failed", errors);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-                    .body(response);
-        } catch (Exception e) {
-            // Store username even for failed registration
-            request.setAttribute("loginUsername", registerRequest.getUsername());
-            request.setAttribute("loginRequestData", sanitizeRegisterRequest(registerRequest));
-            
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", e.getMessage());
-            ApiResponse<RegisterResponse> response = ApiResponse.<RegisterResponse>error(500, "Internal Server Error", errors);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-                    .body(response);
-        }
+        RegisterResponse registerResponse = registerService.register(registerRequest);
+        
+        // Store response data and resource ID for audit logging
+        request.setAttribute("loginResponseData", sanitizeRegisterResponse(registerResponse));
+        request.setAttribute("loginResourceId", registerResponse.getId());
+        
+        ApiResponse<RegisterResponse> response = ApiResponse.<RegisterResponse>success(registerResponse, "User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**

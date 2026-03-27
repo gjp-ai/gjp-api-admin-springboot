@@ -30,7 +30,7 @@ if [[ -z "${JWT_SECRET_KEY:-}" ]]; then
 fi
 
 # ── Resolve project directory (parent of scripts/) ─────────────────────────
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${PROJECT_DIR}"
 
 # ── Parse arguments ──────────────────────────────────────────────────────────

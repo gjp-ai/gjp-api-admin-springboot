@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Objects;
  * Entity representing a role in the authentication system.
  * Roles are used to assign permissions to users.
  */
+@Slf4j
 @Getter
 @Setter
 @ToString(exclude = {"parentRole", "childRoles"}) // Exclude bidirectional relationships to prevent circular references

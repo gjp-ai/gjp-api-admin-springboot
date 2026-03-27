@@ -206,6 +206,133 @@ Revokes access and refresh tokens.
 
 ---
 
+### 3.5 Verify Email
+
+**`POST /v1/auth/email/verify`** — Public
+
+Verifies a user's email address using a one-time verification token.
+
+**Request:**
+```json
+{
+  "token": "a1b2c3d4e5f6..."
+}
+```
+
+| Field | Required | Validation |
+|-------|----------|------------|
+| `token` | Yes | Not blank |
+
+**Response:** `200 OK`
+```json
+{
+  "status": { "code": 200, "message": "Email verified successfully" },
+  "data": null
+}
+```
+
+**Error responses:**
+- `400` — Invalid or expired verification token
+- `400` — Account is not pending verification
+
+---
+
+### 3.6 Resend Verification Email
+
+**`POST /v1/auth/email/resend-verification`** — Public
+
+Generates a new email verification token. Invalidates any existing tokens of the same type.
+
+**Request:**
+```json
+{
+  "email": "john@example.com"
+}
+```
+
+| Field | Required | Validation |
+|-------|----------|------------|
+| `email` | Yes | Valid email, not blank |
+
+**Response:** `200 OK`
+```json
+{
+  "status": { "code": 200, "message": "Verification email sent" },
+  "data": null
+}
+```
+
+> **Note:** Returns a success response even if the email is not registered (prevents email enumeration).
+
+---
+
+### 3.7 Forgot Password
+
+**`POST /v1/auth/password/forgot`** — Public
+
+Initiates a password reset by generating a one-time reset token.
+
+**Request:**
+```json
+{
+  "email": "john@example.com"
+}
+```
+
+| Field | Required | Validation |
+|-------|----------|------------|
+| `email` | Yes | Valid email, not blank |
+
+**Response:** `200 OK`
+```json
+{
+  "status": { "code": 200, "message": "Password reset instructions sent" },
+  "data": null
+}
+```
+
+> **Note:** Returns a success response even if the email is not registered (prevents email enumeration). Suspended accounts cannot request password resets. Locked accounts **can** request resets.
+
+---
+
+### 3.8 Reset Password
+
+**`POST /v1/auth/password/reset`** — Public
+
+Resets the user's password using a valid password reset token.
+
+**Request:**
+```json
+{
+  "token": "a1b2c3d4e5f6...",
+  "newPassword": "NewSecurePass1!"
+}
+```
+
+| Field | Required | Validation |
+|-------|----------|------------|
+| `token` | Yes | Not blank |
+| `newPassword` | Yes | 8-128 chars, uppercase+lowercase+digit+special, no whitespace |
+
+**Response:** `200 OK`
+```json
+{
+  "status": { "code": 200, "message": "Password reset successfully" },
+  "data": null
+}
+```
+
+**Behavior:**
+- If the account was locked, it is automatically unlocked (status → `active`, failed attempts reset)
+- The password reset token is marked as used after successful reset
+
+**Error responses:**
+- `400` — Invalid or expired verification token
+- `400` — Cannot reset password for suspended account
+- `400` — Password validation errors (policy violation)
+
+---
+
 ## 4. User Management Endpoints
 
 All require `Authorization: Bearer <accessToken>` header.
@@ -464,7 +591,10 @@ Self-service endpoints for authenticated users.
 ```
 /                          — Health/root
 /v1/register               — User registration
-/v1/auth/**                — Login, token refresh
+/v1/auth/tokens (POST)     — Login
+/v1/auth/tokens (PUT)      — Token refresh
+/v1/auth/email/**          — Email verification, resend verification
+/v1/auth/password/**       — Forgot password, reset password
 /actuator/health           — Health check
 /swagger-ui/**             — Swagger UI
 /v3/api-docs/**            — OpenAPI docs

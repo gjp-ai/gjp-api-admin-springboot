@@ -29,7 +29,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -95,7 +94,7 @@ public class AuthService {
         // Create authorities
         List<SimpleGrantedAuthority> authorities = activeUserRoles.stream()
                 .map(userRole -> new SimpleGrantedAuthority("ROLE_" + userRole.getRole().getCode()))
-                .collect(Collectors.toList());
+                .toList();
         
         // Generate access token
         String accessToken = jwtUtils.generateTokenWithAuthorities(user, authorities, user.getId());
@@ -156,7 +155,7 @@ public class AuthService {
         // Create authorities
         List<SimpleGrantedAuthority> authorities = activeUserRoles.stream()
                 .map(userRole -> new SimpleGrantedAuthority("ROLE_" + userRole.getRole().getCode()))
-                .collect(Collectors.toList());
+                .toList();
         
         // Rotate tokens - revoke old refresh token and create new tokens
         RefreshToken newRefreshTokenEntity = refreshTokenService.rotateRefreshToken(refreshTokenValue, refreshToken.getUserId());

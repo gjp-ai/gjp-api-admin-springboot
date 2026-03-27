@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS auth_users (
     KEY idx_auth_users_last_login (last_login_at),
     KEY idx_auth_users_created_by (created_by),
     KEY idx_auth_users_updated_by (updated_by),
-    KEY idx_roles_active (is_active),
+    KEY idx_auth_users_active (is_active),
 
     CONSTRAINT fk_auth_users_created_by FOREIGN KEY (created_by) REFERENCES auth_users (id) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT fk_auth_users_updated_by FOREIGN KEY (updated_by) REFERENCES auth_users (id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -248,4 +248,32 @@ CREATE TABLE IF NOT EXISTS auth_token_blacklist (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='Blacklisted JWT access tokens for logout/revocation support';
 
+-- Table: auth_verification_tokens
+-- Purpose: Store verification tokens for password reset and email verification
+CREATE TABLE IF NOT EXISTS auth_verification_tokens (
+    id CHAR(36) NOT NULL COMMENT 'Primary Key (UUID)',
+    user_id CHAR(36) NOT NULL COMMENT 'Foreign key to auth_users.id',
+    token_hash VARCHAR(255) NOT NULL COMMENT 'SHA-256 hash of the token value',
+    token_type ENUM('PASSWORD_RESET', 'EMAIL_VERIFICATION') NOT NULL COMMENT 'Type of verification token',
+    expires_at TIMESTAMP NOT NULL COMMENT 'Expiration timestamp of the token',
+    used_at TIMESTAMP NULL DEFAULT NULL COMMENT 'Timestamp when the token was used',
+
+    -- Audit Trail
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    INDEX idx_verification_token_hash (token_hash),
+    INDEX idx_verification_user_type (user_id, token_type),
+    INDEX idx_verification_expires_at (expires_at),
+
+    CONSTRAINT fk_verification_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES auth_users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+COMMENT='Verification tokens for password reset and email verification';
 

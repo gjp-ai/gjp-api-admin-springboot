@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,6 +53,7 @@ public class ImageController {
      * @return List of images
      */
     @GetMapping()
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<PaginatedResponse<ImageResponse>>> searchImages(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -86,6 +88,7 @@ public class ImageController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<ImageResponse>>> listImages() {
         try {
             List<ImageResponse> images = imageService.listImages();
@@ -102,6 +105,7 @@ public class ImageController {
      * POST /v1/images
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ImageResponse>> createImage(
             @Valid @ModelAttribute ImageCreateRequest request,
             HttpServletRequest httpRequest) {
@@ -123,6 +127,7 @@ public class ImageController {
      * POST /v1/images (application/json)
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ImageResponse>> createImageFromUrl(
             @Valid @RequestBody ImageCreateRequest request,
             HttpServletRequest httpRequest) {
@@ -151,6 +156,7 @@ public class ImageController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ImageResponse>> getImageById(@PathVariable String id) {
         try {
             ImageResponse response = imageService.getImageById(id);
@@ -165,6 +171,7 @@ public class ImageController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ImageResponse>> updateImage(
             @PathVariable String id,
             @Valid @RequestBody ImageUpdateRequest request,
@@ -183,6 +190,7 @@ public class ImageController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteImage(
             @PathVariable String id,
             HttpServletRequest httpRequest) {
@@ -205,6 +213,7 @@ public class ImageController {
      * Returns the actual image file to be displayed in browser
      */
     @GetMapping("/view/{filename}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<Resource> viewImage(@PathVariable String filename) {
         try {
             File imageFile = imageService.getImageFileByFilename(filename);

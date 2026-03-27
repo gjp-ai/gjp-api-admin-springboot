@@ -1,18 +1,22 @@
 package org.ganjp.api.cms.image;
 
 import jakarta.persistence.*;
+
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Timestamp;
 import java.util.Objects;
 
-@Entity
-@Table(name = "cms_image")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Slf4j
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "cms_image")
 public class Image {
     @Id
     @Column(length = 36, nullable = false)
@@ -81,5 +85,18 @@ public class Image {
 
     public enum Language {
         EN, ZH
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image that = (Image) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class ArticleImageController {
     private final JwtUtils jwtUtils;
 
     @GetMapping("/view/{filename:.+}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<Resource> viewImage(@PathVariable String filename) {
         Resource file = articleImageService.getImage(filename);
         String contentType = org.ganjp.api.common.util.CmsUtil.determineContentType(filename);
@@ -39,6 +41,7 @@ public class ArticleImageController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<ArticleImageResponse>>> searchArticleImages(
             @RequestParam(required = false) String articleId,
             @RequestParam(required = false) ArticleImage.Language lang,
@@ -49,6 +52,7 @@ public class ArticleImageController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleImageResponse>> getArticleImage(@PathVariable String id) {
         ArticleImageResponse image = articleImageService.getArticleImageById(id);
         if (image == null) {
@@ -58,6 +62,7 @@ public class ArticleImageController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleImageResponse>> createArticleImageJson(
             @Valid @RequestBody ArticleImageCreateRequest request,
             HttpServletRequest httpRequest
@@ -71,6 +76,7 @@ public class ArticleImageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleImageResponse>> createArticleImage(
             @Valid @ModelAttribute ArticleImageCreateRequest request,
             HttpServletRequest httpRequest
@@ -81,9 +87,10 @@ public class ArticleImageController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<ArticleImageResponse>> updateArticleImage(
             @PathVariable String id,
-            @RequestBody ArticleImageUpdateRequest request,
+            @Valid @RequestBody ArticleImageUpdateRequest request,
             HttpServletRequest httpRequest
     ) {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
@@ -95,6 +102,7 @@ public class ArticleImageController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteArticleImage(@PathVariable String id) {
         articleImageService.deleteArticleImage(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Article image deleted"));

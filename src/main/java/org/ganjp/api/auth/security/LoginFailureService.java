@@ -21,10 +21,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LoginFailureService {
 
-    private static final int MAX_FAILED_ATTEMPTS = 5;
-    private static final int LOCK_DURATION_MINUTES = 30;
-
     private final UserRepository userRepository;
+    private final SecurityProperties securityProperties;
 
     /**
      * Record a failed login attempt and auto-lock after threshold.
@@ -45,12 +43,15 @@ public class LoginFailureService {
             log.debug("Login failure recorded for user {}: {} rows affected", user.getUsername(), rowsUpdated);
 
             // Auto-lock account after exceeding max failed attempts
-            int newFailedAttempts = user.getFailedLoginAttempts() + 1;
-            if (newFailedAttempts >= MAX_FAILED_ATTEMPTS) {
-                LocalDateTime lockUntil = now.plusMinutes(LOCK_DURATION_MINUTES);
+            // Query actual DB value to avoid stale in-memory counter
+            int maxAttempts = securityProperties.getAccountLock().getMaxFailedAttempts();
+            int lockMinutes = securityProperties.getAccountLock().getLockDurationMinutes();
+            int failedAttempts = userRepository.findFailedLoginAttemptsById(user.getId());
+            if (failedAttempts >= maxAttempts) {
+                LocalDateTime lockUntil = now.plusMinutes(lockMinutes);
                 userRepository.lockAccount(user.getId(), AccountStatus.locked, lockUntil, now);
                 log.warn("Account locked for user {} after {} failed attempts. Locked until {}",
-                        user.getUsername(), newFailedAttempts, lockUntil);
+                        user.getUsername(), failedAttempts, lockUntil);
             }
         } catch (Exception e) {
             log.error("Failed to update login failure metrics for user {}", user.getUsername(), e);

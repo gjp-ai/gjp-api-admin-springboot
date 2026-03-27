@@ -9,6 +9,7 @@ import org.ganjp.api.auth.user.AccountStatus;
 import org.ganjp.api.auth.role.RoleRepository;
 import org.ganjp.api.auth.user.UserRepository;
 import org.ganjp.api.auth.role.UserRoleRepository;
+import org.ganjp.api.auth.verification.EmailVerificationService;
 import org.ganjp.api.common.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class RegisterService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationService emailVerificationService;
 
     /**
      * Register a new user with ROLE_USER role
@@ -101,6 +103,11 @@ public class RegisterService {
                 .build();
 
         userRoleRepository.save(userRoleEntity);
+
+        // Send email verification token if email is provided
+        if (savedUser.getEmail() != null && !savedUser.getEmail().isBlank()) {
+            emailVerificationService.sendVerificationToken(savedUser.getId(), savedUser.getEmail());
+        }
 
         return RegisterResponse.builder()
                 .id(savedUser.getId())

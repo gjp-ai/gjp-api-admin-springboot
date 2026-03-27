@@ -1,7 +1,9 @@
-package org.ganjp.api.auth.token.refresh;
+package org.ganjp.api.auth.verification;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -23,8 +25,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Entity representing a refresh token for JWT authentication.
- * Refresh tokens are stored in the database to allow revocation and rotation.
+ * Entity representing a verification token for password reset or email verification.
+ * The actual token value is never stored — only a SHA-256 hash.
  */
 @Slf4j
 @Getter
@@ -34,11 +36,11 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "auth_refresh_tokens")
-public class RefreshToken {
+@Table(name = "auth_verification_tokens")
+public class VerificationToken {
 
     @Id
-    @Column(name = "id", columnDefinition = "CHAR(36)")
+    @Column(columnDefinition = "CHAR(36)")
     private String id;
 
     @Column(name = "user_id", nullable = false, columnDefinition = "CHAR(36)")
@@ -47,32 +49,25 @@ public class RefreshToken {
     @Column(name = "token_hash", nullable = false, length = 255)
     private String tokenHash;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "token_type", nullable = false)
+    private VerificationTokenType tokenType;
+
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
+
+    @Column(name = "used_at")
+    private LocalDateTime usedAt;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "last_used_at")
-    private LocalDateTime lastUsedAt;
-
-    @Column(name = "is_revoked", nullable = false)
-    @Builder.Default
-    private Boolean isRevoked = false;
-
-    @Column(name = "revoked_at")
-    private LocalDateTime revokedAt;
-
-    @Column(name = "created_by", columnDefinition = "CHAR(36)")
-    private String createdBy;
-
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "updated_by", columnDefinition = "CHAR(36)")
-    private String updatedBy;
-
-    // Transient field to hold the actual token value (not stored in DB for security)
+    /**
+     * Transient field to hold the actual token value (not stored in DB).
+     */
     @Transient
     private String tokenValue;
 
@@ -89,43 +84,19 @@ public class RefreshToken {
         if (updatedAt == null) {
             updatedAt = now;
         }
-        if (isRevoked == null) {
-            isRevoked = false;
-        }
     }
-    
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * Check if the token is expired
-     */
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(this.expiresAt);
-    }
-
-    /**
-     * Check if the token is valid (not revoked and not expired)
-     */
-    public boolean isValid() {
-        return !this.isRevoked && !isExpired();
-    }
-
-    /**
-     * Check if the token is active (valid and not revoked)
-     */
-    public boolean isActive() {
-        return isValid();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RefreshToken that = (RefreshToken) o;
-        return id != null && Objects.equals(id, that.id);
+        VerificationToken that = (VerificationToken) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override

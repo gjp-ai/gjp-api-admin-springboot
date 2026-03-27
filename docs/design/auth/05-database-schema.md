@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-The auth module uses 6 database tables in MySQL 8.x with `utf8mb4_unicode_ci` collation:
+The auth module uses 7 database tables in MySQL 8.x with `utf8mb4_unicode_ci` collation:
 
 ```
 ┌──────────────────┐     ┌──────────────────┐
@@ -19,14 +19,25 @@ The auth module uses 6 database tables in MySQL 8.x with `utf8mb4_unicode_ci` co
          │                        │
          │   ┌────────────────┐   │
          └──►│ auth_user_roles│◄──┘
-             │────────────────│
-             │ user_id (PK)  │
-             │ role_id (PK)  │
-             │ granted_at    │
-             │ expires_at    │
-             └───────────────┘
-
-┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+         │   │────────────────│
+         │   │ user_id (PK)  │
+         │   │ role_id (PK)  │
+         │   │ granted_at    │
+         │   │ expires_at    │
+         │   └───────────────┘
+         │
+         ├──►┌──────────────────────────┐
+         │   │ auth_verification_tokens  │
+         │   │──────────────────────────│
+         │   │ id (PK, UUID)            │
+         │   │ user_id (FK)             │
+         │   │ token_hash               │
+         │   │ token_type (ENUM)        │
+         │   │ expires_at               │
+         │   │ used_at                  │
+         │   └──────────────────────────┘
+         │
+┌────────┴─────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
 │ auth_refresh_tokens  │  │ auth_token_blacklist │  │     audit_logs       │
 │──────────────────────│  │──────────────────────│  │──────────────────────│
 │ id (PK, UUID)        │  │ token_id (PK)        │  │ id (PK, UUID)        │
@@ -179,7 +190,36 @@ Persists blacklisted JWT access tokens to survive server restarts.
 - Entries can be purged after `expires_at` since the token is naturally invalid
 - The `token_id` corresponds to the `jti` (JWT ID) claim in the access token
 
-## 7. Table: `audit_logs`
+## 7. Table: `auth_verification_tokens`
+
+Stores hashed verification tokens for email verification and password reset flows.
+
+| Column | Type | Nullable | Default | Description |
+|--------|------|----------|---------|-------------|
+| `id` | CHAR(36) | NO | — | Primary key (UUID) |
+| `user_id` | CHAR(36) | NO | — | FK to auth_users |
+| `token_hash` | VARCHAR(255) | NO | — | SHA-256 hash of token |
+| `token_type` | ENUM | NO | — | `PASSWORD_RESET`, `EMAIL_VERIFICATION` |
+| `expires_at` | TIMESTAMP | NO | — | Token expiration |
+| `used_at` | TIMESTAMP | YES | NULL | When token was consumed |
+| `created_at` | TIMESTAMP | NO | CURRENT_TIMESTAMP | |
+| `updated_at` | TIMESTAMP | NO | CURRENT_TIMESTAMP | |
+
+**Indexes:**
+- `idx_verification_token_hash` on `token_hash` — Token lookup by hash
+- `idx_verification_user_type` on `(user_id, token_type)` — Find tokens by user and type (for invalidation)
+- `idx_verification_expires_at` on `expires_at` — Expired token cleanup
+
+**Foreign Key:**
+- `fk_verification_user_id` → `auth_users(id)` ON DELETE CASCADE
+
+**Design notes:**
+- Follows the same hash-only storage pattern as `auth_refresh_tokens`
+- `token_type` ENUM restricts to known verification flows
+- `used_at` being set indicates the token has been consumed (one-time use)
+- No `is_active`/`created_by`/`updated_by` — verification tokens are ephemeral system-generated records
+
+## 8. Table: `audit_logs`
 
 Tracks all API operations for security and compliance.
 
@@ -205,17 +245,18 @@ Tracks all API operations for security and compliance.
 - **Comprehensive indexing** for common queries (by user, timestamp, endpoint, IP, request ID)
 - **Retention**: 300 days (configurable via `audit.retention-days`)
 
-## 8. Entity Relationships
+## 9. Entity Relationships
 
 ```
 auth_users (1) ──── (N) auth_user_roles (N) ──── (1) auth_roles
 auth_users (1) ──── (N) auth_refresh_tokens
+auth_users (1) ──── (N) auth_verification_tokens
 auth_roles (1) ──── (N) auth_roles (self: parent→children)
 auth_roles (1) ──── (N) auth_user_roles
 ```
 
 **Cascade rules:**
-- User deletion cascades to: user_roles (CASCADE), refresh_tokens (CASCADE)
+- User deletion cascades to: user_roles (CASCADE), refresh_tokens (CASCADE), verification_tokens (CASCADE)
 - Role deletion restricted if: user_roles exist (RESTRICT)
 - Parent role deletion: child's parent_role_id SET NULL
 - Audit log `created_by`/`updated_by` references: SET NULL on user deletion

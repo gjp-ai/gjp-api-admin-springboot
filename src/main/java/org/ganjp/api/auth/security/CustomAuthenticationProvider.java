@@ -3,6 +3,7 @@ package org.ganjp.api.auth.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.token.LoginRequest;
+import org.ganjp.api.auth.user.AccountStatus;
 import org.ganjp.api.auth.user.User;
 import org.ganjp.api.auth.user.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -100,6 +101,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
 
     private void validateAccountStatus(User user) {
+        if (user.getAccountStatus() == AccountStatus.pending_verification) {
+            throw new BadCredentialsException("Please verify your email before logging in");
+        }
+
         if (!user.isEnabled()) {
             throw new BadCredentialsException("Account is not active");
         }

@@ -2,6 +2,7 @@ package org.ganjp.api.cms.article.image;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.ganjp.api.cms.article.ArticleProperties;
 import org.ganjp.api.cms.article.image.ArticleImageCreateRequest;
 import org.ganjp.api.cms.article.image.ArticleImageUpdateRequest;
@@ -10,6 +11,7 @@ import org.ganjp.api.cms.article.image.ArticleImage;
 import org.ganjp.api.cms.article.image.ArticleImageRepository;
 import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -23,9 +25,10 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Transactional
 public class ArticleImageService {
     private final ArticleImageRepository articleImageRepository;
     private final ArticleProperties articleProperties;
@@ -39,10 +42,10 @@ public class ArticleImageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Could not read the file!");
+                throw new IllegalStateException("Could not read the file: " + filename);
             }
         } catch (java.net.MalformedURLException e) {
-            throw new RuntimeException("Error: " + e.getMessage());
+            throw new IllegalStateException("Error reading file: " + filename, e);
         }
     }
 

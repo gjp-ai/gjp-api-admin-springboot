@@ -32,6 +32,7 @@ public class LogoService {
     /**
      * Flexible search for logos by name, language, tags, and status
      */
+    @Transactional(readOnly = true)
     public List<LogoResponse> searchLogos(String name, Logo.Language lang, String tags, Boolean isActive) {
         return logoRepository.searchLogos(name, lang, tags, isActive)
                 .stream()
@@ -42,6 +43,7 @@ public class LogoService {
     /**
      * Flexible search for logos by name, language, tags, and status with pagination
      */
+    @Transactional(readOnly = true)
     public Page<LogoResponse> searchLogos(String name, Logo.Language lang, String tags, Boolean isActive, Pageable pageable) {
         return logoRepository.searchLogos(name, lang, tags, isActive, pageable)
                 .map(this::toResponse);
@@ -170,6 +172,7 @@ public class LogoService {
     /**
      * Get logo by ID
      */
+    @Transactional(readOnly = true)
     public LogoResponse getLogoById(String id) {
         Logo logo = logoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Logo not found with ID: " + id));
@@ -182,6 +185,7 @@ public class LogoService {
      * @return File object representing the logo file
      * @throws IOException if file not found or error reading file
      */
+    @Transactional(readOnly = true)
     public java.io.File getLogoFileByFilename(String filename) throws IOException {
         // Validate that the filename exists in database for security
         List<Logo> logos = logoRepository.findAll();
@@ -198,6 +202,7 @@ public class LogoService {
     /**
      * Get all active logos
      */
+    @Transactional(readOnly = true)
     public List<LogoResponse> getAllActiveLogos() {
         return logoRepository.findByIsActiveTrueOrderByDisplayOrderAsc()
                 .stream()
@@ -208,6 +213,7 @@ public class LogoService {
     /**
      * Get all logos (including inactive)
      */
+    @Transactional(readOnly = true)
     public List<LogoResponse> getAllLogos() {
         return logoRepository.findAll()
                 .stream()
@@ -218,6 +224,7 @@ public class LogoService {
     /**
      * Search logos by name
      */
+    @Transactional(readOnly = true)
     public List<LogoResponse> searchLogosByName(String keyword) {
         return logoRepository.searchByNameContaining(keyword)
                 .stream()
@@ -228,6 +235,7 @@ public class LogoService {
     /**
      * Find logos by tag
      */
+    @Transactional(readOnly = true)
     public List<LogoResponse> findLogosByTag(String tag) {
         return logoRepository.findByTagsContaining(tag)
                 .stream()

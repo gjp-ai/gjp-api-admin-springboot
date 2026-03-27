@@ -3,6 +3,7 @@ package org.ganjp.api.cms.question;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ganjp.api.auth.security.JwtUtils;
 import org.ganjp.api.cms.question.QuestionCreateRequest;
 import org.ganjp.api.cms.question.QuestionUpdateRequest;
@@ -25,6 +26,7 @@ import java.util.List;
 /**
  * REST Controller for Question management
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/questions")
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class QuestionController {
      * GET /v1/questions?question=xxx&lang=EN&tags=yyy&isActive=true&page=0&size=20&sort=updatedAt&direction=desc
      */
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<PaginatedResponse<QuestionResponse>>> getQuestions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -66,6 +69,7 @@ public class QuestionController {
      * Get question by ID
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<QuestionResponse>> getQuestionById(@PathVariable String id) {
         QuestionResponse question = questionService.getQuestionById(id);
         return ResponseEntity.ok(ApiResponse.success(question, "Question retrieved successfully"));
@@ -75,6 +79,7 @@ public class QuestionController {
      * Get questions by language
      */
     @GetMapping("/by-language/{lang}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<List<QuestionResponse>>> getQuestionsByLanguage(
             @PathVariable Question.Language lang,
             @RequestParam(defaultValue = "false") boolean activeOnly
@@ -87,7 +92,7 @@ public class QuestionController {
      * Create a new question
      */
     @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<QuestionResponse>> createQuestion(
             @Valid @RequestBody QuestionCreateRequest request,
             HttpServletRequest httpRequest
@@ -102,7 +107,7 @@ public class QuestionController {
      * Update an existing question
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<QuestionResponse>> updateQuestion(
             @PathVariable String id,
             @Valid @RequestBody QuestionUpdateRequest request,
@@ -117,7 +122,7 @@ public class QuestionController {
      * Delete a question
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteQuestion(
             @PathVariable String id,
             HttpServletRequest httpRequest

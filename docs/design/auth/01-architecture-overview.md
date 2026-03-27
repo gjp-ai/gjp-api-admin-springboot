@@ -2,7 +2,7 @@
 
 ## 1. Module Purpose
 
-The Auth module provides a complete authentication and authorization system for the GJP Admin API. It handles user registration, login/logout with dual JWT tokens, role-based access control (RBAC), user profile management, session tracking, and comprehensive audit logging.
+The Auth module provides a complete authentication and authorization system for the GJP Admin API. It handles user registration, login/logout with dual JWT tokens, role-based access control (RBAC), user profile management, email verification, password reset, session tracking, and comprehensive audit logging.
 
 ## 2. Technology Stack
 
@@ -24,22 +24,6 @@ The auth module follows a **feature-based package structure**, where each sub-pa
 
 ```
 org.ganjp.api.auth
-├── blacklist/                  # Token blacklisting (logout support)
-│   ├── BlacklistedToken.java          # Entity: blacklisted JWT access tokens
-│   ├── BlacklistedTokenRepository.java # Repository
-│   └── TokenBlacklistService.java     # Service: blacklist & check tokens
-│
-├── config/                     # Security configuration
-│   ├── SecurityConfig.java            # Spring Security filter chain config
-│   └── SecurityProperties.java        # Configuration properties (JWT, CORS, endpoints)
-│
-├── refresh/                    # Refresh token management
-│   ├── RefreshToken.java              # Entity: refresh tokens (hash stored)
-│   ├── RefreshTokenRepository.java    # Repository with custom queries
-│   ├── RefreshTokenRequest.java       # DTO: refresh token request
-│   ├── RefreshTokenService.java       # Service: create, validate, rotate, revoke
-│   └── TokenRefreshResponse.java      # DTO: refresh response
-│
 ├── register/                   # User registration
 │   ├── RegisterController.java        # POST /v1/register
 │   ├── RegisterRequest.java           # DTO: registration input
@@ -58,38 +42,65 @@ org.ganjp.api.auth
 │   ├── UserRoleId.java                # Composite key for UserRole
 │   └── UserRoleRepository.java        # Repository
 │
-├── security/                   # JWT & authentication infrastructure
+├── security/                   # Security configuration & JWT infrastructure
 │   ├── CustomAuthenticationProvider.java  # Multi-method auth (username/email/mobile)
 │   ├── JwtAuthenticationFilter.java       # OncePerRequestFilter for JWT validation
-│   └── JwtUtils.java                     # JWT generation, parsing, validation
+│   ├── JwtUtils.java                     # JWT generation, parsing, validation
+│   ├── LoginFailureService.java           # Record failed login attempts (REQUIRES_NEW)
+│   ├── SecurityConfig.java               # Spring Security filter chain config
+│   └── SecurityProperties.java           # Configuration properties (JWT, CORS, verification)
 │
 ├── session/                    # Active session tracking
 │   ├── ActiveUserController.java      # GET /v1/admin/sessions
 │   └── ActiveUserService.java         # In-memory session tracking
 │
-├── token/                      # Authentication (login/logout/refresh)
+├── token/                      # Authentication (login/logout/refresh) & token management
 │   ├── AuthService.java               # Core auth logic (dual tokens, logout)
 │   ├── AuthTokenResponse.java         # DTO: login response
 │   ├── LoginRequest.java              # DTO: login input
 │   ├── LogoutRequest.java             # DTO: logout input
-│   └── TokenController.java           # POST/PUT/DELETE /v1/auth/tokens
+│   ├── TokenController.java           # POST/PUT/DELETE /v1/auth/tokens
+│   ├── blacklist/                     # Token blacklisting (logout support)
+│   │   ├── BlacklistedToken.java          # Entity: blacklisted JWT access tokens
+│   │   ├── BlacklistedTokenRepository.java # Repository
+│   │   └── TokenBlacklistService.java     # Service: blacklist & check tokens
+│   └── refresh/                       # Refresh token management
+│       ├── RefreshToken.java              # Entity: refresh tokens (hash stored)
+│       ├── RefreshTokenRepository.java    # Repository with custom queries
+│       ├── RefreshTokenRequest.java       # DTO: refresh token request
+│       ├── RefreshTokenService.java       # Service: create, validate, rotate, revoke
+│       └── TokenRefreshResponse.java      # DTO: refresh response
 │
-└── user/                       # User management
-    ├── AccountStatus.java             # Enum: active, locked, suspended, pending_verification
-    ├── User.java                      # Entity: auth_users
-    ├── UserController.java            # CRUD /v1/users
-    ├── UserCreateRequest.java         # DTO: create/full-update user
-    ├── UserRepository.java            # Repository with custom queries
-    ├── UserResponse.java              # DTO: user output
-    ├── UserService.java               # Service: CRUD + search + dashboard
-    ├── UserUpdateRequest.java         # DTO: partial update user
-    └── profile/                       # Self-service profile management
-        ├── AdminResetPasswordRequest.java   # DTO: admin password reset
-        ├── ChangePasswordRequest.java       # DTO: user password change
-        ├── UpdateProfileRequest.java        # DTO: profile update
-        ├── UserProfileController.java       # /v1/profile endpoints
-        ├── UserProfileResponse.java         # DTO: profile output
-        └── UserProfileService.java          # Service: profile operations
+├── user/                       # User management
+│   ├── AccountStatus.java             # Enum: active, locked, suspended, pending_verification
+│   ├── User.java                      # Entity: auth_users
+│   ├── UserController.java            # CRUD /v1/users
+│   ├── UserCreateRequest.java         # DTO: create/full-update user
+│   ├── UserRepository.java            # Repository with custom queries
+│   ├── UserResponse.java              # DTO: user output
+│   ├── UserService.java               # Service: CRUD + search + dashboard
+│   ├── UserUpdateRequest.java         # DTO: partial update user
+│   └── profile/                       # Self-service profile management
+│       ├── AdminResetPasswordRequest.java   # DTO: admin password reset
+│       ├── ChangePasswordRequest.java       # DTO: user password change
+│       ├── UpdateProfileRequest.java        # DTO: profile update
+│       ├── UserProfileController.java       # /v1/profile endpoints
+│       ├── UserProfileResponse.java         # DTO: profile output
+│       └── UserProfileService.java          # Service: profile operations
+│
+└── verification/               # Email verification & password reset
+    ├── EmailVerificationController.java   # POST /v1/auth/email/verify, /resend-verification
+    ├── EmailVerificationService.java      # Service: verify email, resend verification
+    ├── ForgotPasswordRequest.java         # DTO: forgot password input
+    ├── PasswordResetController.java       # POST /v1/auth/password/forgot, /reset
+    ├── PasswordResetService.java          # Service: request reset, reset password
+    ├── ResendVerificationRequest.java     # DTO: resend verification input
+    ├── ResetPasswordRequest.java          # DTO: reset password input
+    ├── VerificationToken.java             # Entity: auth_verification_tokens
+    ├── VerificationTokenRepository.java   # Repository with custom queries
+    ├── VerificationTokenService.java      # Shared: create, validate, mark tokens
+    ├── VerificationTokenType.java         # Enum: PASSWORD_RESET, EMAIL_VERIFICATION
+    └── VerifyEmailRequest.java            # DTO: verify email input
 ```
 
 ## 4. Key Design Principles
@@ -128,6 +139,13 @@ RegisterController ──► RegisterService ──► UserRepository
                                         ──► RoleRepository
                                         ──► PasswordEncoder
 
+EmailVerificationController ──► EmailVerificationService ──► VerificationTokenService
+                                                          ──► UserRepository
+
+PasswordResetController ──► PasswordResetService ──► VerificationTokenService
+                                                  ──► UserRepository
+                                                  ──► PasswordEncoder
+
 UserController ──► UserService ──► UserRepository
                                ──► RoleRepository
                                ──► UserRoleRepository
@@ -142,6 +160,8 @@ UserProfileController ──► UserProfileService ──► UserRepository
                                               ──► PasswordEncoder
 
 ActiveUserController ──► ActiveUserService
+
+VerificationTokenService ──► VerificationTokenRepository
 
 JwtAuthenticationFilter ──► JwtUtils
                         ──► UserDetailsService
@@ -158,4 +178,5 @@ JwtAuthenticationFilter ──► JwtUtils
 | Transaction Management | `@Transactional` on service methods; `REQUIRES_NEW` for failure recording |
 | Input Validation | Jakarta Bean Validation annotations on all DTOs |
 | Rate Limiting | In-memory rate limiter (10 attempts/60s per IP) |
-| IP Extraction | Shared `IpAddressUtils` (supports X-Forwarded-For, X-Real-IP) |
+| IP Extraction | `request.getRemoteAddr()` (rely on reverse proxy to set correctly) |
+| Verification Tokens | SHA-256 hashed, one-time use, configurable expiration per type |

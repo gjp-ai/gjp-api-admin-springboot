@@ -3,8 +3,11 @@ server:
   tomcat:
     max-threads: 200
     min-spare-threads: 20
+  shutdown: graceful
 
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   devtools:
     restart:
       enabled: false
@@ -15,6 +18,9 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}

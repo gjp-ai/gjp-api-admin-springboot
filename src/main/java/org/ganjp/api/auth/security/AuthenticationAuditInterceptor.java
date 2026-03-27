@@ -35,20 +35,17 @@ public class AuthenticationAuditInterceptor implements HandlerInterceptor {
         String requestUri = request.getRequestURI();
         String method = request.getMethod();
 
-        // Only audit POST requests to authentication endpoints
-        if (!"POST".equalsIgnoreCase(method)) {
-            return;
-        }
-
         try {
-            if (requestUri.contains("/auth/login")) {
-                auditLoginAttempt(request, response, ex);
-            } else if (requestUri.contains("/auth/logout")) {
-                auditLogoutAttempt(request, response, ex);
-            } else if (requestUri.contains("/auth/signup")) {
+            if (requestUri.contains("/auth/tokens")) {
+                // POST = login, PUT = refresh, DELETE = logout
+                switch (method.toUpperCase()) {
+                    case "POST" -> auditLoginAttempt(request, response, ex);
+                    case "DELETE" -> auditLogoutAttempt(request, response, ex);
+                    case "PUT" -> auditTokenAttempt(request, response, ex);
+                    default -> { /* no audit for other methods */ }
+                }
+            } else if ("POST".equalsIgnoreCase(method) && requestUri.contains("/register")) {
                 auditSignupAttempt(request, response, ex);
-            } else if (requestUri.contains("/auth/tokens")) {
-                auditTokenAttempt(request, response, ex);
             }
         } catch (Exception e) {
             log.error("Error during authentication audit logging", e);
