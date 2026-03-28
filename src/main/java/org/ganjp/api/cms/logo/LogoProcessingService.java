@@ -8,6 +8,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
+import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,8 +46,7 @@ public class LogoProcessingService {
     public String convertImageFormat(File sourceFile, String targetExtension, String logoName) {
         String sourceExtension = getFileExtension(sourceFile.getName());
         String newFilename = generateFilename(logoName, targetExtension);
-        Path uploadDir = Paths.get(uploadProperties.getDirectory());
-        Path newPath = uploadDir.resolve(newFilename);
+        Path newPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), newFilename);
         try {
             if ("svg".equalsIgnoreCase(sourceExtension) && !"svg".equalsIgnoreCase(targetExtension)) {
                 // Only allow SVG to PNG directly
@@ -61,7 +61,7 @@ public class LogoProcessingService {
                 } else if ("jpg".equalsIgnoreCase(targetExtension) || "jpeg".equalsIgnoreCase(targetExtension)) {
                     // Convert SVG to PNG first, then PNG to JPG
                     String tempPngFilename = generateFilename(logoName, "png");
-                    Path tempPngPath = uploadDir.resolve(tempPngFilename);
+                    Path tempPngPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), tempPngFilename);
                     try (InputStream svgInputStream = new FileInputStream(sourceFile);
                          OutputStream pngOutputStream = new FileOutputStream(tempPngPath.toFile())) {
                         org.apache.batik.transcoder.image.PNGTranscoder transcoder = new org.apache.batik.transcoder.image.PNGTranscoder();
@@ -191,10 +191,10 @@ public class LogoProcessingService {
             Files.createDirectories(uploadDir);
             log.info("Created upload directory: {}", uploadDir);
         }
-        
+
         // Full path to save file
-        Path fullPath = uploadDir.resolve(filename);
-        
+        Path fullPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
+
         // Resize and save image
         Thumbnails.of(originalImage)
                 .size(newWidth, newHeight)
@@ -225,10 +225,10 @@ public class LogoProcessingService {
             Files.createDirectories(uploadDir);
             log.info("Created upload directory: {}", uploadDir);
         }
-        
+
         // Full path to save file
-        Path fullPath = uploadDir.resolve(filename);
-        
+        Path fullPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
+
         // Copy SVG file directly (no resize needed)
         Files.copy(inputStream, fullPath, StandardCopyOption.REPLACE_EXISTING);
         
@@ -250,17 +250,16 @@ public class LogoProcessingService {
      */
     public String renameLogoFile(String oldFilename, String newLogoName, String extension) {
         try {
-            Path uploadDir = Paths.get(uploadProperties.getDirectory());
-            Path oldPath = uploadDir.resolve(oldFilename);
-            
+            Path oldPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), oldFilename);
+
             if (!Files.exists(oldPath)) {
                 log.warn("Logo file not found for renaming: {}", oldPath);
                 return null;
             }
-            
+
             // Generate new filename based on new logo name
             String newFilename = generateFilename(newLogoName, extension);
-            Path newPath = uploadDir.resolve(newFilename);
+            Path newPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), newFilename);
             
             // Rename the file
             Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
@@ -280,8 +279,7 @@ public class LogoProcessingService {
      * @throws IOException if file not found or error reading file
      */
     public File getLogoFile(String filename) throws IOException {
-        Path uploadDir = Paths.get(uploadProperties.getDirectory());
-        Path fullPath = uploadDir.resolve(filename);
+        Path fullPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
         
         if (!Files.exists(fullPath)) {
             throw new IOException("Logo file not found: " + filename);
@@ -301,8 +299,7 @@ public class LogoProcessingService {
      */
     public void deleteLogoFile(String filename) {
         try {
-            Path uploadDir = Paths.get(uploadProperties.getDirectory());
-            Path fullPath = uploadDir.resolve(filename);
+            Path fullPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
             
             if (Files.exists(fullPath)) {
                 Files.delete(fullPath);

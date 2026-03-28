@@ -81,7 +81,7 @@ public class VideoController {
     public ResponseEntity<ApiResponse<VideoResponse>> uploadVideo(@Valid @ModelAttribute VideoCreateRequest request, HttpServletRequest httpRequest) throws IOException {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         VideoResponse res = videoService.createVideo(request, userId);
-        return ResponseEntity.status(201).body(ApiResponse.success(res, "Video uploaded"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res, "Video created"));
     }
 
     // create-from-URL endpoint removed; file upload is required

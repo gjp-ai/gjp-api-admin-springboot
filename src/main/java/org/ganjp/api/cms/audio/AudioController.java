@@ -81,7 +81,7 @@ public class AudioController {
     public ResponseEntity<ApiResponse<AudioResponse>> uploadAudio(@Valid @ModelAttribute AudioCreateRequest request, HttpServletRequest httpRequest) throws IOException {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         AudioResponse res = audioService.createAudio(request, userId);
-        return ResponseEntity.status(201).body(ApiResponse.success(res, "Audio uploaded"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res, "Audio created"));
     }
 
     @GetMapping("/{id}")

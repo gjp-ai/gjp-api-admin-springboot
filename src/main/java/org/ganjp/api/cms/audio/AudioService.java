@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.ganjp.api.common.exception.ResourceNotFoundException;
+import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class AudioService {
             }
             Path audioDir = Path.of(uploadProperties.getDirectory());
             Files.createDirectories(audioDir);
-            Path target = audioDir.resolve(filename);
+            Path target = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
 
             if (audioRepository.existsByFilename(filename)) {
                 throw new IllegalArgumentException("Filename already exists: " + filename);
@@ -88,7 +89,7 @@ public class AudioService {
             }
             Path imagesDir = Path.of(uploadProperties.getDirectory(), "cover-images");
             Files.createDirectories(imagesDir);
-            Path coverTarget = imagesDir.resolve(coverFilename);
+            Path coverTarget = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename);
 
             if (Files.exists(coverTarget) || audioRepository.existsByFilename(coverFilename)) {
                 throw new IllegalArgumentException("Audio Cover image already exists: " + coverFilename);
@@ -137,7 +138,7 @@ public class AudioService {
                 }
                 Path imagesDir = Path.of(uploadProperties.getDirectory(), "cover-images");
                 Files.createDirectories(imagesDir);
-                Path coverTarget = imagesDir.resolve(coverFilename);
+                Path coverTarget = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename);
 
                 int suffix = 1;
                 String base = coverFilename;
@@ -149,12 +150,12 @@ public class AudioService {
                 }
                 while (Files.exists(coverTarget) || audioRepository.existsByFilename(coverFilename)) {
                     coverFilename = base + "-" + suffix + ext;
-                    coverTarget = imagesDir.resolve(coverFilename);
+                    coverTarget = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename);
                     suffix++;
                 }
 
                 if (audio.getCoverImageFilename() != null) {
-                    try { Path old = imagesDir.resolve(audio.getCoverImageFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {}
+                    try { Path old = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", audio.getCoverImageFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {}
                 }
 
                 try {
@@ -179,8 +180,8 @@ public class AudioService {
                     !request.getCoverImageFilename().equals(audio.getCoverImageFilename())) {
                 // change the image file name in local storage only (no re-download), implying a rename
                 Path coverImagesDir = Path.of(uploadProperties.getDirectory(), "cover-images");
-                Path oldPath = coverImagesDir.resolve(audio.getCoverImageFilename());
-                Path newPath = coverImagesDir.resolve(request.getCoverImageFilename());
+                Path oldPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", audio.getCoverImageFilename());
+                Path newPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", request.getCoverImageFilename());
                 // if newPath exists, it will not be overwritten
                 if (Files.exists(newPath)) {
                     throw new IllegalArgumentException("Cover image file with name " + request.getCoverImageFilename() + " already exists");
@@ -198,8 +199,8 @@ public class AudioService {
                     request.getFilename().lastIndexOf('.') > 0 &&
                     !request.getFilename().equals(audio.getFilename())) {
                 Path audioDir = Path.of(uploadProperties.getDirectory());
-                Path oldPath = audioDir.resolve(audio.getFilename());
-                Path newPath = audioDir.resolve(request.getFilename());
+                Path oldPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), audio.getFilename());
+                Path newPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), request.getFilename());
                 // if newPath exists, it will not be overwritten
                 if (Files.exists(newPath)) {
                     throw new IllegalArgumentException("Audio file with name " + request.getFilename() + " already exists");
@@ -244,7 +245,7 @@ public class AudioService {
     @Transactional(readOnly = true)
     public java.io.File getAudioFileByFilename(String filename) {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path audioPath = Path.of(uploadProperties.getDirectory(), filename);
+        Path audioPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
         if (!Files.exists(audioPath)) {
             throw new ResourceNotFoundException("Audio file", "filename", filename);
         }
@@ -254,7 +255,7 @@ public class AudioService {
     @Transactional(readOnly = true)
     public java.io.File getCoverImageFileByFilename(String filename) {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path coverPath = Path.of(uploadProperties.getDirectory(), "cover-images", filename);
+        Path coverPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", filename);
         if (!Files.exists(coverPath)) {
             throw new ResourceNotFoundException("Audio cover image", "filename", filename);
         }
@@ -277,8 +278,8 @@ public class AudioService {
         String coverFilename = audio.getCoverImageFilename();
         audioRepository.delete(audio);
         try {
-            if (filename != null) Files.deleteIfExists(Path.of(uploadProperties.getDirectory(), filename));
-            if (coverFilename != null) Files.deleteIfExists(Path.of(uploadProperties.getDirectory(), "cover-images", coverFilename));
+            if (filename != null) Files.deleteIfExists(CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename));
+            if (coverFilename != null) Files.deleteIfExists(CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename));
         } catch (IOException e) {
             log.error("Failed to delete audio files for audio: {}", id, e);
         }
@@ -302,8 +303,14 @@ public class AudioService {
         float scale = Math.min((float) maxSize / width, (float) maxSize / height);
         int newWidth = Math.round(width * scale);
         int newHeight = Math.round(height * scale);
-        BufferedImage resized = new BufferedImage(newWidth, newHeight, image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType());
-        resized.getGraphics().drawImage(image, 0, 0, newWidth, newHeight, null);
+        int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+        BufferedImage resized = new BufferedImage(newWidth, newHeight, type);
+        java.awt.Graphics2D g2d = resized.createGraphics();
+        try {
+            g2d.drawImage(image, 0, 0, newWidth, newHeight, null);
+        } finally {
+            g2d.dispose();
+        }
         return resized;
     }
 }

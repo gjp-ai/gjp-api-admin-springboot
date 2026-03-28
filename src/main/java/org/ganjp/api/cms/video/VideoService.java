@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.ganjp.api.common.exception.ResourceNotFoundException;
+import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class VideoService {
             }
             Path videoDir = Path.of(uploadProperties.getDirectory());
             Files.createDirectories(videoDir);
-            Path target = videoDir.resolve(filename);
+            Path target = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
 
             // If filename already exists in DB, reject to avoid overwrite
             if (videoRepository.existsByFilename(filename)) {
@@ -92,7 +93,7 @@ public class VideoService {
             }
             Path imagesDir = Path.of(uploadProperties.getDirectory(), "cover-images");
             Files.createDirectories(imagesDir);
-            Path coverTarget = imagesDir.resolve(coverFilename);
+            Path coverTarget = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename);
 
             // if filename exists, auto-rename by appending a numeric suffix
             if (Files.exists(coverTarget) || videoRepository.existsByFilename(coverFilename)) {
@@ -147,7 +148,7 @@ public class VideoService {
                 }
                 Path imagesDir = Path.of(uploadProperties.getDirectory(), "cover-images");
                 Files.createDirectories(imagesDir);
-                Path coverTarget = imagesDir.resolve(coverFilename);
+                Path coverTarget = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename);
 
                 // If filename exists, auto-rename by appending numeric suffix
                 int suffix = 1;
@@ -160,14 +161,14 @@ public class VideoService {
                 }
                 while (Files.exists(coverTarget) || videoRepository.existsByFilename(coverFilename)) {
                     coverFilename = base + "-" + suffix + ext;
-                    coverTarget = imagesDir.resolve(coverFilename);
+                    coverTarget = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename);
                     suffix++;
                 }
 
                 // delete old cover file if present
                 if (video.getCoverImageFilename() != null) {
                     try {
-                        Path old = imagesDir.resolve(video.getCoverImageFilename());
+                        Path old = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", video.getCoverImageFilename());
                         Files.deleteIfExists(old);
                     } catch (IOException ignored) {}
                 }
@@ -194,9 +195,8 @@ public class VideoService {
                     request.getCoverImageFilename().lastIndexOf('.') > 0 &&
                     !request.getCoverImageFilename().equals(video.getCoverImageFilename())) {
                 // change the image file name in local storage only (no re-download), implying a rename
-                Path coverImagesDir = Path.of(uploadProperties.getDirectory(), "cover-images");
-                Path oldPath = coverImagesDir.resolve(video.getCoverImageFilename());
-                Path newPath = coverImagesDir.resolve(request.getCoverImageFilename());
+                Path oldPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", video.getCoverImageFilename());
+                Path newPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", request.getCoverImageFilename());
                 // if newPath exists, it will not be overwritten
                 if (Files.exists(newPath)) {
                     throw new IllegalArgumentException("Cover image file with name " + request.getCoverImageFilename() + " already exists");
@@ -213,9 +213,8 @@ public class VideoService {
             if (request.getFilename() != null && 
                     request.getFilename().lastIndexOf('.') > 0 &&
                     !request.getFilename().equals(video.getFilename())) {
-                Path videoDir = Path.of(uploadProperties.getDirectory());
-                Path oldPath = videoDir.resolve(video.getFilename());
-                Path newPath = videoDir.resolve(request.getFilename());
+                Path oldPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), video.getFilename());
+                Path newPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), request.getFilename());
                 // if newPath exists, it will not be overwritten
                 if (Files.exists(newPath)) {
                     throw new IllegalArgumentException("Audio file with name " + request.getFilename() + " already exists");
@@ -258,7 +257,7 @@ public class VideoService {
     @Transactional(readOnly = true)
     public java.io.File getVideoFileByFilename(String filename) {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path videoPath = Path.of(uploadProperties.getDirectory(), filename);
+        Path videoPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
         if (!Files.exists(videoPath)) {
             throw new ResourceNotFoundException("Video file", "filename", filename);
         }
@@ -268,7 +267,7 @@ public class VideoService {
     @Transactional(readOnly = true)
     public org.springframework.core.io.Resource getVideoResource(String filename) throws java.io.IOException {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path videoPath = Path.of(uploadProperties.getDirectory(), filename);
+        Path videoPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
         if (!Files.exists(videoPath)) {
             throw new ResourceNotFoundException("Video file", "filename", filename);
         }
@@ -279,7 +278,7 @@ public class VideoService {
     @Transactional(readOnly = true)
     public java.io.File getCoverImageFileByFilename(String filename) {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path coverPath = Path.of(uploadProperties.getDirectory(), "cover-images", filename);
+        Path coverPath = CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", filename);
         if (!Files.exists(coverPath)) {
             throw new ResourceNotFoundException("Video cover image", "filename", filename);
         }
@@ -302,8 +301,8 @@ public class VideoService {
         String coverFilename = video.getCoverImageFilename();
         videoRepository.delete(video);
         try {
-            if (filename != null) Files.deleteIfExists(Path.of(uploadProperties.getDirectory(), filename));
-            if (coverFilename != null) Files.deleteIfExists(Path.of(uploadProperties.getDirectory(), "cover-images", coverFilename));
+            if (filename != null) Files.deleteIfExists(CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename));
+            if (coverFilename != null) Files.deleteIfExists(CmsUtil.resolveSecurePath(uploadProperties.getDirectory() + "/cover-images", coverFilename));
         } catch (IOException e) {
             log.error("Failed to delete video files for video: {}", id, e);
         }
@@ -332,8 +331,14 @@ public class VideoService {
         float scale = Math.min((float) maxSize / width, (float) maxSize / height);
         int newWidth = Math.round(width * scale);
         int newHeight = Math.round(height * scale);
-        BufferedImage resized = new BufferedImage(newWidth, newHeight, image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType());
-        resized.getGraphics().drawImage(image, 0, 0, newWidth, newHeight, null);
+        int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+        BufferedImage resized = new BufferedImage(newWidth, newHeight, type);
+        java.awt.Graphics2D g2d = resized.createGraphics();
+        try {
+            g2d.drawImage(image, 0, 0, newWidth, newHeight, null);
+        } finally {
+            g2d.dispose();
+        }
         return resized;
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.ganjp.api.common.exception.ResourceNotFoundException;
+import org.ganjp.api.common.util.CmsUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -56,9 +57,8 @@ public class ArticleService {
                 } else {
                     coverFilename = coverOriginal.replaceAll("\\s+", "-");
                 }
-                Path imagesDir = Path.of(articleCoverImageDir);
-                Files.createDirectories(imagesDir);
-                Path coverTarget = imagesDir.resolve(coverFilename);
+                Files.createDirectories(Path.of(articleCoverImageDir));
+                Path coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
 
                 if (Files.exists(coverTarget)) {
                     throw new IllegalArgumentException("Cover image already exists: " + coverFilename);
@@ -97,9 +97,8 @@ public class ArticleService {
                     }
                 }
 
-                Path imagesDir = Path.of(articleCoverImageDir);
-                Files.createDirectories(imagesDir);
-                Path coverTarget = imagesDir.resolve(coverFilename);
+                Files.createDirectories(Path.of(articleCoverImageDir));
+                Path coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
 
                 // ensure unique filename
                 int suffix = 1;
@@ -112,7 +111,7 @@ public class ArticleService {
                 }
                 while (Files.exists(coverTarget)) {
                     coverFilename = base + "-" + suffix + ext;
-                    coverTarget = imagesDir.resolve(coverFilename);
+                    coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
                     suffix++;
                 }
 
@@ -196,9 +195,8 @@ public class ArticleService {
                 } else {
                     coverFilename = coverOriginalFilename.replaceAll("\\s+", "-");
                 }
-                Path imagesDir = Path.of(articleCoverImageDir);
-                Files.createDirectories(imagesDir);
-                Path coverTarget = imagesDir.resolve(coverFilename);
+                Files.createDirectories(Path.of(articleCoverImageDir));
+                Path coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
 
                 int suffix = 1;
                 String base = coverFilename;
@@ -210,12 +208,12 @@ public class ArticleService {
                 }
                 while (Files.exists(coverTarget)) {
                     coverFilename = base + "-" + suffix + ext;
-                    coverTarget = imagesDir.resolve(coverFilename);
+                    coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
                     suffix++;
                 }
 
                 if (a.getCoverImageFilename() != null) {
-                    try { Path old = imagesDir.resolve(a.getCoverImageFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {}
+                    try { Path old = CmsUtil.resolveSecurePath(articleCoverImageDir, a.getCoverImageFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {}
                 }
 
                 try {
@@ -254,9 +252,8 @@ public class ArticleService {
                         }
                     }
 
-                    Path imagesDir = Path.of(articleCoverImageDir);
-                    Files.createDirectories(imagesDir);
-                    Path coverTarget = imagesDir.resolve(coverFilename);
+                    Files.createDirectories(Path.of(articleCoverImageDir));
+                    Path coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
 
                     int suffix = 1;
                     String base = coverFilename;
@@ -268,12 +265,12 @@ public class ArticleService {
                     }
                     while (Files.exists(coverTarget)) {
                         coverFilename = base + "-" + suffix + ext;
-                        coverTarget = imagesDir.resolve(coverFilename);
+                        coverTarget = CmsUtil.resolveSecurePath(articleCoverImageDir, coverFilename);
                         suffix++;
                     }
 
                     if (a.getCoverImageFilename() != null) {
-                        try { Path old = imagesDir.resolve(a.getCoverImageFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {}
+                        try { Path old = CmsUtil.resolveSecurePath(articleCoverImageDir, a.getCoverImageFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {}
                     }
 
                     try (java.io.InputStream is = new java.net.URL(url).openStream()) {
@@ -306,9 +303,9 @@ public class ArticleService {
                     request.getCoverImageFilename().lastIndexOf('.') > 0 &&
                     !request.getCoverImageFilename().equals(a.getCoverImageFilename())) {
                 // change the image file name in local storage only (no re-download), implying a rename
-                Path imagesDir = Path.of(articleProperties.getCoverImage().getUpload().getDirectory());
-                Path oldPath = imagesDir.resolve(a.getCoverImageFilename());
-                Path newPath = imagesDir.resolve(request.getCoverImageFilename());
+                String renameDir = articleProperties.getCoverImage().getUpload().getDirectory();
+                Path oldPath = CmsUtil.resolveSecurePath(renameDir, a.getCoverImageFilename());
+                Path newPath = CmsUtil.resolveSecurePath(renameDir, request.getCoverImageFilename());
                 // if newPath exists, it will not be overwritten
                 if (Files.exists(newPath)) {
                     throw new IllegalArgumentException("Cover image file with name " + request.getCoverImageFilename() + " already exists");
@@ -358,7 +355,7 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public java.io.File getCoverImageFileByFilename(String filename) {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path coverPath = Path.of(articleProperties.getCoverImage().getUpload().getDirectory(), "", filename);
+        Path coverPath = CmsUtil.resolveSecurePath(articleProperties.getCoverImage().getUpload().getDirectory(), filename);
         if (!Files.exists(coverPath)) {
             throw new ResourceNotFoundException("Cover image", "filename", filename);
         }
@@ -382,8 +379,14 @@ public class ArticleService {
         float scale = Math.min((float) maxSize / width, (float) maxSize / height);
         int newWidth = Math.round(width * scale);
         int newHeight = Math.round(height * scale);
-        BufferedImage resized = new BufferedImage(newWidth, newHeight, image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType());
-        resized.getGraphics().drawImage(image, 0, 0, newWidth, newHeight, null);
+        int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+        BufferedImage resized = new BufferedImage(newWidth, newHeight, type);
+        java.awt.Graphics2D g2d = resized.createGraphics();
+        try {
+            g2d.drawImage(image, 0, 0, newWidth, newHeight, null);
+        } finally {
+            g2d.dispose();
+        }
         return resized;
     }
 }

@@ -100,7 +100,7 @@ public class ImageController {
             HttpServletRequest httpRequest) throws IOException {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         ImageResponse response = imageService.createImage(request, userId);
-        return ResponseEntity.status(201).body(ApiResponse.success(response, "Image created successfully"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response, "Image created"));
     }
 
     /**
@@ -114,7 +114,7 @@ public class ImageController {
             HttpServletRequest httpRequest) throws IOException {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         ImageResponse response = imageService.createImage(request, userId);
-        return ResponseEntity.status(201).body(ApiResponse.success(response, "Image created successfully from URL"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response, "Image created"));
     }
 
     @GetMapping("/{id}")

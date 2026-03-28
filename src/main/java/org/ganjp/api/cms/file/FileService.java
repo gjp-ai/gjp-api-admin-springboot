@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import org.ganjp.api.common.util.CmsUtil;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -46,7 +48,7 @@ public class FileService {
                 MultipartFile mf = request.getFile();
                 String orig = mf.getOriginalFilename();
                 String stored = (request.getFilename() != null && !request.getFilename().isBlank()) ? request.getFilename() : (orig == null ? System.currentTimeMillis()+"-file" : orig.replaceAll("\\s+", "-"));
-                Path target = filesDir.resolve(stored);
+                Path target = CmsUtil.resolveSecurePath(baseDir, stored);
                 int suffix = 1;
                 String base = stored;
                 String ext = "";
@@ -54,7 +56,7 @@ public class FileService {
                 if (dot > 0) { base = stored.substring(0, dot); ext = stored.substring(dot); }
                 while (Files.exists(target)) {
                     stored = base + "-" + suffix + ext;
-                    target = filesDir.resolve(stored);
+                    target = CmsUtil.resolveSecurePath(baseDir, stored);
                     suffix++;
                 }
                 Files.copy(mf.getInputStream(), target);
@@ -68,7 +70,7 @@ public class FileService {
                 if (stored == null || stored.isBlank()) {
                     try { java.net.URL u = new java.net.URL(url); String p = u.getPath(); int last = p.lastIndexOf('/'); String lastSeg = last>=0? p.substring(last+1): p; if (lastSeg==null||lastSeg.isBlank()) lastSeg = System.currentTimeMillis()+"-file"; stored = lastSeg.replaceAll("\\s+","-"); } catch (Exception ex) { stored = System.currentTimeMillis()+"-file"; }
                 }
-                Path target = filesDir.resolve(stored);
+                Path target = CmsUtil.resolveSecurePath(baseDir, stored);
                 int dot = stored.lastIndexOf('.');
                 // When downloading from an external originalUrl, do not auto-rename if the file already exists.
                 // Throw an error to let the caller decide how to handle duplicates.
@@ -113,7 +115,7 @@ public class FileService {
                 MultipartFile mf = request.getFile();
                 String orig = mf.getOriginalFilename();
                 String stored = (request.getFilename() != null && !request.getFilename().isBlank()) ? request.getFilename() : (orig == null ? System.currentTimeMillis()+"-file" : orig.replaceAll("\\s+", "-"));
-                Path target = filesDir.resolve(stored);
+                Path target = CmsUtil.resolveSecurePath(baseDir, stored);
                 int suffix = 1;
                 String base = stored;
                 String ext = "";
@@ -121,10 +123,10 @@ public class FileService {
                 if (dot > 0) { base = stored.substring(0, dot); ext = stored.substring(dot); }
                 while (Files.exists(target)) {
                     stored = base + "-" + suffix + ext;
-                    target = filesDir.resolve(stored);
+                    target = CmsUtil.resolveSecurePath(baseDir, stored);
                     suffix++;
                 }
-                if (f.getFilename() != null) { try { Path old = filesDir.resolve(f.getFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {} }
+                if (f.getFilename() != null) { try { Path old = CmsUtil.resolveSecurePath(baseDir, f.getFilename()); Files.deleteIfExists(old); } catch (IOException ignored) {} }
                 Files.copy(mf.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
                 f.setFilename(stored);
                 f.setSizeBytes(mf.getSize());
@@ -155,7 +157,7 @@ public class FileService {
     @Transactional(readOnly = true)
     public java.io.File getFileByFilename(String filename) {
         if (filename == null) throw new IllegalArgumentException("filename is null");
-        Path p = Path.of(uploadProperties.getDirectory(), filename);
+        Path p = CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename);
         if (!Files.exists(p)) throw new ResourceNotFoundException("File", "filename", filename);
         return p.toFile();
     }
@@ -193,7 +195,7 @@ public class FileService {
         fileRepository.delete(f);
         if (filename != null) {
             try {
-                Files.deleteIfExists(Path.of(uploadProperties.getDirectory(), filename));
+                Files.deleteIfExists(CmsUtil.resolveSecurePath(uploadProperties.getDirectory(), filename));
             } catch (IOException e) {
                 log.error("Failed to delete file for file asset: {}", id, e);
             }

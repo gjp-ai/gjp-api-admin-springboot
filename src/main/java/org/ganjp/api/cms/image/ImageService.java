@@ -61,14 +61,13 @@ public class ImageService {
             // Need to convert stored files to new extension
             String newExt = request.getExtension().toLowerCase();
             try {
-                Path uploadDir = Paths.get(imageUploadProperties.getDirectory());
-                Path oldImagePath = uploadDir.resolve(oldFilename);
-                Path oldThumbPath = uploadDir.resolve(oldThumbnail);
+                Path oldImagePath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), oldFilename);
+                Path oldThumbPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), oldThumbnail);
 
                 String newFilename = request.getFilename() != null ? request.getFilename() : replaceExtension(oldFilename, newExt);
                 String newThumbnail = request.getThumbnailFilename() != null ? request.getThumbnailFilename() : replaceExtension(oldThumbnail, newExt);
-                Path newImagePath = uploadDir.resolve(newFilename);
-                Path newThumbPath = uploadDir.resolve(newThumbnail);
+                Path newImagePath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), newFilename);
+                Path newThumbPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), newThumbnail);
 
                 // Try to read and write using ImageIO (conversion)
                 try {
@@ -113,9 +112,8 @@ public class ImageService {
             // Extension not changed, but filename might have
             if (request.getFilename() != null && !request.getFilename().equals(oldFilename)) {
                 try {
-                    Path uploadDir = Paths.get(imageUploadProperties.getDirectory());
-                    Path oldPath = uploadDir.resolve(oldFilename);
-                    Path newPath = uploadDir.resolve(request.getFilename());
+                    Path oldPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), oldFilename);
+                    Path newPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), request.getFilename());
                     Files.move(oldPath, newPath);
                     image.setFilename(request.getFilename());
                 } catch (IOException e) {
@@ -124,9 +122,8 @@ public class ImageService {
             }
             if (request.getThumbnailFilename() != null && !request.getThumbnailFilename().equals(oldThumbnail)) {
                 try {
-                    Path uploadDir = Paths.get(imageUploadProperties.getDirectory());
-                    Path oldPath = uploadDir.resolve(oldThumbnail);
-                    Path newPath = uploadDir.resolve(request.getThumbnailFilename());
+                    Path oldPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), oldThumbnail);
+                    Path newPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), request.getThumbnailFilename());
                     Files.move(oldPath, newPath);
                     image.setThumbnailFilename(request.getThumbnailFilename());
                 } catch (IOException e) {
@@ -163,10 +160,9 @@ public class ImageService {
         String filename = image.getFilename();
         String thumbnailFilename = image.getThumbnailFilename();
         imageRepository.delete(image);
-        Path uploadDir = Paths.get(imageUploadProperties.getDirectory());
         try {
-            if (filename != null) Files.deleteIfExists(uploadDir.resolve(filename));
-            if (thumbnailFilename != null) Files.deleteIfExists(uploadDir.resolve(thumbnailFilename));
+            if (filename != null) Files.deleteIfExists(CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), filename));
+            if (thumbnailFilename != null) Files.deleteIfExists(CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), thumbnailFilename));
         } catch (IOException e) {
             log.error("Failed to delete image files for image: {}", id, e);
         }
@@ -239,8 +235,8 @@ public class ImageService {
             thumbnailFilename = generateFilename(request.getName(), extension, thumbnailImage.getWidth(), thumbnailImage.getHeight());
         }
 
-        Path imagePath = Paths.get(imageUploadProperties.getDirectory(), filename);
-        Path thumbPath = Paths.get(imageUploadProperties.getDirectory(), thumbnailFilename);
+        Path imagePath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), filename);
+        Path thumbPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), thumbnailFilename);
         ImageIO.write(resizedImage, extension, imagePath.toFile());
         ImageIO.write(thumbnailImage, extension, thumbPath.toFile());
 
@@ -369,8 +365,7 @@ public class ImageService {
      * @throws IOException if file not found or error reading file
      */
     public File getImageFile(String filename) throws IOException {
-        Path uploadDir = Paths.get(imageUploadProperties.getDirectory());
-        Path fullPath = uploadDir.resolve(filename);
+        Path fullPath = CmsUtil.resolveSecurePath(imageUploadProperties.getDirectory(), filename);
 
         if (!Files.exists(fullPath)) {
             throw new IOException("Image file not found: " + filename);

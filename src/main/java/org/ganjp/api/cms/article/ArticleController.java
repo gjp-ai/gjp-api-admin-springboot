@@ -80,7 +80,7 @@ public class ArticleController {
     public ResponseEntity<ApiResponse<ArticleResponse>> createArticle(@Valid @ModelAttribute ArticleCreateRequest request, HttpServletRequest httpRequest) {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         ArticleResponse res = articleService.createArticle(request, userId);
-        return ResponseEntity.status(201).body(ApiResponse.success(res, "Article created"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res, "Article created"));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -88,7 +88,7 @@ public class ArticleController {
     public ResponseEntity<ApiResponse<ArticleResponse>> createArticleJson(@Valid @RequestBody ArticleCreateRequest request, HttpServletRequest httpRequest) {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         ArticleResponse res = articleService.createArticle(request, userId);
-        return ResponseEntity.status(201).body(ApiResponse.success(res, "Article created"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res, "Article created"));
     }
 
     @GetMapping("/{id}")

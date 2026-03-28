@@ -95,7 +95,7 @@ public class LogoController {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         LogoResponse response = logoService.createLogo(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response, "Logo created successfully"));
+                .body(ApiResponse.success(response, "Logo created"));
     }
 
     /**
@@ -111,7 +111,7 @@ public class LogoController {
         String userId = jwtUtils.extractUserIdFromToken(httpRequest);
         LogoResponse response = logoService.createLogo(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response, "Logo created successfully from URL"));
+                .body(ApiResponse.success(response, "Logo created"));
     }
 
     /**

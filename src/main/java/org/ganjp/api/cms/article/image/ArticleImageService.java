@@ -33,8 +33,7 @@ public class ArticleImageService {
     @Transactional(readOnly = true)
     public org.springframework.core.io.Resource getImage(String filename) {
         try {
-            Path uploadPath = Paths.get(articleProperties.getContentImage().getUpload().getDirectory());
-            Path filePath = uploadPath.resolve(filename);
+            Path filePath = CmsUtil.resolveSecurePath(articleProperties.getContentImage().getUpload().getDirectory(), filename);
             org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(filePath.toUri());
             
             if (resource.exists() || resource.isReadable()) {
@@ -47,9 +46,9 @@ public class ArticleImageService {
         }
     }
 
+    @Transactional(readOnly = true)
     public java.io.File getImageFile(String filename) {
-        Path uploadPath = Paths.get(articleProperties.getContentImage().getUpload().getDirectory());
-        Path filePath = uploadPath.resolve(filename);
+        Path filePath = CmsUtil.resolveSecurePath(articleProperties.getContentImage().getUpload().getDirectory(), filename);
         return filePath.toFile();
     }
 
@@ -113,7 +112,7 @@ public class ArticleImageService {
                 Files.createDirectories(uploadPath);
             }
 
-            Path filePath = uploadPath.resolve(targetFilename);
+            Path filePath = CmsUtil.resolveSecurePath(articleProperties.getContentImage().getUpload().getDirectory(), targetFilename);
             if (Files.exists(filePath)) {
                 throw new IllegalArgumentException("File with name " + targetFilename + " already exists");
             }
@@ -180,8 +179,7 @@ public class ArticleImageService {
             // Delete file
             if (image.getFilename() != null) {
                 try {
-                    Path uploadPath = Paths.get(articleProperties.getContentImage().getUpload().getDirectory());
-                    Path filePath = uploadPath.resolve(image.getFilename());
+                    Path filePath = CmsUtil.resolveSecurePath(articleProperties.getContentImage().getUpload().getDirectory(), image.getFilename());
                     Files.deleteIfExists(filePath);
                 } catch (IOException e) {
                     log.error("Failed to delete file for article image: " + id, e);
