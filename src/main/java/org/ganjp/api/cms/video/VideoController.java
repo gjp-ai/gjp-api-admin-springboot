@@ -85,7 +85,17 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res, "Video created"));
     }
 
-    // create-from-URL endpoint removed; file upload is required
+    /**
+     * Create a video from a URL (including YouTube).
+     * POST /v1/videos (JSON body)
+     */
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
+    public ResponseEntity<ApiResponse<VideoResponse>> createVideoByUrl(@Valid @RequestBody VideoCreateByUrlRequest request, HttpServletRequest httpRequest) throws IOException {
+        String userId = jwtUtils.extractUserIdFromToken(httpRequest);
+        VideoResponse res = videoService.createVideoByUrl(request, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(res, "Video created from URL"));
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPER_ADMIN')")
@@ -125,7 +135,18 @@ public class VideoController {
         return ResponseEntity.ok(ApiResponse.success(null, "Video permanently deleted"));
     }
 
-    // Optional: serve file by filename
+    @GetMapping("/cover/{filename}")
+    public ResponseEntity<?> viewCoverImage(@PathVariable String filename) throws IOException {
+        java.io.File file = videoService.getCoverImageFileByFilename(filename);
+        String contentType = org.ganjp.api.common.util.CmsUtil.determineContentType(filename);
+        InputStreamResource resource = new InputStreamResource(new java.io.FileInputStream(file));
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + org.ganjp.api.common.util.CmsUtil.sanitizeFilename(filename) + "\"")
+                .contentLength(file.length())
+                .body(resource);
+    }
+
     @GetMapping("/view/{filename}")
     public ResponseEntity<?> viewVideo(@PathVariable String filename, @RequestHeader(value = "Range", required = false) String rangeHeader) throws IOException {
         java.io.File file = videoService.getVideoFileByFilename(filename);

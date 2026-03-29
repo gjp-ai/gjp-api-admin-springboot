@@ -26,7 +26,7 @@ public class Video extends BaseEntity {
     private String name;
 
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String filename;
 
     @Column(name = "size_bytes")

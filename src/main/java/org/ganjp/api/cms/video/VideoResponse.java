@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -38,7 +37,7 @@ public class VideoResponse {
         }
         String coverUrl = null;
         if (video.getCoverImageFilename() != null) {
-            coverUrl = baseUrl + "/v1/videos/view/" + video.getCoverImageFilename();
+            coverUrl = baseUrl + "/v1/videos/cover/" + video.getCoverImageFilename();
         }
         return VideoResponse.builder()
                 .id(video.getId())

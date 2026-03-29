@@ -42,6 +42,7 @@ security:
     - "/v1/logos/view/**"
     - "/v1/audios/view/**"
     - "/v1/videos/view/**"
+    - "/v1/videos/cover/**"
     - "/v1/files/download/**"
     - "/actuator/health"
     - "/swagger-ui/**"
@@ -100,6 +101,8 @@ video:
     max-file-size: 524288000
     cover-image:
       max-size: 600
+    download:
+      max-resolution: 720
 
 image:
   upload:

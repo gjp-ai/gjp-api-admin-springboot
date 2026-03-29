@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -147,6 +149,64 @@ public class CmsUtil {
         } else {
             return "application/octet-stream"; // fallback
         }
+    }
+
+    // ── YouTube utilities ─────────────────────────────────────────────
+
+    /**
+     * Pattern matching various YouTube URL formats:
+     * - https://www.youtube.com/watch?v=VIDEO_ID
+     * - https://youtu.be/VIDEO_ID
+     * - https://www.youtube.com/embed/VIDEO_ID
+     * - https://www.youtube.com/v/VIDEO_ID
+     * - https://www.youtube.com/shorts/VIDEO_ID
+     * - https://m.youtube.com/watch?v=VIDEO_ID
+     */
+    private static final Pattern YOUTUBE_PATTERN = Pattern.compile(
+            "(?:https?://)?(?:www\\.|m\\.)?(?:youtube\\.com/(?:watch\\?.*v=|embed/|v/|shorts/)|youtu\\.be/)([a-zA-Z0-9_-]{11})");
+
+    /**
+     * Check whether a URL is a YouTube video URL.
+     */
+    public static boolean isYouTubeUrl(String url) {
+        if (url == null || url.isBlank()) return false;
+        return YOUTUBE_PATTERN.matcher(url).find();
+    }
+
+    /**
+     * Extract the 11-character video ID from a YouTube URL.
+     * @return the video ID, or null if the URL is not a recognised YouTube format
+     */
+    public static String extractYouTubeVideoId(String url) {
+        if (url == null || url.isBlank()) return null;
+        Matcher matcher = YOUTUBE_PATTERN.matcher(url);
+        return matcher.find() ? matcher.group(1) : null;
+    }
+
+    /**
+     * Build a YouTube embed URL from a video ID.
+     * Example: https://www.youtube.com/embed/dQw4w9WgXcQ
+     */
+    public static String buildYouTubeEmbedUrl(String videoId) {
+        if (videoId == null) return null;
+        return "https://www.youtube.com/embed/" + videoId;
+    }
+
+    /**
+     * Build a YouTube thumbnail URL (best available quality).
+     * Falls back to hqdefault if maxresdefault is not available for the video.
+     */
+    public static String buildYouTubeThumbnailUrl(String videoId) {
+        if (videoId == null) return null;
+        return "https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg";
+    }
+
+    /**
+     * Build a YouTube standard-quality thumbnail URL (always available).
+     */
+    public static String buildYouTubeThumbnailUrlHq(String videoId) {
+        if (videoId == null) return null;
+        return "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
     }
 
     // ── WebP conversion utilities ──────────────────────────────────────
