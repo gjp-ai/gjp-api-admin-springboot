@@ -24,6 +24,7 @@ public interface AudioRepository extends JpaRepository<Audio, String> {
                  Pageable pageable);
 
     boolean existsByFilenameOrCoverImageFilename(String filename, String coverImageFilename);
+    boolean existsByFilenameAndIdNot(String filename, String id);
 
     default boolean existsByFilename(String filename) {
         return existsByFilenameOrCoverImageFilename(filename, filename);

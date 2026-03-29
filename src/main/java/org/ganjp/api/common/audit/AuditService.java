@@ -50,7 +50,7 @@ public class AuditService {
                     .username(username)
                     .httpMethod(httpMethod)
                     .endpoint(endpoint)
-                    .result(resultMessage)
+                    .result(truncateResult(resultMessage))
                     .statusCode(statusCode)
                     .ipAddress(getClientIpAddress(request))
                     .userAgent(getUserAgent(request))
@@ -93,7 +93,7 @@ public class AuditService {
                     .username(username)
                     .httpMethod(httpMethod)
                     .endpoint(endpoint)
-                    .result(resultMessage)
+                    .result(truncateResult(resultMessage))
                     .statusCode(statusCode)
                     .errorMessage(errorMessage)
                     .ipAddress(getClientIpAddress(request))
@@ -141,7 +141,7 @@ public class AuditService {
                     .username(username)
                     .httpMethod(httpMethod)
                     .endpoint(endpoint)
-                    .result(resultMessage)
+                    .result(truncateResult(resultMessage))
                     .statusCode(statusCode)
                     .ipAddress(getClientIpAddress(request))
                     .userAgent(getUserAgent(request))
@@ -177,7 +177,7 @@ public class AuditService {
                     .username(auditData.username)
                     .httpMethod(auditData.httpMethod)
                     .endpoint(auditData.endpoint)
-                    .result(auditData.resultMessage)
+                    .result(truncateResult(auditData.resultMessage))
                     .statusCode(auditData.statusCode)
                     .ipAddress(auditData.ipAddress)
                     .userAgent(auditData.userAgent)
@@ -261,6 +261,15 @@ public class AuditService {
     }
 
     // Helper methods
+
+    private static final int MAX_RESULT_LENGTH = 500;
+
+    private String truncateResult(String result) {
+        if (result == null) return "UNKNOWN";
+        return result.length() > MAX_RESULT_LENGTH
+                ? result.substring(0, MAX_RESULT_LENGTH - 3) + "..."
+                : result;
+    }
 
     /**
      * Get request ID from various sources

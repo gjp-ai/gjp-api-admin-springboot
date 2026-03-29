@@ -21,12 +21,11 @@ import java.time.LocalDateTime;
 @Table(name = "audit_logs", indexes = {
     @Index(name = "idx_audit_user_id", columnList = "user_id"),
     @Index(name = "idx_audit_timestamp", columnList = "timestamp"),
-    @Index(name = "idx_audit_result", columnList = "result"),
+    @Index(name = "idx_audit_status_code_timestamp", columnList = "status_code, timestamp"),
     @Index(name = "idx_audit_endpoint", columnList = "endpoint"),
     @Index(name = "idx_audit_request_id", columnList = "request_id"),
     @Index(name = "idx_audit_user_timestamp", columnList = "user_id, timestamp"),
-    @Index(name = "idx_audit_ip_address", columnList = "ip_address"),
-    @Index(name = "idx_audit_status_code", columnList = "status_code")
+    @Index(name = "idx_audit_ip_address", columnList = "ip_address")
 })
 public class AuditLog {
 
@@ -70,7 +69,7 @@ public class AuditLog {
     /**
      * Result message from response status.message (changed from enum to varchar)
      */
-    @Column(name = "result", length = 100, nullable = false)
+    @Column(name = "result", length = 500, nullable = false)
     private String result;
 
     /**

@@ -159,6 +159,7 @@ public class VideoController {
             InputStreamResource full = new InputStreamResource(new java.io.FileInputStream(file));
             return ResponseEntity.ok()
                     .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + org.ganjp.api.common.util.CmsUtil.sanitizeFilename(filename) + "\"")
                     .contentLength(contentLength)
                     .body(full);
@@ -194,17 +195,16 @@ public class VideoController {
             }
             @Override
             public void close() throws java.io.IOException {
-                try { raf.close(); } finally { super.close(); }
+                raf.close();
             }
         };
 
-        InputStreamResource resource = new InputStreamResource(rangeStream);
-
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                 .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.ACCEPT_RANGES, "bytes")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + org.ganjp.api.common.util.CmsUtil.sanitizeFilename(filename) + "\"")
                 .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + contentLength)
                 .contentLength(rangeLength)
-                .body(resource);
+                .body(new InputStreamResource(rangeStream));
     }
 }

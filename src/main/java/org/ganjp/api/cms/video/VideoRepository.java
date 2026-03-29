@@ -34,6 +34,7 @@ public interface VideoRepository extends JpaRepository<Video, String> {
                              @Param("tags") String tags,
                              @Param("isActive") Boolean isActive);
     boolean existsByFilenameOrCoverImageFilename(String filename, String coverImageFilename);
+    boolean existsByFilenameAndIdNot(String filename, String id);
 
     // Keep the original method name for callers, but check both filename and cover image filename
     default boolean existsByFilename(String filename) {

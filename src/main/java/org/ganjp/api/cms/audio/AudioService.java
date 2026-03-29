@@ -147,6 +147,7 @@ public class AudioService {
         audio.setId(id);
         audio.setName(request.getName());
         audio.setOriginalUrl(url);
+        if (request.getFilename() != null) audio.setFilename(request.getFilename());
         audio.setSourceName(isYouTube ? "youtube" : request.getSourceName());
         audio.setDescription(request.getDescription());
         if (request.getSubtitle() != null) audio.setSubtitle(request.getSubtitle());

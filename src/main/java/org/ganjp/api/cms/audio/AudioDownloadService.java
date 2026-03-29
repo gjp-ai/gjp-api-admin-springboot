@@ -96,8 +96,8 @@ public class AudioDownloadService {
             }
         }
 
-        if (audioRepository.existsByFilename(filename)) {
-            Files.deleteIfExists(result.getFilePath());
+        if (audioRepository.existsByFilenameAndIdNot(filename, audio.getId())) {
+            Files.deleteIfExists(CmsUtil.resolveSecurePath(baseDir, filename));
             throw new IllegalArgumentException("Filename already exists in database: " + filename);
         }
 
@@ -140,7 +140,7 @@ public class AudioDownloadService {
 
         Path target = CmsUtil.resolveSecurePath(baseDir, filename);
 
-        if (audioRepository.existsByFilename(filename)) {
+        if (audioRepository.existsByFilenameAndIdNot(filename, audio.getId())) {
             throw new IllegalArgumentException("Filename already exists: " + filename);
         }
 

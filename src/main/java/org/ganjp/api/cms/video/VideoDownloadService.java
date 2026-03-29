@@ -98,7 +98,7 @@ public class VideoDownloadService {
             }
         }
 
-        if (videoRepository.existsByFilename(filename)) {
+        if (videoRepository.existsByFilenameAndIdNot(filename, video.getId())) {
             Files.deleteIfExists(result.getFilePath());
             throw new IllegalArgumentException("Filename already exists in database: " + filename);
         }

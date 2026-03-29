@@ -149,6 +149,7 @@ public class AudioController {
             InputStreamResource full = new InputStreamResource(new java.io.FileInputStream(file));
             return ResponseEntity.ok()
                     .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + org.ganjp.api.common.util.CmsUtil.sanitizeFilename(filename) + "\"")
                     .contentLength(contentLength)
                     .body(full);
@@ -183,17 +184,29 @@ public class AudioController {
             }
             @Override
             public void close() throws java.io.IOException {
-                try { raf.close(); } finally { super.close(); }
+                raf.close();
             }
         };
 
-        InputStreamResource resource = new InputStreamResource(rangeStream);
-
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                 .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.ACCEPT_RANGES, "bytes")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + org.ganjp.api.common.util.CmsUtil.sanitizeFilename(filename) + "\"")
                 .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + contentLength)
                 .contentLength(rangeLength)
+                .body(new InputStreamResource(rangeStream));
+    }
+
+    @GetMapping("/cover/{filename}")
+    public ResponseEntity<?> viewCoverImage(@PathVariable String filename) throws IOException {
+        java.io.File file = audioService.getCoverImageFileByFilename(filename);
+        String contentType = org.ganjp.api.common.util.CmsUtil.determineContentType(filename);
+        InputStreamResource resource = new InputStreamResource(new java.io.FileInputStream(file));
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + org.ganjp.api.common.util.CmsUtil.sanitizeFilename(filename) + "\"")
+                .contentLength(file.length())
                 .body(resource);
     }
+
 }

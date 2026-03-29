@@ -146,6 +146,18 @@ public class CmsUtil {
             return "video/quicktime";
         } else if (lowerFilename.endsWith(".mkv")) {
             return "video/x-matroska";
+        } else if (lowerFilename.endsWith(".mp3")) {
+            return "audio/mpeg";
+        } else if (lowerFilename.endsWith(".wav")) {
+            return "audio/wav";
+        } else if (lowerFilename.endsWith(".flac")) {
+            return "audio/flac";
+        } else if (lowerFilename.endsWith(".aac")) {
+            return "audio/aac";
+        } else if (lowerFilename.endsWith(".m4a")) {
+            return "audio/mp4";
+        } else if (lowerFilename.endsWith(".opus")) {
+            return "audio/opus";
         } else {
             return "application/octet-stream"; // fallback
         }

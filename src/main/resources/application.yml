@@ -41,6 +41,7 @@ security:
     - "/v1/articles/cover/**"
     - "/v1/logos/view/**"
     - "/v1/audios/view/**"
+    - "/v1/audios/cover/**"
     - "/v1/videos/view/**"
     - "/v1/videos/cover/**"
     - "/v1/files/download/**"

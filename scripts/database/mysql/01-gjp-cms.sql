@@ -154,7 +154,7 @@ CREATE TABLE `cms_audio` (
   `name` varchar(255) NOT NULL COMMENT 'Audio display name',
   `original_url` varchar(500) DEFAULT NULL COMMENT 'Original source URL',
   `source_name` varchar(255) DEFAULT NULL COMMENT 'Audio source name',
-  `filename` varchar(255) NOT NULL COMMENT 'Stored filename',
+  `filename` varchar(255) DEFAULT NULL COMMENT 'Stored filename',
   `size_bytes` bigint UNSIGNED DEFAULT NULL COMMENT 'File size in bytes',
   `cover_image_filename` varchar(500) DEFAULT NULL COMMENT 'Cover image filename (stored in uploads)',
   `description` varchar(500) DEFAULT NULL COMMENT 'Audio description',

@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     request_id CHAR(36) DEFAULT NULL COMMENT 'Request ID from meta.requestId',
 
     -- Operation result (changed from ENUM to VARCHAR to store status.message)
-    result VARCHAR(255) NOT NULL COMMENT 'Result message from response status.message',
+    result VARCHAR(500) NOT NULL COMMENT 'Result message from response status.message',
     status_code INT DEFAULT NULL COMMENT 'HTTP status code',
     error_message TEXT DEFAULT NULL COMMENT 'Error details if operation failed',
 
@@ -182,12 +182,11 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     -- Updated indexes for common queries
     KEY idx_audit_user_id (user_id),
     KEY idx_audit_timestamp (timestamp),
-    KEY idx_audit_result (result),
+    KEY idx_audit_status_code_timestamp (status_code, timestamp),
     KEY idx_audit_endpoint (endpoint),
     KEY idx_audit_request_id (request_id),
     KEY idx_audit_user_timestamp (user_id, timestamp),
-    KEY idx_audit_ip_address (ip_address),
-    KEY idx_audit_status_code (status_code)
+    KEY idx_audit_ip_address (ip_address)
 
     -- No FK on user_id: audit logs are append-only historical records
     -- and must survive user deletion or be writable before user context is available (e.g. login)
