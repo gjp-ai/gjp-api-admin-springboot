@@ -19,6 +19,7 @@ import java.util.Objects;
 @Table(name = "cms_file")
 public class FileAsset extends BaseEntity {
     @Id
+    @Column(columnDefinition = "char(36)", nullable = false)
     private String id;
 
     private String name;

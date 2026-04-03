@@ -29,7 +29,7 @@ import java.util.Objects;
 public class Website extends BaseEntity {
 
     @Id
-    @Column(name = "id", length = 36)
+    @Column(name = "id", columnDefinition = "char(36)", nullable = false)
     private String id;
 
     @Column(name = "name", length = 128, nullable = false)

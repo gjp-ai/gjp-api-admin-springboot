@@ -19,10 +19,10 @@ import java.util.Objects;
 @Table(name = "cms_article_image")
 public class ArticleImage extends BaseEntity {
     @Id
-    @Column(length = 36, nullable = false)
+    @Column(columnDefinition = "char(36)", nullable = false)
     private String id;
 
-    @Column(name = "article_id", length = 36, nullable = false)
+    @Column(name = "article_id", columnDefinition = "char(36)", nullable = false)
     private String articleId;
 
     @Column(name = "article_title", length = 500)

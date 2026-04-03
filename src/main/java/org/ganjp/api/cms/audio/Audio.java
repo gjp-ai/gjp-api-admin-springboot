@@ -19,7 +19,7 @@ import java.util.Objects;
 @Table(name = "cms_audio")
 public class Audio extends BaseEntity {
     @Id
-    @Column(length = 36, nullable = false)
+    @Column(columnDefinition = "char(36)", nullable = false)
     private String id;
 
     @Column(length = 255, nullable = false)
