@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS auth_roles (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by CHAR(36) DEFAULT NULL,
     updated_by CHAR(36) DEFAULT NULL,
+    granted_by CHAR(36) DEFAULT NULL,
 
     -- Soft Delete / Activation
     is_active BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'TRUE if the role can be assigned',

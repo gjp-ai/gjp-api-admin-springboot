@@ -1,7 +1,7 @@
 server:
   port: 8083
   servlet:
-    context-path: /api/
+    context-path: /ai-admin-api/
   error:
     include-stacktrace: never
     include-message: never
@@ -10,7 +10,7 @@ server:
 
 spring:
   application:
-    name: GJP-API-ADMIN
+    name: GJP-ADMIN-API
   profiles:
     active: dev
   jackson:

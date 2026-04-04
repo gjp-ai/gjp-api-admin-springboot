@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.ganjp</groupId>
-	<artifactId>gjp-admin-api</artifactId>
+	<artifactId>gjp-admin-api-boot</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>GJP Admin API</name>
